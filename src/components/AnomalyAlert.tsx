@@ -8,6 +8,7 @@ interface Props {
   anomalies: Anomaly[];
   onSelectFlight: (flight: FlightState | null) => void;
   flights: FlightState[];
+  inline?: boolean;
 }
 
 const SEVERITY_COLORS = {
@@ -16,7 +17,7 @@ const SEVERITY_COLORS = {
   info: { bg: "bg-blue-900/80", dot: "bg-blue-500", text: "text-blue-300", border: "border-blue-700" },
 };
 
-export default function AnomalyAlert({ anomalies, onSelectFlight, flights }: Props) {
+export default function AnomalyAlert({ anomalies, onSelectFlight, flights, inline = false }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   if (anomalies.length === 0) return null;
@@ -30,7 +31,7 @@ export default function AnomalyAlert({ anomalies, onSelectFlight, flights }: Pro
   };
 
   return (
-    <div className="absolute bottom-6 right-4 z-[1000] max-w-sm">
+    <div className={inline ? "w-full" : "absolute bottom-6 right-4 z-[1000] max-w-sm"}>
       {/* Badge button */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}

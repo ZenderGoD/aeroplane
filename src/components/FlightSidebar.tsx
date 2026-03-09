@@ -23,6 +23,7 @@ interface Props {
   flight: FlightState | null;
   onClose: () => void;
   anomalies?: Anomaly[];
+  onOpen3D?: () => void;
 }
 
 const FLIGHT_CAT_COLORS: Record<string, string> = {
@@ -32,7 +33,7 @@ const FLIGHT_CAT_COLORS: Record<string, string> = {
   LIFR: "#a855f7",   // purple
 };
 
-export default function FlightSidebar({ flight, onClose, anomalies = [] }: Props) {
+export default function FlightSidebar({ flight, onClose, anomalies = [], onOpen3D }: Props) {
   const { meta, isLoading: metaLoading } = useAircraftMeta(
     flight?.icao24 ?? null
   );
@@ -47,14 +48,24 @@ export default function FlightSidebar({ flight, onClose, anomalies = [] }: Props
     meta?.registration ?? null
   );
 
-  const { narration, isLoading: narrationLoading, error: narrationError } =
-    useFlightNarration(flight, meta, airportEstimate, weather);
+  const {
+    narration,
+    isLoading: narrationLoading,
+    error: narrationError,
+    generate: generateNarration,
+    remainingToday,
+    dailyLimit,
+  } = useFlightNarration(flight, meta, airportEstimate, weather);
 
   return (
     <div
-      className={`fixed right-0 top-0 h-full w-80 bg-gray-950/95 backdrop-blur-md shadow-2xl border-l border-gray-800 z-[1000] transform transition-transform duration-300 ease-in-out ${
-        flight ? "translate-x-0" : "translate-x-full"
-      }`}
+      className={`fixed z-[1000] bg-gray-950/95 backdrop-blur-md shadow-2xl border-gray-800 transform transition-transform duration-300 ease-in-out
+        md:right-0 md:top-0 md:h-full md:w-80 md:border-l
+        max-md:bottom-0 max-md:left-0 max-md:right-0 max-md:h-[60vh] max-md:w-full max-md:border-t max-md:rounded-t-2xl
+        ${flight
+          ? "md:translate-x-0 max-md:translate-y-0"
+          : "md:translate-x-full max-md:translate-y-full"
+        }`}
     >
       {flight && (
         <div className="h-full flex flex-col">
@@ -83,24 +94,38 @@ export default function FlightSidebar({ flight, onClose, anomalies = [] }: Props
               </div>
               <AnomalyBadge anomalies={anomalies} />
             </div>
-            <button
-              onClick={onClose}
-              className="p-1 hover:bg-gray-800 rounded transition-colors"
-            >
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <div className="flex items-center gap-1">
+              {onOpen3D && (
+                <button
+                  onClick={onOpen3D}
+                  className="flex items-center gap-1 px-2 py-1 bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 hover:text-blue-300 rounded-lg transition-colors text-xs font-medium"
+                  title="Open 3D View"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                  3D
+                </button>
+              )}
+              <button
+                onClick={onClose}
+                className="p-1 hover:bg-gray-800 rounded transition-colors"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
 
           {/* Details */}
@@ -113,6 +138,9 @@ export default function FlightSidebar({ flight, onClose, anomalies = [] }: Props
               narration={narration}
               isLoading={narrationLoading}
               error={narrationError}
+              onGenerate={generateNarration}
+              remainingToday={remainingToday}
+              dailyLimit={dailyLimit}
             />
 
             {/* Route Estimation */}

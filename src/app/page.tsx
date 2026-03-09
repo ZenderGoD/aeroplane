@@ -1,26 +1,39 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect, Suspense } from "react";
 import { useFlightData } from "@/hooks/useFlightData";
 import { useFlightHistory } from "@/hooks/useFlightHistory";
 import { useAnomalyDetection } from "@/hooks/useAnomalyDetection";
 import { useNLSearch } from "@/hooks/useNLSearch";
+import { useNearestAirport } from "@/hooks/useNearestAirport";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { useNotifications } from "@/hooks/useNotifications";
+import { useShareableFlight } from "@/hooks/useShareableFlight";
 import FlightMap from "@/components/FlightMap";
-import SearchBar from "@/components/SearchBar";
-import FlightCounter from "@/components/FlightCounter";
+import type { SearchBarHandle } from "@/components/SearchBar";
 import FlightSidebar from "@/components/FlightSidebar";
-import RegionSelector from "@/components/RegionSelector";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import Legend from "@/components/Legend";
-import AnomalyAlert from "@/components/AnomalyAlert";
-import ViewModeSelector from "@/components/ViewModeSelector";
+import LeftSidebar from "@/components/LeftSidebar";
+import ReplayControls, { filterFlightsByReplayTime } from "@/components/ReplayControls";
+import { KeyboardShortcutHelp } from "@/components/KeyboardShortcutHelp";
+import dynamic from "next/dynamic";
 import { REGIONS } from "@/lib/regions";
 import type { ViewMode } from "@/types/viewMode";
 
-export default function Home() {
+const Flight3DViewer = dynamic(() => import("@/components/Flight3DViewer"), {
+  ssr: false,
+});
+
+function HomeContent() {
   const [regionKey, setRegionKey] = useState("world");
   const [viewMode, setViewMode] = useState<ViewMode>("normal");
+  const [measureActive, setMeasureActive] = useState(false);
+  const [replayActive, setReplayActive] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [replayTime, setReplayTime] = useState<number | null>(null);
+  const [show3DViewer, setShow3DViewer] = useState(false);
   const region = REGIONS[regionKey];
+  const searchBarRef = useRef<SearchBarHandle>(null);
 
   // NL Search
   const { rawQuery, setRawQuery, filters, isAISearching } = useNLSearch();
@@ -46,7 +59,23 @@ export default function Home() {
     filters
   );
 
-  // Flight history (for trails + anomaly detection)
+  // Shareable flight links
+  const { initialFlightIcao, updateFlightUrl } = useShareableFlight();
+
+  // Select flight from URL on initial load
+  useEffect(() => {
+    if (initialFlightIcao && allFlights.length > 0) {
+      const flight = allFlights.find((f) => f.icao24 === initialFlightIcao);
+      if (flight) setSelectedFlight(flight);
+    }
+  }, [initialFlightIcao, allFlights, setSelectedFlight]);
+
+  // Update URL when flight selection changes
+  useEffect(() => {
+    updateFlightUrl(selectedFlight?.icao24 ?? null);
+  }, [selectedFlight, updateFlightUrl]);
+
+  // Flight history (for trails + anomaly detection + replay)
   const { history: flightHistory } = useFlightHistory(allFlights);
 
   // Anomaly detection
@@ -55,11 +84,35 @@ export default function Home() {
     flightHistory
   );
 
+  // Browser notifications for critical anomalies
+  useNotifications(anomalies);
+
   // Anomalies for selected flight
   const selectedAnomalies = useMemo(
     () => anomalyByIcao.get(selectedFlight?.icao24 ?? "") ?? [],
     [anomalyByIcao, selectedFlight]
   );
+
+  // Airport estimate for selected flight (used for route lines + weather)
+  const airportEstimate = useNearestAirport(selectedFlight);
+
+  // Keyboard shortcuts
+  const { showHelp, setShowHelp } = useKeyboardShortcuts({
+    flights,
+    selectedFlight,
+    setSelectedFlight,
+    setSearchFocused: () => searchBarRef.current?.focus(),
+    expandSidebar: () => setSidebarCollapsed(false),
+    toggleSidebar: () => setSidebarCollapsed((v) => !v),
+  });
+
+  // Replay: filter flights when replaying
+  const displayFlights = useMemo(() => {
+    if (replayTime && replayActive) {
+      return filterFlightsByReplayTime(allFlights, flightHistory, replayTime);
+    }
+    return flights;
+  }, [replayTime, replayActive, allFlights, flightHistory, flights]);
 
   return (
     <main className="relative h-screen w-screen overflow-hidden">
@@ -92,47 +145,95 @@ export default function Home() {
         </div>
       )}
 
-      <SearchBar
-        value={rawQuery}
-        onChange={setRawQuery}
+      <LeftSidebar
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
+        searchBarRef={searchBarRef}
+        rawQuery={rawQuery}
+        onRawQueryChange={setRawQuery}
         isAISearching={isAISearching}
         isNaturalLanguage={filters?.is_natural_language ?? false}
-      />
-      <RegionSelector value={regionKey} onChange={setRegionKey} />
-
-      <FlightCounter
-        total={totalCount}
-        filtered={filteredCount}
+        regionKey={regionKey}
+        onRegionChange={setRegionKey}
+        totalCount={totalCount}
+        filteredCount={filteredCount}
         isFiltered={!!filters}
         isRefreshing={isRefreshing}
         isRateLimited={isRateLimited}
         lastUpdated={lastUpdated}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        flights={allFlights}
+        measureActive={measureActive}
+        onMeasureToggle={() => setMeasureActive((v) => !v)}
+        replayActive={replayActive}
+        onReplayToggle={() => {
+          setReplayActive((v) => !v);
+          if (replayActive) setReplayTime(null);
+        }}
+        anomalies={anomalies}
+        onSelectFlight={setSelectedFlight}
+        allFlights={allFlights}
       />
 
       <FlightMap
-        flights={flights}
+        flights={displayFlights}
         selectedFlight={selectedFlight}
         onSelectFlight={setSelectedFlight}
         region={region}
         anomalyIcaos={anomalyIcaos}
         viewMode={viewMode}
         flightHistory={flightHistory}
+        airportEstimate={airportEstimate}
+        measureActive={measureActive}
+        onMeasureDeactivate={() => setMeasureActive(false)}
       />
 
-      <Legend />
-      <ViewModeSelector value={viewMode} onChange={setViewMode} />
-
-      <AnomalyAlert
-        anomalies={anomalies}
-        onSelectFlight={setSelectedFlight}
+      {/* Replay Controls */}
+      <ReplayControls
+        flightHistory={flightHistory}
         flights={allFlights}
+        isActive={replayActive}
+        onToggle={() => {
+          setReplayActive(false);
+          setReplayTime(null);
+        }}
+        onReplayTimeChange={setReplayTime}
       />
 
       <FlightSidebar
         flight={selectedFlight}
         onClose={() => setSelectedFlight(null)}
         anomalies={selectedAnomalies}
+        onOpen3D={() => setShow3DViewer(true)}
       />
+
+      {/* 3D Flight Viewer overlay */}
+      {show3DViewer && selectedFlight && (
+        <Flight3DViewer
+          flight={selectedFlight}
+          onClose={() => setShow3DViewer(false)}
+        />
+      )}
+
+      {/* Keyboard Shortcut Help Dialog */}
+      <KeyboardShortcutHelp open={showHelp} onOpenChange={setShowHelp} />
+
+      {/* Measure mode indicator (2D only) */}
+      {measureActive && viewMode !== "globe" && (
+        <div className={`absolute top-14 z-[1000] bg-cyan-900/90 border border-cyan-700 text-cyan-200 px-3 py-1.5 rounded-lg text-xs flex items-center gap-2 transition-all duration-300 ${sidebarCollapsed ? "left-4" : "left-[296px]"}`}>
+          <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+          Click two points to measure distance &middot; Press Esc to cancel
+        </div>
+      )}
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<LoadingSpinner message="Loading..." />}>
+      <HomeContent />
+    </Suspense>
   );
 }

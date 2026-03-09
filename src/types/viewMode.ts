@@ -1,1 +1,1 @@
-export type ViewMode = "normal" | "heatmap" | "trails";
+export type ViewMode = "normal" | "heatmap" | "trails" | "globe";

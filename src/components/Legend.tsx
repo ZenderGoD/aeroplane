@@ -13,12 +13,18 @@ const LEGEND_ITEMS = [
   { category: 0, label: "Unknown" },
 ];
 
-export default function Legend() {
+interface Props {
+  inline?: boolean;
+}
+
+export default function Legend({ inline = false }: Props) {
   return (
-    <div className="absolute bottom-6 left-4 z-[1000] bg-gray-900/90 backdrop-blur border border-gray-700 rounded-lg px-3 py-2.5">
-      <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
-        Aircraft Type
-      </div>
+    <div className={inline ? "" : "absolute bottom-6 left-4 z-[1000] bg-gray-900/90 backdrop-blur border border-gray-700 rounded-lg px-3 py-2.5"}>
+      {!inline && (
+        <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
+          Aircraft Type
+        </div>
+      )}
       <div className="grid grid-cols-2 gap-x-4 gap-y-1">
         {LEGEND_ITEMS.map((item) => (
           <div key={item.category} className="flex items-center gap-1.5">

@@ -1,20 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useImperativeHandle, forwardRef } from "react";
 
 interface Props {
   value: string;
   onChange: (value: string) => void;
   isAISearching?: boolean;
   isNaturalLanguage?: boolean;
+  inline?: boolean;
 }
 
-export default function SearchBar({
+export interface SearchBarHandle {
+  focus: () => void;
+}
+
+const SearchBar = forwardRef<SearchBarHandle, Props>(function SearchBar({
   value,
   onChange,
   isAISearching = false,
   isNaturalLanguage = false,
-}: Props) {
+  inline = false,
+}, ref) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => inputRef.current?.focus(),
+  }));
   const [input, setInput] = useState(value);
 
   useEffect(() => {
@@ -23,7 +34,7 @@ export default function SearchBar({
   }, [input, onChange]);
 
   return (
-    <div className="absolute top-4 left-4 z-[1000]">
+    <div className={inline ? "" : "absolute top-4 left-4 z-[1000]"}>
       <div className="relative">
         {isAISearching ? (
           <svg
@@ -67,11 +78,12 @@ export default function SearchBar({
           </svg>
         )}
         <input
+          ref={inputRef}
           type="text"
           placeholder='Search flights... (try "planes above 30000 ft")'
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className={`pl-10 pr-8 py-2 w-80 rounded-lg bg-gray-900/90 backdrop-blur shadow-lg border text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 ${
+          className={`pl-10 pr-8 py-2 ${inline ? "w-full" : "w-80"} rounded-lg bg-gray-900/90 backdrop-blur shadow-lg border text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 ${
             isNaturalLanguage
               ? "border-purple-500/50 focus:ring-purple-500"
               : "border-gray-700 focus:ring-blue-500"
@@ -111,4 +123,6 @@ export default function SearchBar({
       )}
     </div>
   );
-}
+});
+
+export default SearchBar;

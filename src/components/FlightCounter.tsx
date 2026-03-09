@@ -7,6 +7,7 @@ interface Props {
   isRefreshing: boolean;
   isRateLimited?: boolean;
   lastUpdated: Date | null;
+  inline?: boolean;
 }
 
 export default function FlightCounter({
@@ -16,6 +17,7 @@ export default function FlightCounter({
   isRefreshing,
   isRateLimited,
   lastUpdated,
+  inline = false,
 }: Props) {
   const statusColor = isRateLimited
     ? "bg-orange-400 animate-pulse"
@@ -24,7 +26,10 @@ export default function FlightCounter({
       : "bg-green-500";
 
   return (
-    <div className="absolute top-4 right-4 z-[1000] bg-gray-900/90 backdrop-blur shadow-lg border border-gray-700 rounded-lg px-4 py-2 text-sm">
+    <div className={inline
+      ? "px-1 py-1 text-sm"
+      : "absolute top-4 right-4 z-[1000] bg-gray-900/90 backdrop-blur shadow-lg border border-gray-700 rounded-lg px-4 py-2 text-sm"
+    }>
       <div className="flex items-center gap-2">
         <span className={`inline-block h-2 w-2 rounded-full ${statusColor}`} />
         <span className="font-semibold text-gray-100">

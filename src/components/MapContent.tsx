@@ -5,10 +5,12 @@ import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { DEFAULT_CENTER, DEFAULT_ZOOM } from "@/lib/mapUtils";
 import CanvasPlaneLayer from "./CanvasPlaneLayer";
+import MeasureTool from "./MeasureTool";
 import type { FlightState } from "@/types/flight";
 import type { Region } from "@/lib/regions";
 import type { ViewMode } from "@/types/viewMode";
 import type { FlightHistoryMap } from "@/lib/flightHistory";
+import type { FlightAirportEstimate } from "@/types/airport";
 
 interface Props {
   flights: FlightState[];
@@ -18,6 +20,9 @@ interface Props {
   anomalyIcaos?: Set<string>;
   viewMode?: ViewMode;
   flightHistory?: FlightHistoryMap;
+  airportEstimate?: FlightAirportEstimate | null;
+  measureActive?: boolean;
+  onMeasureDeactivate?: () => void;
 }
 
 function FlyToRegion({ region }: { region: Region }) {
@@ -48,7 +53,6 @@ function FlyToFlight({ flight }: { flight: FlightState | null }) {
     const isVisible = bounds.contains([flight.latitude, flight.longitude]);
 
     if (!isVisible) {
-      // Flight is off-screen — fly to it at current zoom or zoom 8, whichever is closer
       const targetZoom = Math.max(map.getZoom(), 8);
       map.flyTo([flight.latitude, flight.longitude], targetZoom, {
         duration: 1.2,
@@ -67,6 +71,9 @@ export default function MapContent({
   anomalyIcaos,
   viewMode,
   flightHistory,
+  airportEstimate,
+  measureActive = false,
+  onMeasureDeactivate,
 }: Props) {
   return (
     <MapContainer
@@ -89,6 +96,11 @@ export default function MapContent({
         anomalyIcaos={anomalyIcaos}
         viewMode={viewMode}
         flightHistory={flightHistory}
+        airportEstimate={airportEstimate}
+      />
+      <MeasureTool
+        active={measureActive}
+        onDeactivate={onMeasureDeactivate ?? (() => {})}
       />
     </MapContainer>
   );
