@@ -1,0 +1,246 @@
+/*
+ * AeroIntel Light Theme
+ * ---------------------
+ * Professional aviation light theme with white/light-blue aesthetic.
+ *
+ * NOTE: Import this file in your layout or globals.css:
+ *   @import "../styles/light-theme.css";
+ *
+ * The ThemeToggle component manages the `light` / `dark` class on <html>.
+ */
+
+/* ── Light Design System Tokens ──────────────────────── */
+html.light {
+  /* Surface elevation — lightest to deepest */
+  --surface-0: #f8fafc;
+  --surface-1: #ffffff;
+  --surface-2: #f1f5f9;
+  --surface-3: #e2e8f0;
+  --surface-4: #cbd5e1;
+
+  /* Border system */
+  --border-subtle: rgba(15, 23, 42, 0.05);
+  --border-default: rgba(15, 23, 42, 0.09);
+  --border-strong: rgba(15, 23, 42, 0.15);
+  --border-accent: rgba(8, 145, 178, 0.22);
+
+  /* Text hierarchy */
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-tertiary: #475569;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+
+  /* Accent — slightly deeper cyan for light backgrounds */
+  --accent-primary: #0891b2;
+  --accent-primary-dim: rgba(8, 145, 178, 0.10);
+  --accent-primary-glow: rgba(8, 145, 178, 0.05);
+
+  /* Status — slightly saturated for legibility on white */
+  --status-nominal: #059669;
+  --status-caution: #d97706;
+  --status-warning: #ea580c;
+  --status-critical: #dc2626;
+  --status-info: #2563eb;
+}
+
+/* ── Surface class overrides ─────────────────────────── */
+html.light .surface-elevated {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(241, 245, 249, 0.92) 100%
+  );
+  border: 1px solid var(--border-default);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.8) inset,
+    0 8px 24px -4px rgba(15, 23, 42, 0.08);
+}
+
+html.light .surface-elevated::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(15, 23, 42, 0.04) 30%,
+    rgba(15, 23, 42, 0.06) 50%,
+    rgba(15, 23, 42, 0.04) 70%,
+    transparent 100%
+  );
+}
+
+/* ── Glassmorphism — light mode ──────────────────────── */
+html.light .glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+}
+
+html.light .glass-heavy {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+}
+
+html.light .glass-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(241, 245, 249, 0.85) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+html.light .glass-card-hover:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(241, 245, 249, 0.95) 100%);
+  border-color: rgba(8, 145, 178, 0.18);
+  box-shadow: 0 0 20px rgba(8, 145, 178, 0.06);
+}
+
+/* ── Badge overrides — stronger tints for light bg ───── */
+html.light .badge-critical {
+  background: rgba(220, 38, 38, 0.08);
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.16);
+}
+
+html.light .badge-caution {
+  background: rgba(217, 119, 6, 0.08);
+  color: #d97706;
+  border: 1px solid rgba(217, 119, 6, 0.16);
+}
+
+html.light .badge-nominal {
+  background: rgba(5, 150, 105, 0.08);
+  color: #059669;
+  border: 1px solid rgba(5, 150, 105, 0.16);
+}
+
+html.light .badge-info {
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.16);
+}
+
+/* ── Glow borders — softer for light mode ────────────── */
+html.light .border-gradient-cyan {
+  border-image: linear-gradient(135deg, rgba(8, 145, 178, 0.25), rgba(6, 182, 212, 0.08)) 1;
+}
+
+html.light .border-glow-blue {
+  border: 1px solid rgba(37, 99, 235, 0.15);
+  box-shadow: inset 0 0 12px rgba(37, 99, 235, 0.03), 0 0 8px rgba(37, 99, 235, 0.04);
+}
+
+html.light .border-glow-green {
+  border: 1px solid rgba(5, 150, 105, 0.15);
+  box-shadow: inset 0 0 12px rgba(5, 150, 105, 0.03), 0 0 8px rgba(5, 150, 105, 0.04);
+}
+
+html.light .border-glow-amber {
+  border: 1px solid rgba(217, 119, 6, 0.15);
+  box-shadow: inset 0 0 12px rgba(217, 119, 6, 0.03), 0 0 8px rgba(217, 119, 6, 0.04);
+}
+
+html.light .border-glow-red {
+  border: 1px solid rgba(220, 38, 38, 0.15);
+  box-shadow: inset 0 0 12px rgba(220, 38, 38, 0.03), 0 0 8px rgba(220, 38, 38, 0.04);
+}
+
+/* ── Dividers ────────────────────────────────────────── */
+html.light .divider-glow {
+  background: linear-gradient(90deg, transparent 0%, rgba(8, 145, 178, 0.12) 50%, transparent 100%);
+}
+
+/* ── Skeleton loading ────────────────────────────────── */
+html.light .skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface-2) 0%,
+    var(--surface-3) 40%,
+    var(--surface-2) 80%
+  );
+  background-size: 200% 100%;
+}
+
+/* ── Shimmer animation — softer glow on light ────────── */
+html.light .animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(8, 145, 178, 0.05) 50%, transparent 100%);
+  background-size: 200% 100%;
+}
+
+/* ── Scrollbar — darker thumb for light bg ───────────── */
+html.light .scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.12);
+}
+
+html.light .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 23, 42, 0.22);
+}
+
+/* ── Leaflet overrides — light mode ──────────────────── */
+html.light .leaflet-control-zoom {
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.10) !important;
+}
+
+html.light .leaflet-control-zoom a {
+  background: var(--surface-1) !important;
+  color: var(--text-secondary) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+}
+
+html.light .leaflet-control-zoom a:hover {
+  background: var(--surface-2) !important;
+  color: var(--text-primary) !important;
+}
+
+html.light .leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.85) !important;
+  color: var(--text-muted) !important;
+  border: 1px solid var(--border-subtle) !important;
+}
+
+html.light .leaflet-popup-content-wrapper {
+  background: var(--surface-1);
+  border: 1px solid var(--border-default);
+  box-shadow:
+    0 0 0 1px rgba(15, 23, 42, 0.05),
+    0 4px 16px rgba(15, 23, 42, 0.10),
+    0 0 24px rgba(8, 145, 178, 0.03);
+}
+
+html.light .leaflet-popup-content {
+  color: var(--text-primary);
+}
+
+html.light .leaflet-popup-tip {
+  background: var(--surface-1);
+  border: 1px solid var(--border-default);
+}
+
+/* ── shadcn / Tailwind overrides for light mode ──────── */
+html.light {
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.58 0.22 27);
+  --border: oklch(0.90 0 0);
+  --input: oklch(0.90 0 0);
+  --ring: oklch(0.55 0 0);
+  --sidebar: oklch(0.98 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.95 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.90 0 0);
+  --sidebar-ring: oklch(0.55 0 0);
+}

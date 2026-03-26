@@ -1,3 +1,5 @@
+export type AirportType = "large" | "medium" | "small" | "heliport" | "seaplane" | "balloon" | "other";
+
 export interface Airport {
   id: number;
   name: string;
@@ -9,6 +11,7 @@ export interface Airport {
   lon: number;
   altitude: number; // elevation in feet
   timezone: string;
+  type?: AirportType;
 }
 
 export interface NearestAirportResult {

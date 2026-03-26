@@ -2,6 +2,9 @@ import type { FlightState, FlightHistoryEntry } from "@/types/flight";
 import type { Anomaly, AnomalyType } from "@/types/anomaly";
 import { ANOMALY_SEVERITY } from "@/types/anomaly";
 import type { FlightHistoryMap } from "./flightHistory";
+import { checkRouteDeviation } from "./routeDeviation";
+import { estimateFlightAirports } from "./airports";
+import { checkGPSIntegrity } from "./gpsIntegrity";
 
 function checkSquawk(f: FlightState): AnomalyType | null {
   if (f.squawk === "7500") return "squawk_7500";
@@ -69,6 +72,10 @@ function buildMessage(type: AnomalyType, f: FlightState): string {
       return `${cs} appears to be in a holding pattern`;
     case "ground_stop":
       return `${cs} stationary but not marked on-ground`;
+    case "route_deviation":
+      return `${cs} deviating from expected route`;
+    case "gps_anomaly":
+      return `${cs} showing GPS integrity anomalies`;
   }
 }
 
@@ -135,6 +142,50 @@ export function detectAnomalies(
         message: buildMessage("ground_stop", f),
         detectedAt: now,
       });
+    }
+
+    // Route deviation detection
+    if (flightHistory && flightHistory.length >= 5 && !f.onGround) {
+      const airportEstimate = estimateFlightAirports(f);
+      const deviation = checkRouteDeviation(f, flightHistory, airportEstimate);
+      if (deviation) {
+        anomalies.push({
+          icao24: f.icao24,
+          callsign: f.callsign,
+          type: "route_deviation",
+          severity: "warning",
+          message: `${(f.callsign?.trim() || f.icao24.toUpperCase())} deviating ${deviation.deviationNm} NM from expected ${deviation.departureIcao}-${deviation.destinationIcao} route`,
+          detectedAt: now,
+          metadata: {
+            deviationNm: deviation.deviationNm,
+            maxRecentDeviationNm: deviation.maxRecentDeviationNm,
+            expectedRoute: deviation.expectedRoute,
+            departureIcao: deviation.departureIcao,
+            destinationIcao: deviation.destinationIcao,
+          },
+        });
+      }
+    }
+
+    // GPS integrity / spoofing detection
+    if (flightHistory && flightHistory.length >= 3) {
+      const gpsResult = checkGPSIntegrity(f, flightHistory);
+      if (gpsResult && gpsResult.score < 60) {
+        const severity = gpsResult.score < 30 ? "critical" : "warning";
+        anomalies.push({
+          icao24: f.icao24,
+          callsign: f.callsign,
+          type: "gps_anomaly",
+          severity,
+          message: buildMessage("gps_anomaly", f),
+          detectedAt: now,
+          metadata: {
+            gpsScore: gpsResult.score,
+            gpsSeverity: gpsResult.severity,
+            issues: gpsResult.issues,
+          },
+        });
+      }
     }
   }
 

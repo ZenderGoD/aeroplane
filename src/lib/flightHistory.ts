@@ -1,7 +1,7 @@
 import type { FlightState, FlightHistoryEntry } from "@/types/flight";
 
-const MAX_HISTORY = 10;
-const PRUNE_AFTER_MS = 60_000;
+const MAX_HISTORY = 50;
+const PRUNE_AFTER_MS = 1_800_000; // 30 minutes
 
 export type FlightHistoryMap = Map<string, FlightHistoryEntry[]>;
 

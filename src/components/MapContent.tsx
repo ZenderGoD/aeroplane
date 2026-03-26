@@ -6,6 +6,15 @@ import "leaflet/dist/leaflet.css";
 import { DEFAULT_CENTER, DEFAULT_ZOOM } from "@/lib/mapUtils";
 import CanvasPlaneLayer from "./CanvasPlaneLayer";
 import MeasureTool from "./MeasureTool";
+import CorridorOverlay from "./CorridorOverlay";
+import FlightDistanceTool from "./FlightDistanceTool";
+import WeatherLayer from "./WeatherLayer";
+import MetarOverlay from "./MetarOverlay";
+import RunwayOverlay from "./RunwayOverlay";
+import RouteDensityOverlay from "./RouteDensityOverlay";
+import WindAloftOverlay from "./WindAloftOverlay";
+import TerrainOverlay from "./TerrainOverlay";
+import PirepOverlay from "./PirepOverlay";
 import type { FlightState } from "@/types/flight";
 import type { Region } from "@/lib/regions";
 import type { ViewMode } from "@/types/viewMode";
@@ -18,11 +27,24 @@ interface Props {
   onSelectFlight: (flight: FlightState | null) => void;
   region: Region;
   anomalyIcaos?: Set<string>;
+  instabilityScores?: Map<string, number>;
   viewMode?: ViewMode;
   flightHistory?: FlightHistoryMap;
   airportEstimate?: FlightAirportEstimate | null;
   measureActive?: boolean;
   onMeasureDeactivate?: () => void;
+  corridorsVisible?: boolean;
+  flightDistanceActive?: boolean;
+  onFlightDistanceDeactivate?: () => void;
+  hiddenCategories?: Set<number>;
+  weatherVisible?: boolean;
+  metarVisible?: boolean;
+  runwaysVisible?: boolean;
+  routeDensityVisible?: boolean;
+  windAloftVisible?: boolean;
+  terrainVisible?: boolean;
+  pirepVisible?: boolean;
+  onSelectCorridor?: (corridorId: string) => void;
 }
 
 function FlyToRegion({ region }: { region: Region }) {
@@ -69,11 +91,24 @@ export default function MapContent({
   onSelectFlight,
   region,
   anomalyIcaos,
+  instabilityScores,
   viewMode,
   flightHistory,
   airportEstimate,
   measureActive = false,
   onMeasureDeactivate,
+  corridorsVisible = false,
+  flightDistanceActive = false,
+  onFlightDistanceDeactivate,
+  hiddenCategories,
+  weatherVisible = false,
+  metarVisible = false,
+  runwaysVisible = false,
+  routeDensityVisible = false,
+  windAloftVisible = false,
+  terrainVisible = false,
+  pirepVisible = false,
+  onSelectCorridor,
 }: Props) {
   return (
     <MapContainer
@@ -89,18 +124,34 @@ export default function MapContent({
       />
       <FlyToRegion region={region} />
       <FlyToFlight flight={selectedFlight} />
+      <WeatherLayer visible={weatherVisible} />
+      <MetarOverlay visible={metarVisible} />
+      <RunwayOverlay visible={runwaysVisible} />
+      <RouteDensityOverlay visible={routeDensityVisible} flights={flights} flightHistory={flightHistory ?? new Map()} />
+      <WindAloftOverlay visible={windAloftVisible} />
+      <TerrainOverlay visible={terrainVisible} />
+      <PirepOverlay visible={pirepVisible} />
+      <CorridorOverlay visible={corridorsVisible} onSelectCorridor={onSelectCorridor} />
       <CanvasPlaneLayer
         flights={flights}
         selectedFlight={selectedFlight}
         onSelectFlight={onSelectFlight}
         anomalyIcaos={anomalyIcaos}
+        instabilityScores={instabilityScores}
         viewMode={viewMode}
         flightHistory={flightHistory}
         airportEstimate={airportEstimate}
+        hiddenCategories={hiddenCategories}
       />
       <MeasureTool
         active={measureActive}
         onDeactivate={onMeasureDeactivate ?? (() => {})}
+      />
+      <FlightDistanceTool
+        active={flightDistanceActive}
+        flights={flights}
+        onDeactivate={onFlightDistanceDeactivate ?? (() => {})}
+        onSelectFlight={onSelectFlight}
       />
     </MapContainer>
   );

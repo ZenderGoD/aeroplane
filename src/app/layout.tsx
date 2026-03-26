@@ -9,9 +9,9 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Live Flight Tracker",
+  title: "AeroIntel — Aviation Intelligence Platform",
   description:
-    "Real-time commercial flight tracking powered by OpenSky Network ADS-B data",
+    "Real-time aviation intelligence powered by ADS-B data. Flight tracking, anomaly detection, corridor health, and airport pressure analysis.",
 };
 
 export default function RootLayout({
@@ -22,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${geist.variable} antialiased`}>
+        {/* @ts-expect-error - delayDuration prop type mismatch with shadcn version */}
         <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
       </body>
     </html>

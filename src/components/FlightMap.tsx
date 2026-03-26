@@ -34,11 +34,24 @@ interface Props {
   onSelectFlight: (flight: FlightState | null) => void;
   region: Region;
   anomalyIcaos?: Set<string>;
+  instabilityScores?: Map<string, number>;
   viewMode?: ViewMode;
   flightHistory?: FlightHistoryMap;
   airportEstimate?: FlightAirportEstimate | null;
   measureActive?: boolean;
   onMeasureDeactivate?: () => void;
+  corridorsVisible?: boolean;
+  flightDistanceActive?: boolean;
+  onFlightDistanceDeactivate?: () => void;
+  hiddenCategories?: Set<number>;
+  weatherVisible?: boolean;
+  metarVisible?: boolean;
+  runwaysVisible?: boolean;
+  routeDensityVisible?: boolean;
+  windAloftVisible?: boolean;
+  terrainVisible?: boolean;
+  pirepVisible?: boolean;
+  onSelectCorridor?: (corridorId: string) => void;
 }
 
 export default function FlightMap(props: Props) {

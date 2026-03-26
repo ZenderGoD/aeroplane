@@ -5,7 +5,9 @@ export type AnomalyType =
   | "holding_pattern"
   | "rapid_descent"
   | "unusual_speed"
-  | "ground_stop";
+  | "ground_stop"
+  | "route_deviation"
+  | "gps_anomaly";
 
 export interface Anomaly {
   icao24: string;
@@ -14,6 +16,7 @@ export interface Anomaly {
   severity: "critical" | "warning" | "info";
   message: string;
   detectedAt: number;
+  metadata?: Record<string, unknown>;
 }
 
 export const ANOMALY_LABELS: Record<AnomalyType, string> = {
@@ -24,6 +27,8 @@ export const ANOMALY_LABELS: Record<AnomalyType, string> = {
   rapid_descent: "Rapid Descent",
   unusual_speed: "Unusual Speed",
   ground_stop: "Unexpected Ground Stop",
+  route_deviation: "Route Deviation",
+  gps_anomaly: "GPS Anomaly",
 };
 
 export const ANOMALY_SEVERITY: Record<AnomalyType, "critical" | "warning" | "info"> = {
@@ -34,4 +39,6 @@ export const ANOMALY_SEVERITY: Record<AnomalyType, "critical" | "warning" | "inf
   rapid_descent: "warning",
   unusual_speed: "info",
   ground_stop: "info",
+  route_deviation: "warning",
+  gps_anomaly: "critical",
 };

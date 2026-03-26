@@ -147,10 +147,17 @@ export function useFlightData(
   });
 
   const flights: FlightState[] = useMemo(() => {
-    if (!latestData?.states) return [];
-    return latestData.states
-      .map((raw: unknown[]) => parseStateVector(raw))
-      .filter((f: FlightState | null): f is FlightState => f !== null);
+    // New normalized format: flights are already parsed
+    if (latestData?.flights && Array.isArray(latestData.flights)) {
+      return latestData.flights as FlightState[];
+    }
+    // Backwards compatibility: old OpenSky raw state vector format
+    if (latestData?.states && Array.isArray(latestData.states)) {
+      return latestData.states
+        .map((raw: unknown[]) => parseStateVector(raw))
+        .filter((f: FlightState | null): f is FlightState => f !== null);
+    }
+    return [];
   }, [latestData]);
 
   const filteredFlights = useMemo(() => {
@@ -174,7 +181,7 @@ export function useFlightData(
 
   const isRateLimited = latestData?._rateLimited === true;
   const isQuotaExhausted = latestData?.quotaExhausted === true;
-  const dataSource = (latestData?._dataSource as string) ?? null;
+  const dataSource = (latestData?.source as string) ?? (latestData?._dataSource as string) ?? null;
   const apiError = (latestData?.error as string) ?? null;
 
   // Update ref so next SWR config picks up adaptive interval

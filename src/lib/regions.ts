@@ -9,12 +9,6 @@ export interface Region {
 
 // Bounding boxes for major regions/countries
 export const REGIONS: Record<string, Region> = {
-  world: {
-    name: "Worldwide",
-    bbox: { lamin: -90, lomin: -180, lamax: 90, lomax: 180 },
-    center: [20, 0],
-    zoom: 3,
-  },
   india: {
     name: "India",
     bbox: { lamin: 6.5, lomin: 68.0, lamax: 35.5, lomax: 97.5 },

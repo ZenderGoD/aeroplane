@@ -56,10 +56,10 @@ function HorizontalBar({
       className="group flex items-center gap-2"
       style={{ animationDelay: `${index * 40}ms` }}
     >
-      <span className="w-24 shrink-0 truncate text-xs text-gray-400 text-right">
+      <span className="w-24 shrink-0 truncate text-xs text-right" style={{ color: "var(--text-tertiary)" }}>
         {item.label}
       </span>
-      <div className="relative flex-1 h-5 rounded bg-gray-800/60 overflow-hidden">
+      <div className="relative flex-1 h-5 rounded overflow-hidden" style={{ background: "var(--surface-3)" }}>
         <div
           className="absolute inset-y-0 left-0 rounded transition-all duration-700 ease-out"
           style={{
@@ -76,7 +76,7 @@ function HorizontalBar({
           }}
         />
       </div>
-      <span className="w-12 shrink-0 text-xs tabular-nums text-gray-300 text-right font-medium">
+      <span className="w-12 shrink-0 text-xs tabular-nums text-right font-medium" style={{ color: "var(--text-secondary)" }}>
         {formatNumber(item.value)}
       </span>
     </div>
@@ -87,7 +87,7 @@ function BarChart({ title, items }: { title: string; items: BarItem[] }) {
   const maxValue = Math.max(...items.map((i) => i.value), 1);
   return (
     <div className="space-y-2">
-      <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+      <h4 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>
         {title}
       </h4>
       <div className="space-y-1.5">
@@ -115,20 +115,21 @@ function StatCard({
   color?: string;
 }) {
   return (
-    <Card className="bg-gray-900/80 border-gray-700/60 ring-0">
+    <Card className="ring-0" style={{ background: "var(--surface-2)", borderColor: "var(--border-default)" }}>
       <CardContent className="flex items-center gap-3 py-3 px-3">
         <div
-          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-800/80 ${color}`}
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${color}`}
+          style={{ background: "var(--surface-3)" }}
         >
           {icon}
         </div>
         <div className="min-w-0">
-          <p className="text-lg font-bold text-gray-100 leading-tight tabular-nums">
+          <p className="text-lg font-bold leading-tight tabular-nums" style={{ color: "var(--text-primary)" }}>
             {typeof value === "number" ? formatNumber(value) : value}
           </p>
-          <p className="text-[11px] text-gray-500 truncate">{label}</p>
+          <p className="text-[11px] truncate" style={{ color: "var(--text-muted)" }}>{label}</p>
           {sub && (
-            <p className="text-[10px] text-gray-600 truncate">{sub}</p>
+            <p className="text-[10px] truncate" style={{ color: "var(--text-faint)" }}>{sub}</p>
           )}
         </div>
       </CardContent>
@@ -328,8 +329,9 @@ export default function StatsPanel({ flights }: Props) {
         className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium transition-all ${
           open
             ? "bg-blue-600 text-white"
-            : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
+            : "hover:bg-gray-800/50"
         }`}
+        style={!open ? { color: "var(--text-tertiary)" } : undefined}
       >
         {BarChartIcon}
         Stats
@@ -338,11 +340,12 @@ export default function StatsPanel({ flights }: Props) {
       <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent
         side="left"
-        className="!z-[2000] w-[420px] sm:max-w-[420px] bg-gray-950 border-gray-800 p-0 flex flex-col"
+        className="!z-[2000] w-[420px] sm:max-w-[420px] p-0 flex flex-col"
+        style={{ background: "var(--surface-1)", borderColor: "var(--border-default)" }}
         showCloseButton={true}
       >
         <SheetHeader className="px-5 pt-5 pb-0">
-          <SheetTitle className="text-gray-100 flex items-center gap-2">
+          <SheetTitle className="flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
             <svg
               className="w-5 h-5 text-blue-400"
               fill="none"
@@ -358,16 +361,17 @@ export default function StatsPanel({ flights }: Props) {
             </svg>
             Live Statistics
           </SheetTitle>
-          <SheetDescription className="text-gray-500">
+          <SheetDescription className="" style={{ color: "var(--text-muted)" }}>
             Real-time flight data analysis
           </SheetDescription>
         </SheetHeader>
 
         <Tabs defaultValue="overview" className="flex-1 flex flex-col min-h-0 px-5 pt-3">
-          <TabsList className="bg-gray-900 border border-gray-800 w-full">
+          <TabsList className="border w-full" style={{ background: "var(--surface-2)", borderColor: "var(--border-default)" }}>
             <TabsTrigger
               value="overview"
-              className="flex-1 data-active:bg-gray-800 data-active:text-gray-100 text-gray-400"
+              className="flex-1"
+              style={{ color: "var(--text-tertiary)" }}
             >
               <svg
                 className="w-3.5 h-3.5"
@@ -386,7 +390,8 @@ export default function StatsPanel({ flights }: Props) {
             </TabsTrigger>
             <TabsTrigger
               value="charts"
-              className="flex-1 data-active:bg-gray-800 data-active:text-gray-100 text-gray-400"
+              className="flex-1"
+              style={{ color: "var(--text-tertiary)" }}
             >
               {BarChartIcon}
               Charts
@@ -396,7 +401,7 @@ export default function StatsPanel({ flights }: Props) {
           {/* ── Overview Tab ──────────────────────────────────────────── */}
           <TabsContent value="overview" className="flex-1 min-h-0 mt-3">
             <ScrollArea className="h-[calc(100vh-180px)]">
-              <div className="space-y-5 pb-6 pr-2">
+              {!stats ? <div className="text-zinc-500 text-sm p-4">Loading stats...</div> : <div className="space-y-5 pb-6 pr-2">
                 {/* Summary cards */}
                 <div className="grid grid-cols-2 gap-2.5">
                   <StatCard
@@ -472,7 +477,7 @@ export default function StatsPanel({ flights }: Props) {
                   />
                 </div>
 
-                <Separator className="bg-gray-800" />
+                <Separator style={{ background: "var(--border-default)" }} />
 
                 {/* Top airlines */}
                 <BarChart
@@ -484,7 +489,7 @@ export default function StatsPanel({ flights }: Props) {
                   }))}
                 />
 
-                <Separator className="bg-gray-800" />
+                <Separator style={{ background: "var(--border-default)" }} />
 
                 {/* Top countries */}
                 <BarChart
@@ -496,7 +501,7 @@ export default function StatsPanel({ flights }: Props) {
                   }))}
                 />
 
-                <Separator className="bg-gray-800" />
+                <Separator style={{ background: "var(--border-default)" }} />
 
                 {/* Category distribution */}
                 <BarChart
@@ -507,21 +512,21 @@ export default function StatsPanel({ flights }: Props) {
                     color: c.color,
                   }))}
                 />
-              </div>
+              </div>}
             </ScrollArea>
           </TabsContent>
 
           {/* ── Charts Tab ───────────────────────────────────────────── */}
           <TabsContent value="charts" className="flex-1 min-h-0 mt-3">
             <ScrollArea className="h-[calc(100vh-180px)]">
-              <div className="space-y-6 pb-6 pr-2">
+              {!stats ? <div className="text-zinc-500 text-sm p-4">Loading stats...</div> : <div className="space-y-6 pb-6 pr-2">
                 {/* Altitude histogram */}
                 <div className="space-y-3">
                   <div>
-                    <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>
                       Altitude Distribution
                     </h4>
-                    <p className="text-[10px] text-gray-600 mt-0.5">
+                    <p className="text-[10px] mt-0.5" style={{ color: "var(--text-faint)" }}>
                       Airborne aircraft grouped by barometric altitude
                     </p>
                   </div>
@@ -557,7 +562,7 @@ export default function StatsPanel({ flights }: Props) {
                   />
 
                   {/* Visual altitude breakdown summary */}
-                  <div className="flex h-3 rounded-full overflow-hidden bg-gray-800/60">
+                  <div className="flex h-3 rounded-full overflow-hidden" style={{ background: "var(--surface-3)" }}>
                     {stats.altBuckets.map((count, i) => {
                       const totalAlt = stats.altBuckets.reduce(
                         (s, v) => s + v,
@@ -578,21 +583,21 @@ export default function StatsPanel({ flights }: Props) {
                       );
                     })}
                   </div>
-                  <div className="flex justify-between text-[10px] text-gray-600">
+                  <div className="flex justify-between text-[10px]" style={{ color: "var(--text-faint)" }}>
                     <span>0 ft</span>
                     <span>50,000+ ft</span>
                   </div>
                 </div>
 
-                <Separator className="bg-gray-800" />
+                <Separator style={{ background: "var(--border-default)" }} />
 
                 {/* Speed histogram */}
                 <div className="space-y-3">
                   <div>
-                    <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>
                       Speed Distribution
                     </h4>
-                    <p className="text-[10px] text-gray-600 mt-0.5">
+                    <p className="text-[10px] mt-0.5" style={{ color: "var(--text-faint)" }}>
                       Airborne aircraft grouped by ground speed
                     </p>
                   </div>
@@ -618,7 +623,7 @@ export default function StatsPanel({ flights }: Props) {
                   />
 
                   {/* Visual speed breakdown */}
-                  <div className="flex h-3 rounded-full overflow-hidden bg-gray-800/60">
+                  <div className="flex h-3 rounded-full overflow-hidden" style={{ background: "var(--surface-3)" }}>
                     {stats.spdBuckets.map((count, i) => {
                       const totalSpd = stats.spdBuckets.reduce(
                         (s, v) => s + v,
@@ -639,22 +644,22 @@ export default function StatsPanel({ flights }: Props) {
                       );
                     })}
                   </div>
-                  <div className="flex justify-between text-[10px] text-gray-600">
+                  <div className="flex justify-between text-[10px]" style={{ color: "var(--text-faint)" }}>
                     <span>0 kts</span>
                     <span>600+ kts</span>
                   </div>
                 </div>
 
-                <Separator className="bg-gray-800" />
+                <Separator style={{ background: "var(--border-default)" }} />
 
                 {/* Quick insights */}
                 <div className="space-y-2">
-                  <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>
                     Quick Insights
                   </h4>
                   <div className="grid grid-cols-1 gap-2">
-                    <div className="flex items-center justify-between rounded-lg bg-gray-900/80 border border-gray-800/60 px-3 py-2.5">
-                      <span className="text-xs text-gray-400">
+                    <div className="flex items-center justify-between rounded-lg border px-3 py-2.5" style={{ background: "var(--surface-2)", borderColor: "var(--border-default)" }}>
+                      <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                         High-altitude flights (30k+ ft)
                       </span>
                       <span className="text-xs font-bold text-cyan-400 tabular-nums">
@@ -663,24 +668,24 @@ export default function StatsPanel({ flights }: Props) {
                         )}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between rounded-lg bg-gray-900/80 border border-gray-800/60 px-3 py-2.5">
-                      <span className="text-xs text-gray-400">
+                    <div className="flex items-center justify-between rounded-lg border px-3 py-2.5" style={{ background: "var(--surface-2)", borderColor: "var(--border-default)" }}>
+                      <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                         High-speed flights (400+ kts)
                       </span>
                       <span className="text-xs font-bold text-orange-400 tabular-nums">
                         {formatNumber(stats.spdBuckets[2])}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between rounded-lg bg-gray-900/80 border border-gray-800/60 px-3 py-2.5">
-                      <span className="text-xs text-gray-400">
+                    <div className="flex items-center justify-between rounded-lg border px-3 py-2.5" style={{ background: "var(--surface-2)", borderColor: "var(--border-default)" }}>
+                      <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                         Unique airlines detected
                       </span>
                       <span className="text-xs font-bold text-purple-400 tabular-nums">
                         {formatNumber(stats.topAirlines.length > 0 ? stats.topAirlines.length : 0)}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between rounded-lg bg-gray-900/80 border border-gray-800/60 px-3 py-2.5">
-                      <span className="text-xs text-gray-400">
+                    <div className="flex items-center justify-between rounded-lg border px-3 py-2.5" style={{ background: "var(--surface-2)", borderColor: "var(--border-default)" }}>
+                      <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                         Ground-to-air ratio
                       </span>
                       <span className="text-xs font-bold text-emerald-400 tabular-nums">
@@ -691,7 +696,7 @@ export default function StatsPanel({ flights }: Props) {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div>}
             </ScrollArea>
           </TabsContent>
         </Tabs>

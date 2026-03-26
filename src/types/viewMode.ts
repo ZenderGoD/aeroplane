@@ -1,1 +1,16 @@
-export type ViewMode = "normal" | "heatmap" | "trails" | "globe";
+export type ViewMode =
+  | "normal"
+  | "heatmap"
+  | "trails"
+  | "globe"
+  | "airport"
+  | "fids"
+  | "fleet"
+  | "aircraft"
+  | "stats"
+  | "comparison"
+  | "alerts"
+  | "turbulence"
+  | "embed"
+  | "api"
+  | "exports";

@@ -20,6 +20,7 @@ const airports: Airport[] = (airportsData as Record<string, unknown>[]).map(
     lon: raw.lon as number,
     altitude: raw.alt as number,
     timezone: (raw.tz as string) || "",
+    type: (raw.type as Airport["type"]) || undefined,
   })
 );
 
