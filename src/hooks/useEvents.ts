@@ -4,15 +4,18 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import type { FlightEvent } from "@/types/events";
 
 const MAX_EVENTS = 100;
-const RECONNECT_DELAY = 5000;
+const RECONNECT_DELAY = 10000;
+const MAX_RETRIES = 3;
 
 export function useEvents() {
   const [events, setEvents] = useState<FlightEvent[]>([]);
   const [connected, setConnected] = useState(false);
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const retriesRef = useRef(0);
 
   const connect = useCallback(() => {
+    if (retriesRef.current >= MAX_RETRIES) return; // Stop trying
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
     }
@@ -20,7 +23,10 @@ export function useEvents() {
     const es = new EventSource("/api/events");
     eventSourceRef.current = es;
 
-    es.onopen = () => setConnected(true);
+    es.onopen = () => {
+      setConnected(true);
+      retriesRef.current = 0; // Reset on success
+    };
 
     es.onmessage = (e) => {
       try {
@@ -35,9 +41,11 @@ export function useEvents() {
       setConnected(false);
       es.close();
       eventSourceRef.current = null;
+      retriesRef.current++;
 
-      // Reconnect after delay
-      reconnectTimeoutRef.current = setTimeout(connect, RECONNECT_DELAY);
+      if (retriesRef.current < MAX_RETRIES) {
+        reconnectTimeoutRef.current = setTimeout(connect, RECONNECT_DELAY);
+      }
     };
   }, []);
 

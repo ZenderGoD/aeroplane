@@ -1,23 +1,7 @@
-import Redis from "ioredis";
+// Redis is optional — all features degrade gracefully without it.
+// Only connects when REDIS_URL is explicitly set.
 
-const globalForRedis = globalThis as unknown as {
-  redis: Redis | undefined;
-};
-
-export const redis: Redis =
-  globalForRedis.redis ??
-  new Redis(process.env.REDIS_URL ?? "redis://localhost:6379", {
-    maxRetriesPerRequest: 3,
-    retryStrategy(times) {
-      if (times > 5) return null; // stop retrying
-      return Math.min(times * 200, 2000);
-    },
-    lazyConnect: true,
-  });
-
-if (process.env.NODE_ENV !== "production") {
-  globalForRedis.redis = redis;
-}
+const REDIS_AVAILABLE = !!process.env.REDIS_URL;
 
 // ── Key namespaces ──────────────────────────────────────────────────
 export const KEYS = {
@@ -41,91 +25,99 @@ export const CHANNELS = {
   corridorUpdates: "ch:corridor-updates",
 } as const;
 
-// ── Helpers ─────────────────────────────────────────────────────────
+// Lazy-load ioredis only when needed
+let _redis: import("ioredis").default | null = null;
 
-/** Ensure Redis is connected (call before first operation) */
-export async function ensureRedisConnected(): Promise<void> {
-  if (redis.status === "ready") return;
-  if (redis.status === "connecting") {
-    await new Promise<void>((resolve) => redis.once("ready", resolve));
-    return;
-  }
-  await redis.connect();
+function getRedis() {
+  if (!REDIS_AVAILABLE) return null;
+  if (_redis) return _redis;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const Redis = require("ioredis").default || require("ioredis");
+  _redis = new Redis(process.env.REDIS_URL!, {
+    maxRetriesPerRequest: 3,
+    retryStrategy(times: number) {
+      if (times > 3) return null;
+      return Math.min(times * 200, 2000);
+    },
+    lazyConnect: true,
+    connectTimeout: 5000,
+  });
+  return _redis;
 }
 
-/**
- * Store flight positions in a Redis sorted set (score = timestamp).
- * Trims to maxCount entries and sets TTL.
- */
-export async function cacheFlightPositions(
-  icao24: string,
-  lat: number,
-  lon: number,
-  altitude: number | null,
-  speed: number | null,
-  heading: number | null,
-  verticalRate: number | null,
-  onGround: boolean,
-  timestamp: number,
-  maxCount = 50,
-  ttlSeconds = 1800
-): Promise<void> {
-  const key = KEYS.flightPositions(icao24);
-  const value = JSON.stringify({
-    lat,
-    lon,
-    altitude,
-    speed,
-    heading,
-    verticalRate,
-    onGround,
-    ts: timestamp,
-  });
+export const redis = {
+  get status() {
+    const r = getRedis();
+    return r ? r.status : "end";
+  },
+} as { status: string };
 
-  const pipe = redis.pipeline();
+/** Ensure Redis is connected (no-ops if REDIS_URL is not set) */
+export async function ensureRedisConnected(): Promise<void> {
+  if (!REDIS_AVAILABLE) throw new Error("Redis not configured");
+  const r = getRedis();
+  if (!r) throw new Error("Redis not configured");
+  if (r.status === "ready") return;
+  if (r.status === "connecting") {
+    await new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => reject(new Error("Redis connect timeout")), 5000);
+      r.once("ready", () => { clearTimeout(timeout); resolve(); });
+      r.once("error", (err) => { clearTimeout(timeout); reject(err); });
+    });
+    return;
+  }
+  await r.connect();
+}
+
+/** Get the raw ioredis client (null if not configured) */
+export function getRawRedis() {
+  return getRedis();
+}
+
+/** Publish an event to a Redis channel */
+export async function publishEvent(channel: string, data: unknown): Promise<void> {
+  const r = getRedis();
+  if (!r) return;
+  await r.publish(channel, JSON.stringify(data));
+}
+
+/** Create a duplicate Redis client for subscriptions */
+export function createSubscriber() {
+  if (!REDIS_AVAILABLE) return null;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const Redis = require("ioredis").default || require("ioredis");
+  return new Redis(process.env.REDIS_URL!, {
+    maxRetriesPerRequest: 3,
+    retryStrategy(times: number) {
+      if (times > 3) return null;
+      return Math.min(times * 200, 2000);
+    },
+    connectTimeout: 5000,
+  });
+}
+
+export async function cacheFlightPositions(
+  icao24: string, lat: number, lon: number,
+  altitude: number | null, speed: number | null, heading: number | null,
+  verticalRate: number | null, onGround: boolean, timestamp: number,
+  maxCount = 50, ttlSeconds = 1800
+): Promise<void> {
+  const r = getRedis();
+  if (!r || r.status !== "ready") return;
+  const key = KEYS.flightPositions(icao24);
+  const value = JSON.stringify({ lat, lon, altitude, speed, heading, verticalRate, onGround, ts: timestamp });
+  const pipe = r.pipeline();
   pipe.zadd(key, timestamp, value);
-  // Trim to most recent maxCount entries
   pipe.zremrangebyrank(key, 0, -(maxCount + 1));
   pipe.expire(key, ttlSeconds);
   await pipe.exec();
 }
 
-/** Get cached flight positions (most recent first) */
 export async function getCachedFlightPositions(
-  icao24: string,
-  maxCount = 50
-): Promise<
-  Array<{
-    lat: number;
-    lon: number;
-    altitude: number | null;
-    speed: number | null;
-    heading: number | null;
-    verticalRate: number | null;
-    onGround: boolean;
-    ts: number;
-  }>
-> {
-  const key = KEYS.flightPositions(icao24);
-  const raw = await redis.zrevrange(key, 0, maxCount - 1);
-  return raw.map((r) => JSON.parse(r));
-}
-
-/** Publish an event to a Redis channel */
-export async function publishEvent(
-  channel: string,
-  data: unknown
-): Promise<void> {
-  await redis.publish(channel, JSON.stringify(data));
-}
-
-/** Create a duplicate Redis client for subscriptions */
-export function createSubscriber(): Redis {
-  return new Redis(process.env.REDIS_URL ?? "redis://localhost:6379", {
-    maxRetriesPerRequest: 3,
-    retryStrategy(times) {
-      if (times > 5) return null;
-      return Math.min(times * 200, 2000);
-    },
-  });
+  icao24: string, maxCount = 50
+): Promise<Array<{ lat: number; lon: number; altitude: number | null; speed: number | null; heading: number | null; verticalRate: number | null; onGround: boolean; ts: number }>> {
+  const r = getRedis();
+  if (!r || r.status !== "ready") return [];
+  const raw = await r.zrevrange(KEYS.flightPositions(icao24), 0, maxCount - 1);
+  return raw.map((s) => JSON.parse(s));
 }

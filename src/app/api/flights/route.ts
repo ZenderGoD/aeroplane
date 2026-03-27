@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { redis, KEYS } from "@/lib/redis";
+import { getRawRedis, KEYS } from "@/lib/redis";
 import { parseAirplanesLive, AIRPLANES_LIVE_URL } from "@/lib/airplaneslive";
 import { parseStateVector } from "@/lib/opensky";
 import type { FlightState, BoundingBox } from "@/types/flight";
@@ -358,8 +358,9 @@ export async function GET(request: NextRequest) {
     // Check if worker is active
     let workerActive = false;
     try {
-      if (redis.status === "ready") {
-        const hb = await redis.get(KEYS.workerHeartbeat);
+      const r = getRawRedis();
+      if (r && r.status === "ready") {
+        const hb = await r.get(KEYS.workerHeartbeat);
         workerActive = !!hb && Date.now() - parseInt(hb, 10) < 60_000;
       }
     } catch {
@@ -424,8 +425,9 @@ export async function GET(request: NextRequest) {
 
     let workerActive = false;
     try {
-      if (redis.status === "ready") {
-        const hb = await redis.get(KEYS.workerHeartbeat);
+      const r = getRawRedis();
+      if (r && r.status === "ready") {
+        const hb = await r.get(KEYS.workerHeartbeat);
         workerActive = !!hb && Date.now() - parseInt(hb, 10) < 60_000;
       }
     } catch {

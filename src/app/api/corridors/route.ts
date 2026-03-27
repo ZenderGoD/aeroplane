@@ -1,34 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import { redis, KEYS, ensureRedisConnected } from "@/lib/redis";
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const corridorId = searchParams.get("id");
+  if (!process.env.REDIS_URL) return NextResponse.json([]);
 
   try {
+    const { ensureRedisConnected, getRawRedis, KEYS } = await import("@/lib/redis");
+    const { searchParams } = new URL(request.url);
+    const corridorId = searchParams.get("id");
+
     await ensureRedisConnected();
+    const r = getRawRedis();
+    if (!r || r.status !== "ready") return NextResponse.json([]);
+
+    if (corridorId) {
+      const cached = await r.get(KEYS.corridorHealth(corridorId));
+      return cached ? NextResponse.json(JSON.parse(cached)) : NextResponse.json(null, { status: 404 });
+    }
+
+    const cached = await r.get(KEYS.allCorridorHealth);
+    return cached ? NextResponse.json(JSON.parse(cached)) : NextResponse.json([]);
   } catch {
     return NextResponse.json([]);
   }
-
-  // Single corridor
-  if (corridorId) {
-    if (redis.status === "ready") {
-      const cached = await redis.get(KEYS.corridorHealth(corridorId));
-      if (cached) {
-        return NextResponse.json(JSON.parse(cached));
-      }
-    }
-    return NextResponse.json(null, { status: 404 });
-  }
-
-  // All corridors
-  if (redis.status === "ready") {
-    const cached = await redis.get(KEYS.allCorridorHealth);
-    if (cached) {
-      return NextResponse.json(JSON.parse(cached));
-    }
-  }
-
-  return NextResponse.json([]);
 }
