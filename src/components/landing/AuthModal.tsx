@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 import { X, Mail, Lock, User, Github, Loader2 } from "lucide-react";
 
-export default function AuthModal() {
+function AuthModalInner() {
   const { data: session, status } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -267,5 +267,13 @@ export default function AuthModal() {
         </div>
       )}
     </>
+  );
+}
+
+export default function AuthModal() {
+  return (
+    <SessionProvider refetchOnWindowFocus={false} refetchInterval={0}>
+      <AuthModalInner />
+    </SessionProvider>
   );
 }

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import AuthProvider from "@/components/SessionProvider";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import "./globals.css";
 
@@ -77,10 +76,8 @@ export default function RootLayout({
           }}
         />
         <ThemeProvider>
-          <AuthProvider>
-            {/* @ts-expect-error - delayDuration prop type mismatch with shadcn version */}
-            <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
-          </AuthProvider>
+          {/* @ts-expect-error - delayDuration prop type mismatch with shadcn version */}
+          <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -3,8 +3,6 @@
 @import "shadcn/tailwind.css";
 @import "../styles/light-theme.css";
 
-@source not "../../design-editor";
-
 @custom-variant dark (&:is(.dark *));
 
 /* ── Base resets ──────────────────────────────────────── */

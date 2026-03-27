@@ -7,5 +7,14 @@ export default function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
-  return <SessionProvider>{children}</SessionProvider>;
+  return (
+    <SessionProvider
+      // Don't refetch session on window focus — reduces error noise
+      // when auth providers aren't configured
+      refetchOnWindowFocus={false}
+      refetchInterval={0}
+    >
+      {children}
+    </SessionProvider>
+  );
 }
