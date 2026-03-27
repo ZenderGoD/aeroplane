@@ -12,6 +12,8 @@ import type { FlightState } from "@/types/flight";
 import { haversineNm, bearing } from "@/lib/geo";
 import airportsData from "@/data/airports.json";
 import ATCPanel from "@/components/ATCPanel";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 // Re-export the airport radar as an embeddable component
 // This avoids Next.js page export restrictions
@@ -118,8 +120,6 @@ function AirportMapInner({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const layersRef = useRef<L.LayerGroup | null>(null);
-  const L = require("leaflet");
-  require("leaflet/dist/leaflet.css");
 
   const ringColors = [
     "rgba(34,211,238,0.50)", "rgba(34,211,238,0.45)", "rgba(34,211,238,0.40)",

@@ -11,6 +11,10 @@ import dynamic from "next/dynamic";
 import type { FlightState } from "@/types/flight";
 import { haversineNm, bearing } from "@/lib/geo";
 import airportsData from "@/data/airports.json";
+// Leaflet loaded dynamically to avoid SSR "window is not defined"
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const L: typeof import("leaflet") = typeof window !== "undefined" ? require("leaflet") : null;
+if (typeof window !== "undefined") require("leaflet/dist/leaflet.css");
 
 // ---------- Types ----------
 
@@ -133,10 +137,6 @@ function AirportMapInner({
   bearingLines,
   onFlightClick,
 }: AirportMapProps) {
-  /* eslint-disable @typescript-eslint/no-require-imports */
-  require("leaflet/dist/leaflet.css");
-  const L = require("leaflet") as typeof import("leaflet");
-  /* eslint-enable @typescript-eslint/no-require-imports */
 
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -157,7 +157,7 @@ function AirportMapInner({
 
   // ── Create map imperatively ──
   useEffect(() => {
-    if (!containerRef.current || mapRef.current) return;
+    if (!containerRef.current || mapRef.current || !L) return;
     const map = L.map(containerRef.current, {
       center: [airport.lat, airport.lon],
       zoom: 7,

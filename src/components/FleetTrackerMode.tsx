@@ -10,6 +10,8 @@ import {
 import dynamic from "next/dynamic";
 import type { FlightState } from "@/types/flight";
 import airlines, { type Airline } from "@/data/airlines";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 // ────────────────────────────────────────────────────
 // Constants
@@ -82,8 +84,6 @@ function FleetMapInner({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const layersRef = useRef<L.LayerGroup | null>(null);
-  const L = require("leaflet");
-  require("leaflet/dist/leaflet.css");
 
   // Init map once
   useEffect(() => {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import type { FlightState } from "@/types/flight";
+import "leaflet/dist/leaflet.css";
 
 // ─── Aircraft Type Database (~100 common types) ─────────────────────────────
 
@@ -421,7 +422,6 @@ export default function AircraftProfileMode({ onExitMode }: Props) {
 
     const initMap = async () => {
       const L = (await import("leaflet")).default;
-      require("leaflet/dist/leaflet.css");
 
       if (!mapContainerRef.current) return;
 

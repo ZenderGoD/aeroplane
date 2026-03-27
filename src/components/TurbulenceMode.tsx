@@ -22,6 +22,8 @@ import {
   feetToFlightLevel,
   ALTITUDE_BANDS,
 } from "@/lib/turbulenceDetection";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -83,8 +85,6 @@ function TurbulenceMapInner({
   const heatLayerRef = useRef<L.LayerGroup | null>(null);
   const flightLayerRef = useRef<L.LayerGroup | null>(null);
 
-  const L = require("leaflet");
-  require("leaflet/dist/leaflet.css");
 
   // Initialize map
   useEffect(() => {

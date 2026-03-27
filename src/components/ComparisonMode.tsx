@@ -16,6 +16,8 @@ import {
   mToFt,
   msToKts,
 } from "@/lib/geo";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 /* ── Constants ────────────────────────────────────────────────────── */
 
@@ -227,10 +229,6 @@ export default function ComparisonMode({ onExitMode }: Props) {
     if (activeTab !== "map" || !mapRef.current) return;
     if (leafletMapRef.current) return; // already initialized
 
-    /* eslint-disable @typescript-eslint/no-require-imports */
-    require("leaflet/dist/leaflet.css");
-    const L = require("leaflet") as typeof import("leaflet");
-    /* eslint-enable @typescript-eslint/no-require-imports */
     leafletRef.current = L;
 
     const map = L.map(mapRef.current, {

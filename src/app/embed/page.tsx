@@ -4,6 +4,10 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import type { FlightState } from "@/types/flight";
+// Leaflet loaded dynamically to avoid SSR "window is not defined"
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const L: typeof import("leaflet") = typeof window !== "undefined" ? require("leaflet") : null;
+if (typeof window !== "undefined") require("leaflet/dist/leaflet.css");
 
 /* ------------------------------------------------------------------ */
 /*  Altitude → colour (same palette the main tracker uses)            */
@@ -145,11 +149,9 @@ function EmbedMapInner() {
 
   /* ---- Init Leaflet map ----------------------------------------- */
   useEffect(() => {
-    if (!containerRef.current || !airportResolved) return;
+    if (!containerRef.current || !airportResolved || !L) return;
     if (mapRef.current) return; // already initialised
 
-    const L = require("leaflet") as typeof import("leaflet");
-    require("leaflet/dist/leaflet.css");
     leafletRef.current = L;
 
     const tileUrl =
