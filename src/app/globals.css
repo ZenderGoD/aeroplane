@@ -600,3 +600,72 @@ body {
     @apply font-sans;
   }
 }
+
+/* ── Mobile responsive styles ──────────────────────────── */
+
+@media (max-width: 767px) {
+  /* Ensure map fills full screen below MobileNav */
+  .leaflet-container {
+    height: 100% !important;
+    width: 100% !important;
+  }
+
+  /* Push zoom controls above the mobile bottom bar */
+  .leaflet-control-zoom {
+    bottom: 80px !important;
+    right: 12px !important;
+  }
+
+  /* Push attribution above mobile nav */
+  .leaflet-control-attribution {
+    bottom: 68px !important;
+  }
+
+  /* Prevent horizontal overflow on fullscreen modes */
+  main {
+    overflow-x: hidden !important;
+  }
+
+  /* Touch-friendly button sizes */
+  .mobile-tool-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Make fullscreen mode back buttons large enough to tap */
+  button[aria-label="Back"],
+  button[aria-label="back"],
+  button[aria-label="Exit"],
+  button[aria-label="exit"],
+  [data-back-button] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Status bar / banner adjustments on mobile */
+  .leaflet-top {
+    top: env(safe-area-inset-top) !important;
+  }
+
+  /* Ensure bottom sheet transitions are smooth */
+  .mobile-sheet-enter {
+    transform: translateY(100%);
+  }
+  .mobile-sheet-enter-active {
+    transform: translateY(0);
+    transition: transform 300ms var(--ease-out-expo);
+  }
+
+  /* Prevent body scroll when sheet is open */
+  body.sheet-open {
+    overflow: hidden;
+    touch-action: none;
+  }
+}
+
+/* ── Safe area padding for notch devices ───────────────── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .mobile-safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

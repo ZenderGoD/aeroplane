@@ -15,6 +15,7 @@ import type { SearchBarHandle } from "@/components/SearchBar";
 import FlightSidebar from "@/components/FlightSidebar";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import LeftSidebar from "@/components/LeftSidebar";
+import MobileNav from "@/components/MobileNav";
 import ReplayControls, { filterFlightsByReplayTime } from "@/components/ReplayControls";
 import { KeyboardShortcutHelp } from "@/components/KeyboardShortcutHelp";
 import dynamic from "next/dynamic";
@@ -26,6 +27,8 @@ import CorridorDetailSheet from "@/components/CorridorDetailSheet";
 import CommandPalette from "@/components/CommandPalette";
 import MapHUD from "@/components/MapHUD";
 import LiveActivityFeed from "@/components/LiveActivityFeed";
+import ShareButton from "@/components/ShareButton";
+import SoundToggle from "@/components/SoundToggle";
 
 const Flight3DViewer = dynamic(() => import("@/components/Flight3DViewer"), {
   ssr: false,
@@ -68,6 +71,7 @@ function HomeContent() {
   const [windAloftVisible, setWindAloftVisible] = useState(false);
   const [terrainVisible, setTerrainVisible] = useState(false);
   const [pirepVisible, setPirepVisible] = useState(false);
+  const [routeLinesVisible, setRouteLinesVisible] = useState(false);
   const [selectedAirport, setSelectedAirport] = useState<string | null>(null);
   const [selectedCorridor, setSelectedCorridor] = useState<string | null>(null);
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
@@ -155,6 +159,12 @@ function HomeContent() {
     setSearchFocused: () => searchBarRef.current?.focus(),
     expandSidebar: () => setSidebarCollapsed(false),
     toggleSidebar: () => setSidebarCollapsed((v) => !v),
+    onToggleMeasure: () => setMeasureActive((v) => !v),
+    onToggleWeather: () => setWeatherVisible((v) => !v),
+    onToggleRouteLines: () => setRouteLinesVisible((v) => !v),
+    onToggleRouteDensity: () => setRouteDensityVisible((v) => !v),
+    onToggleTerrain: () => setTerrainVisible((v) => !v),
+    onViewModeChange: setViewMode,
   });
 
   // Cmd+K command palette
@@ -264,8 +274,55 @@ function HomeContent() {
         onTerrainToggle={() => setTerrainVisible((v) => !v)}
         pirepVisible={pirepVisible}
         onPirepToggle={() => setPirepVisible((v) => !v)}
+        routeLinesVisible={routeLinesVisible}
+        onRouteLinesToggle={() => setRouteLinesVisible((v) => !v)}
         onSelectAirport={setSelectedAirport}
+        onSelectAirline={(icaoCode) => {
+          setRawQuery(icaoCode);
+          setViewMode("fleet");
+        }}
       />}
+
+      {!FULLSCREEN_MODES.has(viewMode) && (
+        <MobileNav
+          searchBarRef={searchBarRef}
+          rawQuery={rawQuery}
+          onRawQueryChange={setRawQuery}
+          isAISearching={isAISearching}
+          isNaturalLanguage={filters?.is_natural_language ?? false}
+          regionKey={regionKey}
+          onRegionChange={setRegionKey}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          measureActive={measureActive}
+          onMeasureToggle={() => setMeasureActive((v) => !v)}
+          replayActive={replayActive}
+          onReplayToggle={() => {
+            setReplayActive((v) => !v);
+            if (replayActive) setReplayTime(null);
+          }}
+          corridorsVisible={corridorsVisible}
+          onCorridorsToggle={() => setCorridorsVisible((v) => !v)}
+          flightDistanceActive={flightDistanceActive}
+          onFlightDistanceToggle={() => setFlightDistanceActive((v) => !v)}
+          weatherVisible={weatherVisible}
+          onWeatherToggle={() => setWeatherVisible((v) => !v)}
+          metarVisible={metarVisible}
+          onMetarToggle={() => setMetarVisible((v) => !v)}
+          runwaysVisible={runwaysVisible}
+          onRunwaysToggle={() => setRunwaysVisible((v) => !v)}
+          routeDensityVisible={routeDensityVisible}
+          onRouteDensityToggle={() => setRouteDensityVisible((v) => !v)}
+          windAloftVisible={windAloftVisible}
+          onWindAloftToggle={() => setWindAloftVisible((v) => !v)}
+          terrainVisible={terrainVisible}
+          onTerrainToggle={() => setTerrainVisible((v) => !v)}
+          pirepVisible={pirepVisible}
+          onPirepToggle={() => setPirepVisible((v) => !v)}
+          routeLinesVisible={routeLinesVisible}
+          onRouteLinesToggle={() => setRouteLinesVisible((v) => !v)}
+        />
+      )}
 
       {(() => {
         const exitMode = () => setViewMode("normal");
@@ -305,6 +362,7 @@ function HomeContent() {
               windAloftVisible={windAloftVisible}
               terrainVisible={terrainVisible}
               pirepVisible={pirepVisible}
+              routeLinesVisible={routeLinesVisible}
               onSelectCorridor={setSelectedCorridor}
             />
           );
@@ -385,6 +443,14 @@ function HomeContent() {
           flights={displayFlights}
           flightHistory={flightHistory}
         />
+      )}
+
+      {/* Share & Sound controls */}
+      {!FULLSCREEN_MODES.has(viewMode) && (
+        <div className="absolute top-4 right-4 z-[900] flex items-center gap-2">
+          <ShareButton selectedFlightIcao={selectedFlight?.icao24} />
+          <SoundToggle />
+        </div>
       )}
 
       {/* Airspace Copilot Chat */}

@@ -17,6 +17,8 @@ import { useCorridorHealth } from "@/hooks/useCorridorHealth";
 import { getAirportByIcao } from "@/lib/airports";
 import { CORRIDORS } from "@/lib/corridors";
 import { haversineNm } from "@/lib/geo";
+import { getFrequenciesByIcao } from "@/data/atcFrequencies";
+import { getApproachesByIcao } from "@/data/approaches";
 import type { FlightState } from "@/types/flight";
 import type { FlightEvent } from "@/types/events";
 import type { AirportBaseline } from "@/types/baseline";
@@ -104,6 +106,16 @@ export default function AirportDetailSheet({
     return m;
   }, [corridorHealthData]);
 
+  const freqData = useMemo(() => {
+    if (!airportIcao) return null;
+    return getFrequenciesByIcao(airportIcao);
+  }, [airportIcao]);
+
+  const approachData = useMemo(() => {
+    if (!airportIcao) return null;
+    return getApproachesByIcao(airportIcao);
+  }, [airportIcao]);
+
   const nearbyFlights = useMemo(() => {
     if (!airport) return [];
     return allFlights
@@ -181,6 +193,68 @@ export default function AirportDetailSheet({
             </Section>
 
             <div className="divider-glow" />
+
+            {/* ── ATC Frequencies ─────────────────────── */}
+            {freqData && (
+              <>
+                <Section title="ATC Frequencies" count={freqData.frequencies.length}>
+                  <div className="space-y-1">
+                    {freqData.frequencies.map((f, i) => {
+                      const typeColors: Record<string, string> = {
+                        ATIS: "#60a5fa", GND: "#4ade80", TWR: "#fbbf24",
+                        DEP: "#22d3ee", APP: "#c084fc", CTR: "#f87171", UNICOM: "#94a3b8",
+                      };
+                      const color = typeColors[f.type] || "#94a3b8";
+                      return (
+                        <div key={`${f.type}-${i}`} className="flex items-center justify-between rounded-lg px-3 py-1.5" style={{ background: "var(--surface-2)" }}>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: `${color}18`, border: `1px solid ${color}30`, color }}>{f.type}</span>
+                            <span className="text-xs" style={{ color: "var(--text-secondary)" }}>{f.name}</span>
+                          </div>
+                          <span className="font-mono text-xs font-bold tabular-nums" style={{ color }}>{f.frequency}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </Section>
+                <div className="divider-glow" />
+              </>
+            )}
+
+            {/* ── Approach Procedures ─────────────────── */}
+            {approachData && (
+              <>
+                <Section title="Approaches" count={approachData.approaches.length}>
+                  <div className="space-y-1">
+                    {approachData.approaches.map((app) => {
+                      const typeColors: Record<string, string> = {
+                        ILS: "#4ade80", RNAV: "#60a5fa", VOR: "#fbbf24",
+                        NDB: "#c084fc", VISUAL: "#94a3b8", LOC: "#22d3ee",
+                      };
+                      const color = typeColors[app.type] || "#94a3b8";
+                      return (
+                        <div key={app.name} className="rounded-lg px-3 py-2" style={{ background: "var(--surface-2)" }}>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: `${color}18`, border: `1px solid ${color}30`, color }}>{app.type}</span>
+                              <span className="text-xs font-medium" style={{ color: "var(--text-primary)" }}>{app.name}</span>
+                            </div>
+                            <span className="text-[10px] font-mono tabular-nums" style={{ color: "var(--text-muted)" }}>{app.course.toString().padStart(3, "0")}{"\u00B0"}</span>
+                          </div>
+                          <div className="flex items-center gap-3 mt-1 text-[10px] tabular-nums" style={{ color: "var(--text-muted)" }}>
+                            <span>DH {app.minimums.dh}ft</span>
+                            <span>VIS {app.minimums.visibility}SM</span>
+                            {app.glideslope !== undefined && <span>GS {app.glideslope.toFixed(1)}{"\u00B0"}</span>}
+                            {app.frequency && <span className="font-mono" style={{ color }}>{app.frequency}</span>}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </Section>
+                <div className="divider-glow" />
+              </>
+            )}
 
             {/* ── Turnarounds ─────────────────────────── */}
             <Section title="Aircraft on Ground" count={airportTurnarounds.length}>

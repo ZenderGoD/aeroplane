@@ -51,6 +51,7 @@ interface Props {
   windAloftVisible?: boolean;
   terrainVisible?: boolean;
   pirepVisible?: boolean;
+  routeLinesVisible?: boolean;
   onSelectCorridor?: (corridorId: string) => void;
 }
 

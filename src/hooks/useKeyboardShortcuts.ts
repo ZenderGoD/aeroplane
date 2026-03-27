@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import type { FlightState } from "@/types/flight";
+import type { ViewMode } from "@/types/viewMode";
 
 interface UseKeyboardShortcutsParams {
   flights: FlightState[];
@@ -10,7 +11,26 @@ interface UseKeyboardShortcutsParams {
   setSearchFocused: () => void;
   expandSidebar: () => void;
   toggleSidebar: () => void;
+  // New tool/layer toggle callbacks
+  onToggleMeasure?: () => void;
+  onToggleWeather?: () => void;
+  onToggleRouteLines?: () => void;
+  onToggleRouteDensity?: () => void;
+  onToggleTerrain?: () => void;
+  onViewModeChange?: (mode: ViewMode) => void;
 }
+
+const VIEW_MODE_KEYS: Record<string, ViewMode> = {
+  "1": "normal",
+  "2": "heatmap",
+  "3": "trails",
+  "4": "globe",
+  "5": "airport",
+  "6": "fids",
+  "7": "fleet",
+  "8": "aircraft",
+  "9": "stats",
+};
 
 export function useKeyboardShortcuts({
   flights,
@@ -19,6 +39,12 @@ export function useKeyboardShortcuts({
   setSearchFocused,
   expandSidebar,
   toggleSidebar,
+  onToggleMeasure,
+  onToggleWeather,
+  onToggleRouteLines,
+  onToggleRouteDensity,
+  onToggleTerrain,
+  onViewModeChange,
 }: UseKeyboardShortcutsParams) {
   const [showHelp, setShowHelp] = useState(false);
 
@@ -116,11 +142,76 @@ export function useKeyboardShortcuts({
           break;
         }
 
+        // Tool toggles
+        case "m":
+        case "M": {
+          if (!e.ctrlKey && !e.metaKey) {
+            onToggleMeasure?.();
+          }
+          break;
+        }
+
+        case "w":
+        case "W": {
+          if (!e.ctrlKey && !e.metaKey) {
+            onToggleWeather?.();
+          }
+          break;
+        }
+
+        case "r":
+        case "R": {
+          if (!e.ctrlKey && !e.metaKey) {
+            onToggleRouteLines?.();
+          }
+          break;
+        }
+
+        case "d":
+        case "D": {
+          if (!e.ctrlKey && !e.metaKey) {
+            onToggleRouteDensity?.();
+          }
+          break;
+        }
+
+        case "t":
+        case "T": {
+          if (!e.ctrlKey && !e.metaKey) {
+            onToggleTerrain?.();
+          }
+          break;
+        }
+
+        // View mode keys 1-9
+        case "1":
+        case "2":
+        case "3":
+        case "4":
+        case "5":
+        case "6":
+        case "7":
+        case "8":
+        case "9": {
+          if (!e.ctrlKey && !e.metaKey && !e.altKey) {
+            const mode = VIEW_MODE_KEYS[e.key];
+            if (mode && onViewModeChange) {
+              onViewModeChange(mode);
+            }
+          }
+          break;
+        }
+
         default:
           break;
       }
     },
-    [flights, selectedFlight, setSelectedFlight, setSearchFocused, showHelp, expandSidebar, toggleSidebar]
+    [
+      flights, selectedFlight, setSelectedFlight, setSearchFocused,
+      showHelp, expandSidebar, toggleSidebar,
+      onToggleMeasure, onToggleWeather, onToggleRouteLines,
+      onToggleRouteDensity, onToggleTerrain, onViewModeChange,
+    ]
   );
 
   useEffect(() => {

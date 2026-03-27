@@ -9,6 +9,7 @@ import Legend from "@/components/Legend";
 import AnomalyAlert from "@/components/AnomalyAlert";
 import StatsPanel from "@/components/StatsPanel";
 import IntelligencePanel from "@/components/IntelligencePanel";
+import ThemeToggle from "@/components/ThemeToggle";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -75,8 +76,12 @@ interface LeftSidebarProps {
   onTerrainToggle?: () => void;
   pirepVisible?: boolean;
   onPirepToggle?: () => void;
+  routeLinesVisible?: boolean;
+  onRouteLinesToggle?: () => void;
   // Airport detail
   onSelectAirport?: (icao: string) => void;
+  // Autocomplete airline selection
+  onSelectAirline?: (icaoCode: string) => void;
 }
 
 const VIEW_MODES: { key: ViewMode; label: string; icon: string }[] = [
@@ -211,7 +216,10 @@ export default function LeftSidebar({
   onTerrainToggle,
   pirepVisible,
   onPirepToggle,
+  routeLinesVisible,
+  onRouteLinesToggle,
   onSelectAirport,
+  onSelectAirline,
 }: LeftSidebarProps) {
   const [legendExpanded, setLegendExpanded] = useState(false);
 
@@ -246,6 +254,7 @@ export default function LeftSidebar({
     { key: "winds", label: "Winds", color: "#22d3ee", icon: "M5 12h14M12 5l7 7-7 7" },
     { key: "terrain", label: "Terrain", color: "#a78bfa", icon: "M4 20l4.5-9 3.5 4 4-8 4 13H4z" },
     { key: "pirep", label: "PIREPs", color: "#ef4444", icon: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" },
+    { key: "routes", label: "Routes", color: "#38bdf8", icon: "M3 17l4-4 4 4 4-8 5 6M3 3v18h18" },
   ];
 
   const dataLayerStates: Record<string, boolean> = {
@@ -255,6 +264,7 @@ export default function LeftSidebar({
     winds: windAloftVisible ?? false,
     terrain: terrainVisible ?? false,
     pirep: pirepVisible ?? false,
+    routes: routeLinesVisible ?? false,
   };
 
   const dataLayerToggles: Record<string, () => void> = {
@@ -264,6 +274,7 @@ export default function LeftSidebar({
     winds: onWindAloftToggle ?? (() => {}),
     terrain: onTerrainToggle ?? (() => {}),
     pirep: onPirepToggle ?? (() => {}),
+    routes: onRouteLinesToggle ?? (() => {}),
   };
 
   const dataLayerTips: Record<string, string> = {
@@ -273,10 +284,11 @@ export default function LeftSidebar({
     winds: "Wind aloft vectors & jet stream from NOAA",
     terrain: "Terrain elevation & satellite imagery",
     pirep: "Real pilot reports (turbulence & icing)",
+    routes: "Flight route lines (great circle arcs)",
   };
 
   return (
-    <>
+    <div className="hidden md:block">
       {/* Collapsed toggle button */}
       <button
         onClick={onToggleCollapse}
@@ -357,6 +369,10 @@ export default function LeftSidebar({
             isAISearching={isAISearching}
             isNaturalLanguage={isNaturalLanguage}
             inline
+            flights={allFlights}
+            onSelectFlight={(f) => onSelectFlight(f)}
+            onSelectAirport={onSelectAirport}
+            onSelectAirline={onSelectAirline}
           />
           <div className="flex items-center gap-2">
             <div className="flex-1">
@@ -564,7 +580,10 @@ export default function LeftSidebar({
         <div className="px-4 py-2.5 shrink-0 relative">
           <div className="absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-slate-700/30 to-transparent" />
           <div className="flex items-center justify-between text-[10px]" style={{ color: "var(--text-faint)" }}>
-            <span className="font-medium">ADS-B Intelligence</span>
+            <div className="flex items-center gap-2">
+              <span className="font-medium">ADS-B Intelligence</span>
+              <ThemeToggle />
+            </div>
             <div className="flex items-center gap-2">
               <div className="relative">
                 <div className={`w-2 h-2 rounded-full ${isRateLimited ? "bg-amber-500" : "bg-emerald-400"}`} />
@@ -577,6 +596,6 @@ export default function LeftSidebar({
           </div>
         </div>
       </aside>
-    </>
+    </div>
   );
 }

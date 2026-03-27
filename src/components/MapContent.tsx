@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { DEFAULT_CENTER, DEFAULT_ZOOM } from "@/lib/mapUtils";
+import { useTheme } from "@/contexts/ThemeContext";
 import CanvasPlaneLayer from "./CanvasPlaneLayer";
 import MeasureTool from "./MeasureTool";
 import CorridorOverlay from "./CorridorOverlay";
@@ -15,6 +16,7 @@ import RouteDensityOverlay from "./RouteDensityOverlay";
 import WindAloftOverlay from "./WindAloftOverlay";
 import TerrainOverlay from "./TerrainOverlay";
 import PirepOverlay from "./PirepOverlay";
+import RouteOverlay from "./RouteOverlay";
 import type { FlightState } from "@/types/flight";
 import type { Region } from "@/lib/regions";
 import type { ViewMode } from "@/types/viewMode";
@@ -44,6 +46,7 @@ interface Props {
   windAloftVisible?: boolean;
   terrainVisible?: boolean;
   pirepVisible?: boolean;
+  routeLinesVisible?: boolean;
   onSelectCorridor?: (corridorId: string) => void;
 }
 
@@ -108,8 +111,14 @@ export default function MapContent({
   windAloftVisible = false,
   terrainVisible = false,
   pirepVisible = false,
+  routeLinesVisible = false,
   onSelectCorridor,
 }: Props) {
+  const { theme } = useTheme();
+  const tileUrl = theme === "light"
+    ? "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+    : "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+
   return (
     <MapContainer
       center={DEFAULT_CENTER}
@@ -119,8 +128,9 @@ export default function MapContent({
       preferCanvas={true}
     >
       <TileLayer
+        key={theme}
         attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        url={tileUrl}
       />
       <FlyToRegion region={region} />
       <FlyToFlight flight={selectedFlight} />
@@ -131,6 +141,7 @@ export default function MapContent({
       <WindAloftOverlay visible={windAloftVisible} />
       <TerrainOverlay visible={terrainVisible} />
       <PirepOverlay visible={pirepVisible} />
+      <RouteOverlay flights={flights} selectedFlight={selectedFlight} visible={routeLinesVisible} />
       <CorridorOverlay visible={corridorsVisible} onSelectCorridor={onSelectCorridor} />
       <CanvasPlaneLayer
         flights={flights}

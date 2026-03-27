@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FlightState } from "@/types/flight";
 import type { FlightHistoryMap } from "@/lib/flightHistory";
+import { playAlertSound } from "@/lib/sounds";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -40,6 +41,35 @@ interface FeedEvent {
 const MAX_EVENTS = 8;
 const EXPIRE_MS = 2 * 60 * 1000; // 2 minutes
 const DEDUP_MS = 30 * 1000; // 30 seconds
+const SOUND_STORAGE_KEY = "aerointel-sound-enabled";
+
+function isSoundEnabled(): boolean {
+  try {
+    return localStorage.getItem(SOUND_STORAGE_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+/** Map event kinds to sound types */
+function soundForKind(kind: EventKind): "emergency" | "military" | "alert" | "info" | null {
+  switch (kind) {
+    case "emergency":
+      return "emergency";
+    case "military":
+      return "military";
+    case "rapid_descent":
+    case "rapid_climb":
+      return "alert";
+    case "entered":
+    case "departed":
+    case "landed":
+    case "takeoff":
+      return "info";
+    default:
+      return null;
+  }
+}
 const BORDER_COLORS: Record<string, string> = {
   emergency: "#ef4444",
   military: "#f59e0b",
@@ -111,6 +141,12 @@ function LiveActivityFeed({ flights }: Props) {
       };
 
       setEvents((prev) => [evt, ...prev].slice(0, MAX_EVENTS));
+
+      // Play notification sound if enabled
+      if (isSoundEnabled()) {
+        const soundType = soundForKind(kind);
+        if (soundType) playAlertSound(soundType);
+      }
     },
     [],
   );

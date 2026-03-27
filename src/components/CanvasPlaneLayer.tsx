@@ -13,6 +13,27 @@ import { getInstabilityColor } from "@/lib/instabilityScore";
 import { greatCircleArc, haversineNm } from "@/lib/geo";
 import { crossTrackDistanceNm } from "@/lib/routeDeviation";
 
+/** Detect if the current theme is light by checking the <html> class */
+function isLightTheme(): boolean {
+  if (typeof document === "undefined") return false;
+  return document.documentElement.classList.contains("light");
+}
+
+/** Theme-aware canvas colors for elements drawn on the map */
+function getCanvasColors() {
+  const light = isLightTheme();
+  return {
+    /** Stroke color for selected aircraft highlight ring */
+    selectionStroke: light ? "#0f172a" : "#ffffff",
+    /** Callsign label text color */
+    labelText: light ? "rgba(15, 23, 42, 0.85)" : "rgba(255, 255, 255, 0.7)",
+    /** Callsign label background */
+    labelBg: light ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.5)",
+    /** Route / badge label background */
+    routeLabelBg: light ? "rgba(255, 255, 255, 0.88)" : "rgba(0, 0, 0, 0.75)",
+  };
+}
+
 interface Props {
   flights: FlightState[];
   selectedFlight: FlightState | null;
@@ -122,7 +143,7 @@ function drawPlane(
   ctx.fill();
 
   if (isSelected) {
-    ctx.strokeStyle = "#ffffff";
+    ctx.strokeStyle = getCanvasColors().selectionStroke;
     ctx.lineWidth = 2;
     ctx.stroke();
   }
@@ -176,7 +197,7 @@ function drawRotorcraft(
   ctx.fill();
 
   if (isSelected) {
-    ctx.strokeStyle = "#ffffff";
+    ctx.strokeStyle = getCanvasColors().selectionStroke;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(0, 0, size * 0.5, 0, Math.PI * 2);
@@ -231,7 +252,7 @@ function drawLightAircraft(
   ctx.fill();
 
   if (isSelected) {
-    ctx.strokeStyle = "#ffffff";
+    ctx.strokeStyle = getCanvasColors().selectionStroke;
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.arc(0, 0, size * 0.9, 0, Math.PI * 2);
@@ -298,7 +319,7 @@ function drawHeavyJet(
   ctx.stroke();
 
   if (isSelected) {
-    ctx.strokeStyle = "#ffffff";
+    ctx.strokeStyle = getCanvasColors().selectionStroke;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(0, 0, size * 0.85, 0, Math.PI * 2);
@@ -363,7 +384,7 @@ function drawFighterJet(
   ctx.stroke();
 
   if (isSelected) {
-    ctx.strokeStyle = "#ffffff";
+    ctx.strokeStyle = getCanvasColors().selectionStroke;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(0, 0, size * 0.8, 0, Math.PI * 2);
@@ -510,13 +531,14 @@ function drawCallsignLabel(
   const labelY = y + 14;
 
   // Background rounded rect
-  ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+  const colors = getCanvasColors();
+  ctx.fillStyle = colors.labelBg;
   ctx.beginPath();
   ctx.roundRect(x - bgW / 2, labelY - bgH / 2 - padV, bgW, bgH + padV, 3);
   ctx.fill();
 
   // Text
-  ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+  ctx.fillStyle = colors.labelText;
   ctx.fillText(text, x, labelY + 3);
   ctx.restore();
 }
@@ -542,11 +564,12 @@ function drawSpecialBadges(
   ctx.font = "bold 9px system-ui, sans-serif";
   ctx.textAlign = "left";
 
+  const badgeBg = getCanvasColors().routeLabelBg;
   let offsetX = 14;
   for (const badge of badges) {
     const w = ctx.measureText(badge.text).width + 6;
     // Background pill
-    ctx.fillStyle = "rgba(0, 0, 0, 0.70)";
+    ctx.fillStyle = badgeBg;
     ctx.beginPath();
     ctx.roundRect(x + offsetX - 3, y - 14, w, 13, 3);
     ctx.fill();
@@ -635,6 +658,7 @@ function drawGhostRoute(
   const dep = estimate.departure;
   const near = estimate.nearest;
   if (!dep || !near) return;
+  const routeBg = getCanvasColors().routeLabelBg;
 
   const lat1 = dep.airport.lat;
   const lon1 = dep.airport.lon;
@@ -722,7 +746,7 @@ function drawGhostRoute(
   ctx.textAlign = "center";
   const depLabel = dep.airport.icao ?? "DEP";
   const depLabelW = ctx.measureText(depLabel).width + 8;
-  ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+  ctx.fillStyle = routeBg;
   ctx.beginPath();
   ctx.roundRect(depPt.x - depLabelW / 2, depPt.y - 22, depLabelW, 16, 3);
   ctx.fill();
@@ -742,7 +766,7 @@ function drawGhostRoute(
   // Destination label
   const nearLabel = near.airport.icao ?? "DST";
   const nearLabelW = ctx.measureText(nearLabel).width + 8;
-  ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+  ctx.fillStyle = routeBg;
   ctx.beginPath();
   ctx.roundRect(nearPt.x - nearLabelW / 2, nearPt.y - 22, nearLabelW, 16, 3);
   ctx.fill();
@@ -758,7 +782,7 @@ function drawGhostRoute(
   const progX = flightPt.x + 16;
   const progY = flightPt.y + 12;
 
-  ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+  ctx.fillStyle = routeBg;
   ctx.beginPath();
   ctx.roundRect(progX - progW / 2, progY - 7, progW, 14, 4);
   ctx.fill();
@@ -822,7 +846,7 @@ function drawGhostRoute(
     ctx.font = "bold 9px system-ui, sans-serif";
     const devTextW = ctx.measureText(devText).width + 8;
 
-    ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+    ctx.fillStyle = routeBg;
     ctx.beginPath();
     ctx.roundRect(midX - devTextW / 2, midY - 8, devTextW, 14, 3);
     ctx.fill();

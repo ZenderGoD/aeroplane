@@ -11,6 +11,7 @@ import dynamic from "next/dynamic";
 import type { FlightState } from "@/types/flight";
 import { haversineNm, bearing } from "@/lib/geo";
 import airportsData from "@/data/airports.json";
+import ATCPanel from "@/components/ATCPanel";
 
 // Re-export the airport radar as an embeddable component
 // This avoids Next.js page export restrictions
@@ -364,6 +365,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
   const REFRESH_OPTIONS = [3, 5, 10, 15, 30, 60];
   const [refreshRate, setRefreshRate] = useState(10);
   const [panelCollapsed, setPanelCollapsed] = useState(false);
+  const [showATCPanel, setShowATCPanel] = useState(false);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -557,6 +559,27 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
             <span className="truncate" style={{ color: "var(--text-secondary)", fontSize: "11px", maxWidth: "200px" }}>{selectedAirport.name}</span>
           </div>
         )}
+
+        {/* ATC Panel toggle */}
+        {selectedAirport && (
+          <button
+            onClick={() => setShowATCPanel((v) => !v)}
+            className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all hover:brightness-125"
+            style={{
+              background: showATCPanel ? "rgba(168,85,247,0.15)" : "rgba(168,85,247,0.06)",
+              border: `1px solid ${showATCPanel ? "rgba(168,85,247,0.35)" : "rgba(168,85,247,0.15)"}`,
+              color: showATCPanel ? "#c084fc" : "var(--text-muted)",
+              fontSize: "11px",
+              fontWeight: 600,
+            }}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6" />
+              <line x1="2" y1="20" x2="2.01" y2="20" />
+            </svg>
+            ATC
+          </button>
+        )}
       </div>
 
       {/* Body */}
@@ -713,6 +736,11 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
 
           {selectedFlight && selectedAirport && (
             <FlightDetailPanel flight={selectedFlight} airportLat={selectedAirport.lat} airportLon={selectedAirport.lon} onClose={() => setSelectedFlight(null)} />
+          )}
+
+          {/* ATC Panel slide-out */}
+          {showATCPanel && selectedAirport && (
+            <ATCPanel icao={selectedAirport.icao} onClose={() => setShowATCPanel(false)} />
           )}
 
           {/* Bottom-right badge */}

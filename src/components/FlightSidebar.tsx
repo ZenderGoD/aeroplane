@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import Image from "next/image";
 import type { FlightState } from "@/types/flight";
 import type { Anomaly } from "@/types/anomaly";
@@ -46,6 +46,39 @@ const FLIGHT_CAT_COLORS: Record<string, string> = {
 };
 
 export default function FlightSidebar({ flight, onClose, anomalies = [], instability, onOpen3D, flightHistory }: Props) {
+  /* ── Mobile drag-to-dismiss ─────────────────────────── */
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const dragStartY = useRef(0);
+  const dragCurrentY = useRef(0);
+  const isDragging = useRef(false);
+
+  const handleDragStart = useCallback((e: React.TouchEvent) => {
+    dragStartY.current = e.touches[0].clientY;
+    dragCurrentY.current = e.touches[0].clientY;
+    isDragging.current = true;
+  }, []);
+
+  const handleDragMove = useCallback((e: React.TouchEvent) => {
+    if (!isDragging.current) return;
+    dragCurrentY.current = e.touches[0].clientY;
+    const delta = dragCurrentY.current - dragStartY.current;
+    if (delta > 0 && sheetRef.current) {
+      sheetRef.current.style.transform = `translateY(${delta}px)`;
+    }
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
+    if (!isDragging.current) return;
+    isDragging.current = false;
+    const delta = dragCurrentY.current - dragStartY.current;
+    if (sheetRef.current) {
+      sheetRef.current.style.transform = "";
+    }
+    if (delta > 80) {
+      onClose();
+    }
+  }, [onClose]);
+
   const { meta, isLoading: metaLoading } = useAircraftMeta(
     flight?.icao24 ?? null
   );
@@ -75,9 +108,10 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
 
   return (
     <div
+      ref={sheetRef}
       className={`fixed z-[1000] shadow-2xl shadow-black/30 transform transition-transform duration-300
         md:right-0 md:top-0 md:h-full md:w-[340px]
-        max-md:bottom-0 max-md:left-0 max-md:right-0 max-md:h-[60vh] max-md:w-full max-md:rounded-t-2xl
+        max-md:bottom-[calc(env(safe-area-inset-bottom)+60px)] max-md:left-0 max-md:right-0 max-md:max-h-[60vh] max-md:w-full max-md:rounded-t-2xl
         ${flight
           ? "md:translate-x-0 max-md:translate-y-0"
           : "md:translate-x-full max-md:translate-y-full"
@@ -90,6 +124,15 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
     >
       {flight && (
         <div className="h-full flex flex-col">
+          {/* ── Mobile drag handle ─────────────── */}
+          <div
+            className="md:hidden flex justify-center pt-2 pb-1 cursor-grab active:cursor-grabbing touch-none"
+            onTouchStart={handleDragStart}
+            onTouchMove={handleDragMove}
+            onTouchEnd={handleDragEnd}
+          >
+            <div className="w-10 h-1 rounded-full bg-slate-600" />
+          </div>
           {/* ── Header ────────────────────────── */}
           <div className="relative text-white px-5 py-4 shrink-0 overflow-hidden">
             <div className="absolute bottom-0 left-5 right-5 h-px bg-gradient-to-r from-transparent via-slate-700/40 to-transparent" />
