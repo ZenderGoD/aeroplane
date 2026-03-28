@@ -17,7 +17,7 @@ export function useBaselines() {
   );
 
   return {
-    baselines: data ?? [],
+    baselines: Array.isArray(data) ? data : [],
     error,
     isLoading,
   };

@@ -18,7 +18,7 @@ export function useAirportPressure() {
   );
 
   return {
-    pressureScores: data ?? [],
+    pressureScores: Array.isArray(data) ? data : [],
     error,
     isLoading,
   };

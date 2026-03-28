@@ -17,7 +17,7 @@ export function useCorridorHealth() {
   );
 
   return {
-    corridors: data ?? [],
+    corridors: Array.isArray(data) ? data : [],
     error,
     isLoading,
   };

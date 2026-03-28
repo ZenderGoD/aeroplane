@@ -17,7 +17,7 @@ export function useCorridorPredictability() {
   );
 
   return {
-    predictabilities: data ?? [],
+    predictabilities: Array.isArray(data) ? data : [],
     error,
     isLoading,
   };
