@@ -79,13 +79,17 @@ export default function CorridorOverlay({ visible, onSelectCorridor }: CorridorO
   // Build lookup maps
   const healthMap = useMemo(() => {
     const m = new Map<string, CorridorHealth>();
-    for (const h of healthData) m.set(h.corridorId, h);
+    if (Array.isArray(healthData)) {
+      for (const h of healthData) m.set(h.corridorId, h);
+    }
     return m;
   }, [healthData]);
 
   const predMap = useMemo(() => {
     const m = new Map<string, CorridorPredictability>();
-    for (const p of predictabilities) m.set(p.corridorId, p);
+    if (Array.isArray(predictabilities)) {
+      for (const p of predictabilities) m.set(p.corridorId, p);
+    }
     return m;
   }, [predictabilities]);
 

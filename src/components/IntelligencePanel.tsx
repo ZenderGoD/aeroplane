@@ -666,12 +666,15 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
   // Build pressure lookup map for baseline tab
   const pressureMap = useMemo(() => {
     const m = new Map<string, AirportPressureScore>();
-    for (const p of pressureScores) m.set(p.airportIcao, p);
+    if (Array.isArray(pressureScores)) {
+      for (const p of pressureScores) m.set(p.airportIcao, p);
+    }
     return m;
   }, [pressureScores]);
 
   // Sort baselines by deviation severity (most deviated first)
   const sortedBaselines = useMemo(() => {
+    if (!Array.isArray(baselines)) return [];
     return [...baselines]
       .filter((b) => b.sampleCount > 0)
       .sort((a, b) => {
@@ -691,6 +694,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
 
   // Turnaround stats
   const avgTurnaround = useMemo(() => {
+    if (!Array.isArray(recentTurnarounds)) return null;
     const departed = recentTurnarounds.filter((r) => r.turnaround_minutes !== null);
     if (departed.length === 0) return null;
     const sum = departed.reduce((s, r) => s + (r.turnaround_minutes ?? 0), 0);
@@ -700,27 +704,31 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
   // Build predictability lookup map
   const predMap = useMemo(() => {
     const m = new Map<string, CorridorPredictability>();
-    for (const p of predictabilities) m.set(p.corridorId, p);
+    if (Array.isArray(predictabilities)) {
+      for (const p of predictabilities) m.set(p.corridorId, p);
+    }
     return m;
   }, [predictabilities]);
 
   // Sort pressure by score descending
   const sortedPressure = useMemo(
-    () => [...pressureScores].sort((a, b) => b.pressureScore - a.pressureScore),
+    () => Array.isArray(pressureScores) ? [...pressureScores].sort((a, b) => b.pressureScore - a.pressureScore) : [],
     [pressureScores]
   );
 
   // Sort corridors by health score ascending (worst first)
   const sortedCorridors = useMemo(
-    () => [...corridors].sort((a, b) => a.healthScore - b.healthScore),
+    () => Array.isArray(corridors) ? [...corridors].sort((a, b) => a.healthScore - b.healthScore) : [],
     [corridors]
   );
 
   // Event counts by severity
   const eventCounts = useMemo(() => {
     const counts = { critical: 0, warning: 0, info: 0 };
-    for (const e of events) {
-      counts[e.severity]++;
+    if (Array.isArray(events)) {
+      for (const e of events) {
+        counts[e.severity]++;
+      }
     }
     return counts;
   }, [events]);

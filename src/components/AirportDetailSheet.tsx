@@ -102,7 +102,9 @@ export default function AirportDetailSheet({
 
   const corridorHealthMap = useMemo(() => {
     const m = new Map<string, (typeof corridorHealthData)[0]>();
-    for (const h of corridorHealthData) m.set(h.corridorId, h);
+    if (Array.isArray(corridorHealthData)) {
+      for (const h of corridorHealthData) m.set(h.corridorId, h);
+    }
     return m;
   }, [corridorHealthData]);
 
