@@ -72,12 +72,13 @@ interface CacheEntry {
 }
 
 const regionCache = new Map<string, CacheEntry>();
-const CACHE_TTL = 15_000;
+const CACHE_TTL = 30_000; // 30s — keeps airplanes.live requests under rate limit
 const STALE_TTL = 300_000;
 
-// ── Airplanes.live rate limiter (1 req/sec) ─────────────────────────
+// ── Airplanes.live rate limiter ──────────────────────────────────────
 let lastAirplanesLiveRequest = 0;
-const AIRPLANES_LIVE_MIN_INTERVAL = 1_000;
+const AIRPLANES_LIVE_MIN_INTERVAL = 1_500;
+let airplanesLiveRateLimitedUntil = 0;
 
 async function throttledFetch(url: string): Promise<Response> {
   const now = Date.now();
@@ -98,6 +99,25 @@ const RATE_LIMIT_BACKOFF = 30_000;
 // ── Helpers ─────────────────────────────────────────────────────────
 
 function bboxFromParams(searchParams: URLSearchParams): BoundingBox | null {
+  // Support lat/lon/radius params (used by AirportRadarMode etc.)
+  const lat = searchParams.get("lat");
+  const lon = searchParams.get("lon");
+  const radius = searchParams.get("radius");
+  if (lat && lon && radius) {
+    const latF = parseFloat(lat);
+    const lonF = parseFloat(lon);
+    const radiusNm = parseFloat(radius);
+    // Convert radius in NM to approximate degrees
+    const latDelta = radiusNm / 60;
+    const lonDelta = radiusNm / (60 * Math.cos((latF * Math.PI) / 180));
+    return {
+      lamin: latF - latDelta,
+      lomin: lonF - lonDelta,
+      lamax: latF + latDelta,
+      lomax: lonF + lonDelta,
+    };
+  }
+
   const lamin = searchParams.get("lamin");
   const lomin = searchParams.get("lomin");
   const lamax = searchParams.get("lamax");
@@ -112,7 +132,9 @@ function bboxFromParams(searchParams: URLSearchParams): BoundingBox | null {
 }
 
 /**
- * Compute tile centers needed to cover a bounding box with 250nm radius circles.
+ * Compute tile centers needed to cover a bounding box.
+ * airplanes.live supports large radii (1000nm+), so we prefer a single
+ * request when possible to avoid rate limits (~1 req per 10s).
  * Returns array of [lat, lon, radius_nm].
  */
 function computeTiles(bbox: BoundingBox): [number, number, number][] {
@@ -125,34 +147,13 @@ function computeTiles(bbox: BoundingBox): [number, number, number][] {
   const widthNm =
     Math.abs(bbox.lomax - bbox.lomin) * 60 * Math.cos(midLatRad);
 
-  const radiusNm = Math.min(
-    250,
-    Math.ceil(Math.sqrt((heightNm / 2) ** 2 + (widthNm / 2) ** 2))
+  // Radius needed to cover the bbox from its center
+  const neededRadius = Math.ceil(
+    Math.sqrt((heightNm / 2) ** 2 + (widthNm / 2) ** 2)
   );
 
-  // If single tile covers it, return one
-  if (radiusNm <= 250) {
-    return [[centerLat, centerLon, radiusNm]];
-  }
-
-  // Split into grid tiles with 250nm radius each
-  // Each tile covers ~500nm diameter = ~8.3 degrees lat
-  const tileSpacing = 7; // degrees, some overlap for safety
-  const tiles: [number, number, number][] = [];
-  const latSteps = Math.ceil(heightNm / (tileSpacing * 60)) || 1;
-  const lonSteps = Math.ceil(widthNm / (tileSpacing * 60 * Math.cos(midLatRad))) || 1;
-
-  for (let i = 0; i < latSteps; i++) {
-    for (let j = 0; j < lonSteps; j++) {
-      const lat =
-        bbox.lamin + (bbox.lamax - bbox.lamin) * ((i + 0.5) / latSteps);
-      const lon =
-        bbox.lomin + (bbox.lomax - bbox.lomin) * ((j + 0.5) / lonSteps);
-      tiles.push([lat, lon, 250]);
-    }
-  }
-
-  return tiles;
+  // Single request covers it — airplanes.live handles up to ~1500nm
+  return [[centerLat, centerLon, neededRadius]];
 }
 
 /**
@@ -162,20 +163,27 @@ function computeTiles(bbox: BoundingBox): [number, number, number][] {
 async function fetchAirplanesLive(
   bbox: BoundingBox | null
 ): Promise<FlightState[] | null> {
+  // Skip if we're in a rate-limit backoff
+  if (Date.now() < airplanesLiveRateLimitedUntil) return null;
+
   const tiles = bbox ? computeTiles(bbox) : GLOBAL_TILES;
 
   try {
-    // Fetch all tiles. For rate limiting, we stagger sequentially.
     const allAircraft = new Map<string, FlightState>();
 
+    // Fetch tiles sequentially with throttle to avoid rate limits
     for (const [lat, lon, radius] of tiles) {
       const url = `${AIRPLANES_LIVE_URL}/point/${lat.toFixed(4)}/${lon.toFixed(4)}/${radius}`;
       const res = await throttledFetch(url);
 
+      if (res.status === 429) {
+        // Back off for 60s on rate limit — stop fetching more tiles
+        airplanesLiveRateLimitedUntil = Date.now() + 60_000;
+        console.warn("[Flights] airplanes.live rate limited, backing off 60s");
+        break;
+      }
       if (!res.ok) {
-        console.warn(
-          `[Flights] airplanes.live tile error: ${res.status} for ${url}`
-        );
+        console.warn(`[Flights] airplanes.live tile error: ${res.status}`);
         continue;
       }
 
@@ -186,7 +194,7 @@ async function fetchAirplanesLive(
       for (const ac of acList) {
         const parsed = parseAirplanesLive(ac as Record<string, unknown>);
         if (parsed && parsed.icao24) {
-          allAircraft.set(parsed.icao24, parsed); // dedupe by icao24
+          allAircraft.set(parsed.icao24, parsed);
         }
       }
     }

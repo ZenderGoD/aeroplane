@@ -13,6 +13,14 @@ export interface SearchFilters {
     lon: number;
     radius_nm: number;
   };
+  /** Filter flights heading toward a destination airport */
+  destination_airport?: {
+    lat: number;
+    lon: number;
+    icao: string;
+    name: string;
+    radius_nm: number; // search radius around airport
+  };
   on_ground?: boolean;
   category?: number[];
   is_natural_language: boolean;

@@ -108,7 +108,7 @@ function relativeTime(ts: number): string {
 
 function LiveActivityFeed({ flights }: Props) {
   const [events, setEvents] = useState<FeedEvent[]>([]);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [, setTick] = useState(0); // forces re-render for relative timestamps
 
   const prevFlightsRef = useRef<Map<string, FlightState>>(new Map());
@@ -266,7 +266,7 @@ function LiveActivityFeed({ flights }: Props) {
           style={styles.collapseBtn}
           aria-label="Collapse live feed"
         >
-          \u2015
+          {"\u2015"}
         </button>
       </div>
 

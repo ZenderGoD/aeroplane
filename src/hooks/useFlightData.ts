@@ -6,7 +6,7 @@ import type { FlightState, BoundingBox } from "@/types/flight";
 import type { SearchFilters } from "@/types/search";
 import { parseStateVector } from "@/lib/opensky";
 import { getAirlineName } from "@/lib/airlines";
-import { haversineNm } from "@/lib/geo";
+import { haversineNm, bearing } from "@/lib/geo";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -96,6 +96,22 @@ function applyFilters(f: FlightState, filters: SearchFilters): boolean {
       filters.near_location.lon
     );
     if (dist > filters.near_location.radius_nm) return false;
+  }
+
+  // Destination airport: flights heading toward the airport
+  if (filters.destination_airport) {
+    if (f.latitude === null || f.longitude === null) return false;
+    if (f.onGround) return false;
+    const da = filters.destination_airport;
+    const dist = haversineNm(f.latitude, f.longitude, da.lat, da.lon);
+    if (dist > da.radius_nm) return false;
+    // Check if flight is heading toward the airport (within ±60°)
+    if (f.trueTrack !== null) {
+      const bearingToAirport = bearing(f.latitude, f.longitude, da.lat, da.lon);
+      let diff = Math.abs(f.trueTrack - bearingToAirport);
+      if (diff > 180) diff = 360 - diff;
+      if (diff > 60) return false;
+    }
   }
 
   // On ground

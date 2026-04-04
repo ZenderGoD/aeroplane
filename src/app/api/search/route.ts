@@ -27,6 +27,7 @@ Available filter fields:
 - speed_max: number (knots)
 - origin_country: string (country name)
 - near_location: { lat: number, lon: number, radius_nm: number } (well-known locations)
+- destination_airport: { lat: number, lon: number, icao: string, name: string, radius_nm: number } (flights heading to a specific airport — use for queries like "flights to Mumbai", "landing at Delhi", "arriving at JFK")
 - on_ground: boolean
 - category: number[] (0=unknown,2=light,3=small,4=large,5=high-vortex,6=heavy,7=high-perf,8=rotorcraft)
 
@@ -48,8 +49,17 @@ For well-known locations, use approximate coordinates:
 - Frankfurt: 50.03, 8.57
 - Paris CDG: 49.01, 2.55
 
+For destination_airport queries (e.g. "flights to Mumbai"), use:
+- Mumbai: { lat: 19.09, lon: 72.87, icao: "VABB", name: "Mumbai", radius_nm: 250 }
+- Delhi: { lat: 28.56, lon: 77.10, icao: "VIDP", name: "Delhi", radius_nm: 250 }
+- Bangalore: { lat: 13.20, lon: 77.71, icao: "VOBL", name: "Bangalore", radius_nm: 250 }
+- Chennai: { lat: 12.99, lon: 80.17, icao: "VOMM", name: "Chennai", radius_nm: 250 }
+- London Heathrow: { lat: 51.47, lon: -0.46, icao: "EGLL", name: "London", radius_nm: 250 }
+- JFK: { lat: 40.64, lon: -73.78, icao: "KJFK", name: "New York", radius_nm: 250 }
+- Dubai: { lat: 25.25, lon: 55.36, icao: "OMDB", name: "Dubai", radius_nm: 250 }
+
 Return ONLY valid JSON. No explanation. Only include fields the query specifies.
-Default radius for "near" queries is 50nm.`;
+Default radius for "near" queries is 50nm. Default radius for destination_airport is 250nm.`;
 
     const response = await fetch(OPENROUTER_URL, {
       method: "POST",

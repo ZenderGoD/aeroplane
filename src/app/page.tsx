@@ -102,6 +102,20 @@ function HomeContent() {
     filters
   );
 
+  // Auto-switch to trails view when arrivals filter is active
+  const prevViewModeRef = useRef<ViewMode | null>(null);
+  useEffect(() => {
+    if (filters?.destination_airport) {
+      if (viewMode !== "trails") {
+        prevViewModeRef.current = viewMode;
+        setViewMode("trails");
+      }
+    } else if (prevViewModeRef.current !== null) {
+      setViewMode(prevViewModeRef.current);
+      prevViewModeRef.current = null;
+    }
+  }, [filters?.destination_airport]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Shareable flight links
   const { initialFlightIcao, updateFlightUrl } = useShareableFlight();
 

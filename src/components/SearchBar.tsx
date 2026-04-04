@@ -37,17 +37,17 @@ function highlightMatch(text: string, query: string): React.ReactNode {
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   Flights: (
-    <svg className="w-3.5 h-3.5 text-cyan-400 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+    <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 24 24">
       <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
     </svg>
   ),
   Airports: (
-    <svg className="w-3.5 h-3.5 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
     </svg>
   ),
   Airlines: (
-    <svg className="w-3.5 h-3.5 text-purple-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
   ),
@@ -246,7 +246,7 @@ const SearchBar = forwardRef<SearchBarHandle, Props>(function SearchBar({
       <div className="relative">
         {isAISearching ? (
           <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-purple-400 animate-spin"
+            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 animate-spin"
             fill="none"
             viewBox="0 0 24 24"
           >
@@ -267,7 +267,7 @@ const SearchBar = forwardRef<SearchBarHandle, Props>(function SearchBar({
         ) : (
           <svg
             className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 ${
-              isNaturalLanguage ? "text-purple-400" : "text-gray-400"
+              isNaturalLanguage ? "text-slate-300" : "text-gray-400"
             }`}
             fill="none"
             stroke="currentColor"
@@ -299,8 +299,8 @@ const SearchBar = forwardRef<SearchBarHandle, Props>(function SearchBar({
           }}
           className={`pl-10 pr-8 py-2 ${inline ? "w-full" : "w-80"} rounded-lg bg-gray-900/90 backdrop-blur shadow-lg border text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 ${
             isNaturalLanguage
-              ? "border-purple-500/50 focus:ring-purple-500"
-              : "border-gray-700 focus:ring-blue-500"
+              ? "border-slate-500/50 focus:ring-slate-500"
+              : "border-gray-700 focus:ring-slate-500"
           }`}
         />
         {input && (
@@ -345,7 +345,7 @@ const SearchBar = forwardRef<SearchBarHandle, Props>(function SearchBar({
                     key={`${item.category}-${item.value}`}
                     className={`w-full flex items-center gap-2.5 px-3 py-2 text-left transition-colors duration-75 ${
                       item.globalIndex === selectedIndex
-                        ? "bg-cyan-500/15 text-white"
+                        ? "bg-white/10 text-white"
                         : "text-gray-300 hover:bg-white/[0.04]"
                     }`}
                     onMouseEnter={() => setSelectedIndex(item.globalIndex)}
@@ -384,10 +384,10 @@ const SearchBar = forwardRef<SearchBarHandle, Props>(function SearchBar({
       </div>
       {isNaturalLanguage && !isAISearching && (
         <div className="mt-1 ml-1 flex items-center gap-1">
-          <svg className="w-3 h-3 text-purple-400" fill="currentColor" viewBox="0 0 24 24">
+          <svg className="w-3 h-3 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
           </svg>
-          <span className="text-[10px] text-purple-400 font-medium">AI-powered search</span>
+          <span className="text-[10px] text-slate-400 font-medium">AI-powered search</span>
         </div>
       )}
     </div>

@@ -54,6 +54,53 @@ export function getAirportByIcao(icao: string): Airport | null {
   return icaoMap.get(icao.toUpperCase()) ?? null;
 }
 
+// Build IATA lookup
+const iataMap = new Map<string, Airport>();
+for (const a of airports) {
+  if (a.iata) iataMap.set(a.iata.toUpperCase(), a);
+}
+
+/**
+ * Find an airport by ICAO code, IATA code, city name, or airport name.
+ * Returns the best match or null.
+ */
+export function findAirport(query: string): Airport | null {
+  const q = query.trim().toUpperCase();
+  if (!q) return null;
+
+  // Exact ICAO match
+  const byIcao = icaoMap.get(q);
+  if (byIcao) return byIcao;
+
+  // Exact IATA match
+  const byIata = iataMap.get(q);
+  if (byIata) return byIata;
+
+  // City or name match (prefer large/medium airports)
+  const lowerQ = q.toLowerCase();
+  let best: Airport | null = null;
+  let bestScore = 0;
+
+  for (const a of airports) {
+    const cityMatch = a.city?.toLowerCase() === lowerQ;
+    const nameMatch = a.name?.toLowerCase().includes(lowerQ);
+    if (!cityMatch && !nameMatch) continue;
+
+    // Score: exact city match > name match, large > medium > small
+    let score = cityMatch ? 100 : 10;
+    if (a.type === "large") score += 50;
+    else if (a.type === "medium") score += 20;
+    else if (a.type === "small") score += 5;
+
+    if (score > bestScore) {
+      bestScore = score;
+      best = a;
+    }
+  }
+
+  return best;
+}
+
 export function estimateFlightAirports(
   flight: FlightState
 ): FlightAirportEstimate {
