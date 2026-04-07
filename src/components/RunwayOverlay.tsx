@@ -46,8 +46,8 @@ function buildPopupContent(airport: RunwayData): string {
   const runwayRows = airport.runways
     .map((rwy) => {
       const status = rwy.closed
-        ? '<span style="color:#ef4444;font-weight:600">CLOSED</span>'
-        : '<span style="color:#22c55e;font-weight:600">ACTIVE</span>';
+        ? '<span style="color:#e2e8f0;font-weight:600">CLOSED</span>'
+        : '<span style="color:#cbd5e1;font-weight:600">ACTIVE</span>';
       return `
         <tr style="border-bottom:1px solid #334155">
           <td style="padding:4px 8px;font-family:monospace;font-weight:700;color:#e2e8f0">${rwy.id}</td>
@@ -61,7 +61,7 @@ function buildPopupContent(airport: RunwayData): string {
 
   return `
     <div style="font-family:system-ui,-apple-system,sans-serif;min-width:320px">
-      <div style="padding:8px 12px;background:#1e293b;border-bottom:2px solid #3b82f6;border-radius:6px 6px 0 0">
+      <div style="padding:8px 12px;background:#1e293b;border-bottom:2px solid #94a3b8;border-radius:6px 6px 0 0">
         <div style="font-size:16px;font-weight:700;color:#f1f5f9">${airport.airportIcao}</div>
         <div style="font-size:12px;color:#94a3b8;margin-top:2px">${airport.airportName}</div>
       </div>
@@ -132,15 +132,15 @@ function createIcaoLabel(icao: string, zoom: number): L.DivIcon {
       font-family:'SF Mono',SFMono-Regular,Consolas,'Liberation Mono',Menlo,monospace;
       font-size:${fontSize}px;
       font-weight:700;
-      color:#3b82f6;
+      color:#94a3b8;
       background:rgba(15,23,42,0.82);
       padding:3px 7px;
       border-radius:4px;
-      border:1px solid rgba(59,130,246,0.4);
+      border:1px solid rgba(148,163,184,0.4);
       white-space:nowrap;
       transform:translate(-50%,-50%);
       cursor:pointer;
-      text-shadow:0 0 6px rgba(59,130,246,0.4);
+      text-shadow:0 0 6px rgba(148,163,184,0.4);
       line-height:1.2;
     ">${icao}</div>`,
     iconSize: [0, 0],
@@ -204,7 +204,7 @@ export default function RunwayOverlay({ visible }: RunwayOverlayProps) {
         const heLatLng: L.LatLngExpression = [runway.he.lat, runway.he.lon];
 
         // Main runway surface
-        const runwayColor = runway.closed ? "#ef4444" : "#cbd5e1";
+        const runwayColor = runway.closed ? "#64748b" : "#cbd5e1";
         const runwayLine = L.polyline([leLatLng, heLatLng], {
           color: runwayColor,
           weight,
@@ -226,7 +226,7 @@ export default function RunwayOverlay({ visible }: RunwayOverlayProps) {
 
         // Center line (yellow dashed)
         const centerLine = L.polyline([leLatLng, heLatLng], {
-          color: "#fbbf24",
+          color: "#94a3b8",
           weight: centerWeight,
           opacity: 0.7,
           dashArray: "6, 8",
@@ -317,7 +317,7 @@ export default function RunwayOverlay({ visible }: RunwayOverlayProps) {
         background: #0f172a;
         color: #e2e8f0;
         border-radius: 8px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(59,130,246,0.2);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(148,163,184,0.2);
         padding: 0;
         overflow: hidden;
       }

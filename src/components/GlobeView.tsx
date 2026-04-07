@@ -110,9 +110,9 @@ export default function GlobeView({
             ? Math.max((f.baroAltitude * 0.3048) / 6_371_000, 0.0005) * ALTITUDE_SCALE
             : 0.001,
           color: isSelected
-            ? "#facc15"
+            ? "#e2e8f0"
             : isAnomaly
-              ? "#ef4444"
+              ? "#e2e8f0"
               : getCategoryColor(f.category),
           size: isSelected ? 0.6 : isAnomaly ? 0.35 : 0.2,
           flight: f,
@@ -150,7 +150,7 @@ export default function GlobeView({
     return (
       <div className="flex h-full w-full items-center justify-center bg-gray-950">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
           <span className="text-gray-400 text-sm">Loading 3D Globe...</span>
         </div>
       </div>
@@ -165,7 +165,7 @@ export default function GlobeView({
         ref={globeRef}
         globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
         backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
-        atmosphereColor="#3b82f6"
+        atmosphereColor="#94a3b8"
         atmosphereAltitude={0.15}
         showGraticules={true}
         width={dimensions.width}
@@ -184,7 +184,7 @@ export default function GlobeView({
 
       {/* Flight count badge */}
       <div className="absolute bottom-4 left-4 z-10 bg-gray-900/80 backdrop-blur border border-gray-700 rounded-lg px-3 py-1.5 text-xs text-gray-400 flex items-center gap-2">
-        <div className="w-2 h-2 rounded-full bg-blue-400" />
+        <div className="w-2 h-2 rounded-full bg-slate-400" />
         {pointsData.length.toLocaleString()} flights
       </div>
     </div>

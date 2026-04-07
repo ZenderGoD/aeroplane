@@ -33,10 +33,10 @@ export default function LiveFlightCount() {
 
   if (error || count === null) {
     return (
-      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(148,163,184,0.1)] bg-[rgba(15,23,42,0.6)] backdrop-blur-md">
+      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(203,213,225,0.1)] bg-[rgba(15,23,42,0.6)] backdrop-blur-md">
         <span className="relative flex h-2.5 w-2.5">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-300 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-slate-300" />
         </span>
         <span className="text-sm font-mono text-[var(--text-secondary)]">
           {error ? "Tracking live flights" : "Connecting..."}
@@ -46,14 +46,14 @@ export default function LiveFlightCount() {
   }
 
   return (
-    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(52,211,153,0.2)] bg-[rgba(52,211,153,0.06)] backdrop-blur-md">
+    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(203,213,225,0.2)] bg-[rgba(203,213,225,0.06)] backdrop-blur-md">
       <span className="relative flex h-2.5 w-2.5">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-300 opacity-75" />
+        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-slate-300" />
       </span>
-      <span className="text-sm font-mono text-emerald-400">
+      <span className="text-sm font-mono text-slate-300">
         Currently tracking{" "}
-        <span className="font-bold text-emerald-300">{count.toLocaleString()}</span>{" "}
+        <span className="font-bold text-slate-200">{count.toLocaleString()}</span>{" "}
         flights
       </span>
     </div>

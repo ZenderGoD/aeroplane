@@ -58,13 +58,13 @@ const VIEWPORT_PADDING = 12;
 const CATEGORY_COLORS: Record<number, string> = {
   0: "#94a3b8",
   1: "#94a3b8",
-  2: "#22d3ee",
-  3: "#34d399",
-  4: "#60a5fa",
-  5: "#a78bfa",
-  6: "#f97316",
-  7: "#ef4444",
-  8: "#e879f9",
+  2: "#cbd5e1",
+  3: "#cbd5e1",
+  4: "#94a3b8",
+  5: "#94a3b8",
+  6: "#94a3b8",
+  7: "#e2e8f0",
+  8: "#94a3b8",
 };
 
 export function getCategoryColor(category: number): string {
@@ -139,7 +139,7 @@ function drawPlane(
   ctx.lineTo(-size * 0.6, size * 0.5);
   ctx.closePath();
 
-  ctx.fillStyle = isSelected ? "#facc15" : getCategoryColor(category);
+  ctx.fillStyle = isSelected ? "#e2e8f0" : getCategoryColor(category);
   ctx.fill();
 
   if (isSelected) {
@@ -162,7 +162,7 @@ function drawRotorcraft(
 ) {
   const size = sizeOverride ?? (isSelected ? SELECTED_SIZE : PLANE_SIZE);
   const rad = ((heading - 90) * Math.PI) / 180;
-  const color = isSelected ? "#facc15" : getCategoryColor(8);
+  const color = isSelected ? "#e2e8f0" : getCategoryColor(8);
 
   ctx.save();
   ctx.translate(x, y);
@@ -218,7 +218,7 @@ function drawLightAircraft(
 ) {
   const size = (sizeOverride ?? (isSelected ? SELECTED_SIZE : PLANE_SIZE)) * 0.8;
   const rad = ((heading - 90) * Math.PI) / 180;
-  const color = isSelected ? "#facc15" : getCategoryColor(2);
+  const color = isSelected ? "#e2e8f0" : getCategoryColor(2);
 
   ctx.save();
   ctx.translate(x, y);
@@ -273,7 +273,7 @@ function drawHeavyJet(
 ) {
   const size = (sizeOverride ?? (isSelected ? SELECTED_SIZE : PLANE_SIZE)) * 1.2;
   const rad = ((heading - 90) * Math.PI) / 180;
-  const color = isSelected ? "#facc15" : getCategoryColor(6);
+  const color = isSelected ? "#e2e8f0" : getCategoryColor(6);
 
   ctx.save();
   ctx.translate(x, y);
@@ -340,7 +340,7 @@ function drawFighterJet(
 ) {
   const size = sizeOverride ?? (isSelected ? SELECTED_SIZE : PLANE_SIZE);
   const rad = ((heading - 90) * Math.PI) / 180;
-  const color = isSelected ? "#facc15" : getCategoryColor(7);
+  const color = isSelected ? "#e2e8f0" : getCategoryColor(7);
 
   ctx.save();
   ctx.translate(x, y);
@@ -434,16 +434,16 @@ function drawAnomalyRing(
   const alpha = 0.3 + (1 - phase) * 0.7;
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, Math.PI * 2);
-  ctx.strokeStyle = `rgba(239, 68, 68, ${alpha})`;
+  ctx.strokeStyle = `rgba(226, 232, 240, ${alpha})`;
   ctx.lineWidth = 2;
   ctx.stroke();
 }
 
 /** Emergency squawk color mapping */
 const SQUAWK_COLORS: Record<string, string> = {
-  "7700": "#ef4444", // emergency — red
-  "7600": "#f59e0b", // radio failure — amber
-  "7500": "#a855f7", // hijack — purple
+  "7700": "#e2e8f0", // emergency
+  "7600": "#94a3b8", // radio failure
+  "7500": "#94a3b8", // hijack
 };
 
 /** Draw pulsing concentric rings for emergency squawk codes */
@@ -485,23 +485,23 @@ function drawMilitaryGlow(
   // Outer glow
   ctx.beginPath();
   ctx.arc(x, y, 8, 0, Math.PI * 2);
-  ctx.fillStyle = "rgba(245, 158, 11, 0.15)";
+  ctx.fillStyle = "rgba(148, 163, 184, 0.15)";
   ctx.fill();
   // Inner glow
   ctx.beginPath();
   ctx.arc(x, y, 5, 0, Math.PI * 2);
-  ctx.fillStyle = "rgba(245, 158, 11, 0.25)";
+  ctx.fillStyle = "rgba(148, 163, 184, 0.25)";
   ctx.fill();
 }
 
 /** Get trail segment color based on altitude in meters */
 function getTrailAltitudeColor(altitudeMeters: number | null): string {
-  if (altitudeMeters === null) return "#60a5fa"; // default blue
+  if (altitudeMeters === null) return "#94a3b8"; // default
   const feet = altitudeMeters * 3.28084;
-  if (feet < 10000) return "#34d399";   // green — below 10k
-  if (feet < 25000) return "#22d3ee";   // cyan — 10-25k
-  if (feet < 40000) return "#3b82f6";   // blue — 25-40k
-  return "#a855f7";                      // purple — above 40k
+  if (feet < 10000) return "#cbd5e1";   // below 10k
+  if (feet < 25000) return "#cbd5e1";   // 10-25k
+  if (feet < 40000) return "#94a3b8";   // 25-40k
+  return "#94a3b8";                      // above 40k
 }
 
 /** Get zoom-based aircraft size scaling factor */
@@ -553,9 +553,9 @@ function drawSpecialBadges(
   if (!dbFlags) return;
 
   const badges: { text: string; color: string }[] = [];
-  if (dbFlags & 1) badges.push({ text: "MIL", color: "#f59e0b" });
-  if (dbFlags & 2) badges.push({ text: "\u2605", color: "#eab308" });
-  if (dbFlags & 4) badges.push({ text: "PIA", color: "#a78bfa" });
+  if (dbFlags & 1) badges.push({ text: "MIL", color: "#94a3b8" });
+  if (dbFlags & 2) badges.push({ text: "\u2605", color: "#94a3b8" });
+  if (dbFlags & 4) badges.push({ text: "PIA", color: "#94a3b8" });
   if (dbFlags & 8) badges.push({ text: "LADD", color: "#9ca3af" });
 
   if (badges.length === 0) return;
@@ -630,7 +630,7 @@ function drawPredictionLine(
     ctx.beginPath();
     ctx.moveTo(points[i - 1].x, points[i - 1].y);
     ctx.lineTo(points[i].x, points[i].y);
-    ctx.strokeStyle = `rgba(250, 204, 21, ${alpha})`;
+    ctx.strokeStyle = `rgba(148, 163, 184, ${alpha})`;
     ctx.lineWidth = 2;
     ctx.stroke();
   }
@@ -639,7 +639,7 @@ function drawPredictionLine(
   const end = points[points.length - 1];
   ctx.beginPath();
   ctx.arc(end.x, end.y, 4, 0, Math.PI * 2);
-  ctx.strokeStyle = "rgba(250, 204, 21, 0.3)";
+  ctx.strokeStyle = "rgba(148, 163, 184, 0.3)";
   ctx.lineWidth = 1.5;
   ctx.setLineDash([]);
   ctx.stroke();
@@ -683,7 +683,7 @@ function drawGhostRoute(
   // --- Outer glow (full path) ---
   ctx.setLineDash([]);
   ctx.lineWidth = 6;
-  ctx.strokeStyle = "rgba(56, 189, 248, 0.08)";
+  ctx.strokeStyle = "rgba(203, 213, 225, 0.08)";
   ctx.beginPath();
   ctx.moveTo(screenPts[0].x, screenPts[0].y);
   for (let i = 1; i < screenPts.length; i++) {
@@ -697,7 +697,7 @@ function drawGhostRoute(
 
   // Completed portion (dimmer)
   if (progressIndex > 0) {
-    ctx.strokeStyle = "rgba(56, 189, 248, 0.12)";
+    ctx.strokeStyle = "rgba(203, 213, 225, 0.12)";
     ctx.beginPath();
     ctx.moveTo(screenPts[0].x, screenPts[0].y);
     for (let i = 1; i <= Math.min(progressIndex, screenPts.length - 1); i++) {
@@ -708,7 +708,7 @@ function drawGhostRoute(
 
   // Upcoming portion (brighter)
   if (progressIndex < screenPts.length - 1) {
-    ctx.strokeStyle = "rgba(56, 189, 248, 0.25)";
+    ctx.strokeStyle = "rgba(203, 213, 225, 0.25)";
     ctx.beginPath();
     ctx.moveTo(screenPts[Math.max(0, progressIndex)].x, screenPts[Math.max(0, progressIndex)].y);
     for (let i = progressIndex + 1; i < screenPts.length; i++) {
@@ -726,7 +726,7 @@ function drawGhostRoute(
       const isPast = idx <= progressIndex;
       ctx.beginPath();
       ctx.arc(wp.x, wp.y, 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = isPast ? "rgba(56, 189, 248, 0.15)" : "rgba(56, 189, 248, 0.35)";
+      ctx.fillStyle = isPast ? "rgba(203, 213, 225, 0.15)" : "rgba(203, 213, 225, 0.35)";
       ctx.fill();
     }
   }
@@ -735,9 +735,9 @@ function drawGhostRoute(
   const depPt = screenPts[0];
   ctx.beginPath();
   ctx.arc(depPt.x, depPt.y, 5, 0, Math.PI * 2);
-  ctx.fillStyle = "rgba(52, 211, 153, 0.5)";
+  ctx.fillStyle = "rgba(203, 213, 225, 0.5)";
   ctx.fill();
-  ctx.strokeStyle = "rgba(52, 211, 153, 0.9)";
+  ctx.strokeStyle = "rgba(203, 213, 225, 0.9)";
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
@@ -750,16 +750,16 @@ function drawGhostRoute(
   ctx.beginPath();
   ctx.roundRect(depPt.x - depLabelW / 2, depPt.y - 22, depLabelW, 16, 3);
   ctx.fill();
-  ctx.fillStyle = "#34d399";
+  ctx.fillStyle = "#cbd5e1";
   ctx.fillText(depLabel, depPt.x, depPt.y - 10);
 
   // --- Destination airport dot (blue) ---
   const nearPt = screenPts[screenPts.length - 1];
   ctx.beginPath();
   ctx.arc(nearPt.x, nearPt.y, 5, 0, Math.PI * 2);
-  ctx.fillStyle = "rgba(96, 165, 250, 0.5)";
+  ctx.fillStyle = "rgba(148, 163, 184, 0.5)";
   ctx.fill();
-  ctx.strokeStyle = "rgba(96, 165, 250, 0.9)";
+  ctx.strokeStyle = "rgba(148, 163, 184, 0.9)";
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
@@ -770,7 +770,7 @@ function drawGhostRoute(
   ctx.beginPath();
   ctx.roundRect(nearPt.x - nearLabelW / 2, nearPt.y - 22, nearLabelW, 16, 3);
   ctx.fill();
-  ctx.fillStyle = "#60a5fa";
+  ctx.fillStyle = "#94a3b8";
   ctx.fillText(nearLabel, nearPt.x, nearPt.y - 10);
 
   // --- Progress indicator (pill badge near aircraft) ---
@@ -788,12 +788,12 @@ function drawGhostRoute(
   ctx.fill();
 
   // Progress bar background inside pill
-  ctx.fillStyle = "rgba(56, 189, 248, 0.2)";
+  ctx.fillStyle = "rgba(203, 213, 225, 0.2)";
   ctx.beginPath();
   ctx.roundRect(progX - progW / 2 + 1, progY - 6, (progW - 2) * progress, 12, 3);
   ctx.fill();
 
-  ctx.fillStyle = "#38bdf8";
+  ctx.fillStyle = "#cbd5e1";
   ctx.textAlign = "center";
   ctx.fillText(progText, progX, progY + 3);
 
@@ -820,8 +820,8 @@ function drawGhostRoute(
 
     // Deviation connector color based on severity
     const devColor = deviationNm >= 15
-      ? "rgba(249, 115, 22, 0.7)"   // orange for >= 15 NM
-      : "rgba(251, 191, 36, 0.7)";  // yellow for < 15 NM
+      ? "rgba(148, 163, 184, 0.7)"   // >= 15 NM
+      : "rgba(148, 163, 184, 0.7)";  // < 15 NM
 
     // Draw thin perpendicular line
     ctx.setLineDash([4, 4]);
@@ -851,7 +851,7 @@ function drawGhostRoute(
     ctx.roundRect(midX - devTextW / 2, midY - 8, devTextW, 14, 3);
     ctx.fill();
 
-    ctx.fillStyle = deviationNm >= 15 ? "#f97316" : "#fbbf24";
+    ctx.fillStyle = deviationNm >= 15 ? "#94a3b8" : "#94a3b8";
     ctx.textAlign = "center";
     ctx.fillText(devText, midX, midY + 3);
   }
@@ -999,8 +999,8 @@ function HoverTooltip({
   const sourceBadge = (() => {
     if (!flight.positionSource) return null;
     const src = flight.positionSource.toLowerCase();
-    if (src.includes("adsb")) return { label: "ADS-B", color: "#34d399", bg: "rgba(52,211,153,0.12)", border: "rgba(52,211,153,0.20)" };
-    if (src.includes("mlat")) return { label: "MLAT", color: "#fbbf24", bg: "rgba(251,191,36,0.12)", border: "rgba(251,191,36,0.20)" };
+    if (src.includes("adsb")) return { label: "ADS-B", color: "#cbd5e1", bg: "rgba(203,213,225,0.12)", border: "rgba(203,213,225,0.20)" };
+    if (src.includes("mlat")) return { label: "MLAT", color: "#94a3b8", bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.20)" };
     return { label: src, color: "#9ca3af", bg: "rgba(156,163,175,0.12)", border: "rgba(156,163,175,0.20)" };
   })();
 
@@ -1053,9 +1053,9 @@ function HoverTooltip({
           {isAnomaly && (
             <span
               style={{
-                background: "rgba(248, 113, 113, 0.12)",
-                color: "#f87171",
-                border: "1px solid rgba(248, 113, 113, 0.20)",
+                background: "rgba(226, 232, 240, 0.12)",
+                color: "#e2e8f0",
+                border: "1px solid rgba(226, 232, 240, 0.20)",
                 borderRadius: 6,
                 padding: "1px 6px",
                 fontSize: 9,
@@ -1069,9 +1069,9 @@ function HoverTooltip({
           {instabilityScore !== undefined && instabilityScore > 30 && (
             <span
               style={{
-                background: "rgba(251, 191, 36, 0.12)",
-                color: "#fbbf24",
-                border: "1px solid rgba(251, 191, 36, 0.20)",
+                background: "rgba(148, 163, 184, 0.12)",
+                color: "#94a3b8",
+                border: "1px solid rgba(148, 163, 184, 0.20)",
                 borderRadius: 6,
                 padding: "1px 6px",
                 fontSize: 9,
@@ -1088,17 +1088,17 @@ function HoverTooltip({
         {hasSpecialFlags && (
           <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
             {isMilitary && (
-              <span style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.25)", borderRadius: 6, padding: "1px 6px", fontSize: 9, fontWeight: 700, letterSpacing: "0.04em" }}>
+              <span style={{ background: "rgba(148,163,184,0.15)", color: "#94a3b8", border: "1px solid rgba(148,163,184,0.25)", borderRadius: 6, padding: "1px 6px", fontSize: 9, fontWeight: 700, letterSpacing: "0.04em" }}>
                 MILITARY
               </span>
             )}
             {isInteresting && (
-              <span style={{ background: "rgba(234,179,8,0.15)", color: "#eab308", border: "1px solid rgba(234,179,8,0.25)", borderRadius: 6, padding: "1px 6px", fontSize: 9, fontWeight: 700, letterSpacing: "0.04em" }}>
+              <span style={{ background: "rgba(148,163,184,0.15)", color: "#94a3b8", border: "1px solid rgba(148,163,184,0.25)", borderRadius: 6, padding: "1px 6px", fontSize: 9, fontWeight: 700, letterSpacing: "0.04em" }}>
                 {"\u2605"} SPECIAL
               </span>
             )}
             {isPIA && (
-              <span style={{ background: "rgba(167,139,250,0.15)", color: "#a78bfa", border: "1px solid rgba(167,139,250,0.25)", borderRadius: 6, padding: "1px 6px", fontSize: 9, fontWeight: 700, letterSpacing: "0.04em" }}>
+              <span style={{ background: "rgba(148,163,184,0.15)", color: "#94a3b8", border: "1px solid rgba(148,163,184,0.25)", borderRadius: 6, padding: "1px 6px", fontSize: 9, fontWeight: 700, letterSpacing: "0.04em" }}>
                 PRIVACY
               </span>
             )}
@@ -1386,7 +1386,7 @@ export default function CanvasPlaneLayer({
         ctx.lineTo(-effectiveSize * 0.3, 0);
         ctx.lineTo(-effectiveSize * 0.6, effectiveSize * 0.5);
         ctx.closePath();
-        ctx.fillStyle = "#f59e0b";
+        ctx.fillStyle = "#94a3b8";
         ctx.fill();
         ctx.restore();
       } else {

@@ -13,14 +13,14 @@ if (typeof window !== "undefined") require("leaflet/dist/leaflet.css");
 /*  Altitude → colour (same palette the main tracker uses)            */
 /* ------------------------------------------------------------------ */
 function altitudeColor(altMeters: number | null): string {
-  if (altMeters === null || altMeters <= 0) return "#6ee7b7"; // ground / unknown → green
+  if (altMeters === null || altMeters <= 0) return "#cbd5e1"; // ground / unknown → slate
   const ft = altMeters * 3.28084;
-  if (ft < 5_000) return "#34d399";
-  if (ft < 10_000) return "#38bdf8";
-  if (ft < 20_000) return "#818cf8";
-  if (ft < 30_000) return "#c084fc";
-  if (ft < 40_000) return "#f472b6";
-  return "#fb923c";
+  if (ft < 5_000) return "#cbd5e1";
+  if (ft < 10_000) return "#94a3b8";
+  if (ft < 20_000) return "#94a3b8";
+  if (ft < 30_000) return "#94a3b8";
+  if (ft < 40_000) return "#e2e8f0";
+  return "#94a3b8";
 }
 
 /* ------------------------------------------------------------------ */
@@ -47,7 +47,7 @@ function drawRangeRings(
     const meters = nm * 1852;
     L.circle([lat, lon], {
       radius: meters,
-      color: "rgba(56,189,248,0.25)",
+      color: "rgba(148,163,184,0.25)",
       weight: 1,
       fill: false,
       dashArray: "4 6",
@@ -58,7 +58,7 @@ function drawRangeRings(
     L.marker([labelLat, lon], {
       icon: L.divIcon({
         className: "",
-        html: `<span style="color:rgba(56,189,248,0.5);font-size:9px;font-family:monospace;white-space:nowrap;">${nm} NM</span>`,
+        html: `<span style="color:rgba(148,163,184,0.5);font-size:9px;font-family:monospace;white-space:nowrap;">${nm} NM</span>`,
         iconSize: [40, 12],
         iconAnchor: [20, 6],
       }),
@@ -184,7 +184,7 @@ function EmbedMapInner() {
       L.marker(center, {
         icon: L.divIcon({
           className: "",
-          html: `<div style="background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);border-radius:6px;padding:2px 6px;font-size:10px;font-family:monospace;color:#38bdf8;white-space:nowrap;">${airportIcao.toUpperCase()}</div>`,
+          html: `<div style="background:rgba(148,163,184,0.15);border:1px solid rgba(148,163,184,0.3);border-radius:6px;padding:2px 6px;font-size:10px;font-family:monospace;color:#94a3b8;white-space:nowrap;">${airportIcao.toUpperCase()}</div>`,
           iconSize: [60, 20],
           iconAnchor: [30, 10],
         }),
@@ -242,7 +242,7 @@ function EmbedMapInner() {
 
       marker.bindPopup(
         `<div style="font-family:'Geist Mono',monospace;font-size:11px;color:#e2e8f0;min-width:160px;padding:8px;">
-          <div style="font-size:13px;font-weight:700;color:#38bdf8;margin-bottom:6px;">${cs}</div>
+          <div style="font-size:13px;font-weight:700;color:#94a3b8;margin-bottom:6px;">${cs}</div>
           <div style="display:grid;grid-template-columns:auto 1fr;gap:2px 8px;">
             <span style="color:#64748b;">ALT</span><span>${altFt} ft</span>
             <span style="color:#64748b;">SPD</span><span>${spdKts} kts</span>
@@ -310,8 +310,8 @@ function EmbedMapInner() {
             width: 6,
             height: 6,
             borderRadius: "50%",
-            background: "#34d399",
-            boxShadow: "0 0 6px rgba(52,211,153,0.5)",
+            background: "#94a3b8",
+            boxShadow: "0 0 6px rgba(148,163,184,0.5)",
             animation: "embed-pulse 2s ease-in-out infinite",
           }}
         />
@@ -320,7 +320,7 @@ function EmbedMapInner() {
         </span>
         aircraft
         {trackCallsign && (
-          <span style={{ color: "#38bdf8", marginLeft: 4 }}>
+          <span style={{ color: "#94a3b8", marginLeft: 4 }}>
             tracking {trackCallsign.toUpperCase()}
           </span>
         )}

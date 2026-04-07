@@ -21,8 +21,8 @@ const GlobeView = dynamic(() => import("./GlobeView"), {
   loading: () => (
     <div className="flex h-full w-full items-center justify-center bg-gray-950">
       <div className="flex flex-col items-center gap-3">
-        <div className="w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
-        <span className="text-gray-400 text-sm">Loading 3D Globe...</span>
+        <div className="w-8 h-8 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+        <span className="text-slate-400 text-sm">Loading 3D Globe...</span>
       </div>
     </div>
   ),

@@ -52,10 +52,10 @@ function resolveRoute(
 function altitudeColor(altMeters: number | null): string {
   if (altMeters === null) return "#64748b";
   const altFt = altMeters * 3.28084;
-  if (altFt < 10000) return "#22c55e"; // green - low
-  if (altFt < 25000) return "#eab308"; // yellow - medium
-  if (altFt < 35000) return "#3b82f6"; // blue - high
-  return "#a855f7"; // purple - very high
+  if (altFt < 10000) return "#cbd5e1"; // slate-300 - low
+  if (altFt < 25000) return "#94a3b8"; // slate-400 - medium
+  if (altFt < 35000) return "#94a3b8"; // slate-400 - high
+  return "#94a3b8"; // slate-400 - very high
 }
 
 export default function RouteOverlay({
@@ -140,7 +140,7 @@ export default function RouteOverlay({
       const completedLine = L.polyline(
         completedPoints as L.LatLngExpression[],
         {
-          color: "#38bdf8",
+          color: "#94a3b8",
           weight: 2,
           opacity: 0.7,
           dashArray: undefined,
@@ -155,7 +155,7 @@ export default function RouteOverlay({
       const remainingLine = L.polyline(
         remainingPoints as L.LatLngExpression[],
         {
-          color: "#38bdf8",
+          color: "#94a3b8",
           weight: 2,
           opacity: 0.4,
           dashArray: "8, 6",
@@ -168,14 +168,14 @@ export default function RouteOverlay({
     // Origin airport marker
     const originMarker = L.circleMarker([origin.lat, origin.lon], {
       radius: 5,
-      color: "#38bdf8",
-      fillColor: "#0c4a6e",
+      color: "#94a3b8",
+      fillColor: "#1e293b",
       fillOpacity: 0.9,
       weight: 1.5,
       interactive: false,
     });
     originMarker.bindTooltip(
-      `<div style="font-size:11px;font-weight:600;color:#38bdf8">${origin.icao ?? origin.iata ?? "?"}</div>
+      `<div style="font-size:11px;font-weight:600;color:#94a3b8">${origin.icao ?? origin.iata ?? "?"}</div>
        <div style="font-size:10px;color:#94a3b8">${origin.name}</div>`,
       {
         permanent: false,
@@ -189,14 +189,14 @@ export default function RouteOverlay({
     // Destination airport marker
     const destMarker = L.circleMarker([destination.lat, destination.lon], {
       radius: 5,
-      color: "#38bdf8",
-      fillColor: "#0c4a6e",
+      color: "#94a3b8",
+      fillColor: "#1e293b",
       fillOpacity: 0.9,
       weight: 1.5,
       interactive: false,
     });
     destMarker.bindTooltip(
-      `<div style="font-size:11px;font-weight:600;color:#38bdf8">${destination.icao ?? destination.iata ?? "?"}</div>
+      `<div style="font-size:11px;font-weight:600;color:#94a3b8">${destination.icao ?? destination.iata ?? "?"}</div>
        <div style="font-size:10px;color:#94a3b8">${destination.name}</div>`,
       {
         permanent: false,
@@ -220,11 +220,11 @@ export default function RouteOverlay({
         className: "route-distance-label",
         html: `<div style="
           background: rgba(15,23,42,0.85);
-          border: 1px solid rgba(56,189,248,0.3);
+          border: 1px solid rgba(148,163,184,0.3);
           border-radius: 4px;
           padding: 2px 6px;
           font-size: 10px;
-          color: #38bdf8;
+          color: #94a3b8;
           white-space: nowrap;
           font-family: ui-monospace, monospace;
           backdrop-filter: blur(4px);

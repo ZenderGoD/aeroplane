@@ -23,26 +23,26 @@ export default function AIInsights({
   const isExhausted = remainingToday <= 0;
 
   return (
-    <div className="border border-purple-500/30 rounded-lg overflow-hidden bg-purple-950/20">
+    <div className="border border-slate-500/30 rounded-lg overflow-hidden bg-slate-950/20">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-purple-950/30 transition-colors"
+        className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-slate-950/30 transition-colors"
       >
         <svg
-          className="w-4 h-4 text-purple-400 flex-shrink-0"
+          className="w-4 h-4 text-slate-400 flex-shrink-0"
           fill="currentColor"
           viewBox="0 0 24 24"
         >
           <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
         </svg>
-        <span className="text-xs font-semibold text-purple-300 uppercase tracking-wider flex-1">
+        <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex-1">
           AI Insights
         </span>
-        <span className="text-[10px] text-purple-500 tabular-nums mr-1">
+        <span className="text-[10px] text-slate-500 tabular-nums mr-1">
           {remainingToday}/{dailyLimit}
         </span>
         <svg
-          className={`w-3 h-3 text-purple-400 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+          className={`w-3 h-3 text-slate-400 transition-transform ${isExpanded ? "rotate-180" : ""}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -61,9 +61,9 @@ export default function AIInsights({
           {/* Loading state */}
           {isLoading && (
             <div className="space-y-2">
-              <div className="h-3 bg-purple-900/40 rounded animate-pulse w-full" />
-              <div className="h-3 bg-purple-900/40 rounded animate-pulse w-5/6" />
-              <div className="h-3 bg-purple-900/40 rounded animate-pulse w-4/6" />
+              <div className="h-3 bg-slate-800/40 rounded animate-pulse w-full" />
+              <div className="h-3 bg-slate-800/40 rounded animate-pulse w-5/6" />
+              <div className="h-3 bg-slate-800/40 rounded animate-pulse w-4/6" />
             </div>
           )}
 
@@ -94,7 +94,7 @@ export default function AIInsights({
               ) : (
                 <button
                   onClick={onGenerate}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500/40 rounded-md text-xs text-purple-300 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-600/30 hover:bg-slate-600/50 border border-slate-500/40 rounded-md text-xs text-slate-300 transition-colors"
                 >
                   <svg
                     className="w-3.5 h-3.5"

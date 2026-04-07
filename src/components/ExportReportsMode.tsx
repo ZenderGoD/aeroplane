@@ -128,7 +128,7 @@ function ProgressBar({ progress, label }: { progress: number; label: string }) {
           className="h-full rounded-full transition-all duration-300 ease-out"
           style={{
             width: `${progress}%`,
-            background: "linear-gradient(90deg, #38bdf8, #22d3ee)",
+            background: "linear-gradient(90deg, #cbd5e1, #cbd5e1)",
           }}
         />
       </div>
@@ -440,7 +440,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
   .header h1 {
     font-size: 28px;
     font-weight: 700;
-    background: linear-gradient(135deg, #38bdf8, #22d3ee);
+    background: linear-gradient(135deg, #cbd5e1, #cbd5e1);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -454,11 +454,11 @@ export default function ExportReportsMode({ onExitMode }: Props) {
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #38bdf8;
+    color: #cbd5e1;
     padding: 4px 12px;
-    border: 1px solid rgba(56,189,248,0.2);
+    border: 1px solid rgba(203,213,225,0.2);
     border-radius: 6px;
-    background: rgba(56,189,248,0.06);
+    background: rgba(203,213,225,0.06);
   }
   .section {
     background: #0c1018;
@@ -481,7 +481,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
     display: inline-block;
     width: 3px;
     height: 16px;
-    background: #38bdf8;
+    background: #cbd5e1;
     border-radius: 2px;
   }
   .summary-grid {
@@ -499,7 +499,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
   .stat-card .value {
     font-size: 28px;
     font-weight: 700;
-    color: #38bdf8;
+    color: #cbd5e1;
     font-variant-numeric: tabular-nums;
   }
   .stat-card .label {
@@ -528,7 +528,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
     color: #cbd5e1;
     font-variant-numeric: tabular-nums;
   }
-  table tr:hover td { background: rgba(56,189,248,0.03); }
+  table tr:hover td { background: rgba(203,213,225,0.03); }
   .bar-container {
     display: flex;
     align-items: center;
@@ -552,7 +552,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
   .bar-fill {
     height: 100%;
     border-radius: 4px;
-    background: linear-gradient(90deg, #38bdf8, #22d3ee);
+    background: linear-gradient(90deg, #cbd5e1, #cbd5e1);
     transition: width 0.3s;
   }
   .bar-value {
@@ -570,7 +570,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
     border-bottom: 1px solid rgba(148,163,184,0.06);
   }
   .quality-label { font-size: 13px; color: #94a3b8; }
-  .quality-value { font-size: 13px; font-weight: 600; color: #34d399; font-variant-numeric: tabular-nums; }
+  .quality-value { font-size: 13px; font-weight: 600; color: #cbd5e1; font-variant-numeric: tabular-nums; }
   .footer {
     text-align: center;
     padding: 30px 0 20px;
@@ -579,7 +579,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
     color: #64748b;
     font-size: 12px;
   }
-  .footer .brand-footer { color: #38bdf8; font-weight: 600; }
+  .footer .brand-footer { color: #cbd5e1; font-weight: 600; }
   @media print {
     body { background: #fff; color: #1a1a1a; padding: 20px; }
     .section { border-color: #ddd; background: #fafafa; }
@@ -756,7 +756,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
   const btnPrimary =
     "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed";
   const btnPrimaryStyle: React.CSSProperties = {
-    background: "linear-gradient(135deg, #38bdf8, #0ea5e9)",
+    background: "linear-gradient(135deg, #cbd5e1, #94a3b8)",
     color: "#020617",
   };
 
@@ -845,14 +845,14 @@ export default function ExportReportsMode({ onExitMode }: Props) {
         <div
           className="mx-6 mt-3 px-4 py-2.5 rounded-lg flex items-center gap-2 animate-slide-up shrink-0"
           style={{
-            background: "rgba(52, 211, 153, 0.08)",
-            border: "1px solid rgba(52, 211, 153, 0.2)",
+            background: "rgba(148, 163, 184, 0.08)",
+            border: "1px solid rgba(148, 163, 184, 0.2)",
           }}
         >
-          <span style={{ color: "#34d399" }}>
+          <span style={{ color: "#cbd5e1" }}>
             <IconCheck />
           </span>
-          <span className="text-xs font-medium" style={{ color: "#34d399" }}>
+          <span className="text-xs font-medium" style={{ color: "#cbd5e1" }}>
             {exportDone} &mdash; File downloaded successfully
           </span>
         </div>
@@ -886,7 +886,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
               <div className="flex items-center gap-3 mb-4">
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                  style={{ background: "rgba(56,189,248,0.1)", color: "#38bdf8" }}
+                  style={{ background: "rgba(203,213,225,0.1)", color: "#cbd5e1" }}
                 >
                   <IconCSV />
                 </div>
@@ -931,7 +931,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
               <div className="flex items-center gap-3 mb-4">
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                  style={{ background: "rgba(168,85,247,0.1)", color: "#a855f7" }}
+                  style={{ background: "rgba(148,163,184,0.1)", color: "#94a3b8" }}
                 >
                   <IconJSON />
                 </div>
@@ -952,7 +952,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   <span className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
                     Total objects
                   </span>
-                  <span className="text-xs font-bold font-mono tabular-nums" style={{ color: "#a855f7" }}>
+                  <span className="text-xs font-bold font-mono tabular-nums" style={{ color: "#94a3b8" }}>
                     {flights.length.toLocaleString()}
                   </span>
                 </div>
@@ -966,7 +966,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   onClick={() => exportJSON(flights, "aerointel_snapshot")}
                   disabled={exportProgress.active}
                   className={btnPrimary + " w-full justify-center"}
-                  style={{ ...btnPrimaryStyle, background: "linear-gradient(135deg, #a855f7, #8b5cf6)" }}
+                  style={{ ...btnPrimaryStyle, background: "linear-gradient(135deg, #94a3b8, #94a3b8)" }}
                 >
                   <IconDownload />
                   Download JSON
@@ -979,7 +979,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
               <div className="flex items-center gap-3 mb-4">
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                  style={{ background: "rgba(251,191,36,0.1)", color: "#fbbf24" }}
+                  style={{ background: "rgba(148,163,184,0.1)", color: "#94a3b8" }}
                 >
                   <IconFilter />
                 </div>
@@ -1081,9 +1081,9 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                       }
                       className="px-2.5 py-1 rounded-md text-[10px] font-semibold transition-colors duration-150 cursor-pointer"
                       style={{
-                        background: filters[opt.key] ? "rgba(251,191,36,0.15)" : "var(--surface-2)",
-                        color: filters[opt.key] ? "#fbbf24" : "var(--text-muted)",
-                        border: `1px solid ${filters[opt.key] ? "rgba(251,191,36,0.3)" : "var(--border-default)"}`,
+                        background: filters[opt.key] ? "rgba(148,163,184,0.15)" : "var(--surface-2)",
+                        color: filters[opt.key] ? "#94a3b8" : "var(--text-muted)",
+                        border: `1px solid ${filters[opt.key] ? "rgba(148,163,184,0.3)" : "var(--border-default)"}`,
                       }}
                     >
                       {opt.label}
@@ -1101,7 +1101,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   </span>
                   <span
                     className="text-xs font-bold font-mono tabular-nums"
-                    style={{ color: hasActiveFilters ? "#fbbf24" : "var(--text-secondary)" }}
+                    style={{ color: hasActiveFilters ? "#94a3b8" : "var(--text-secondary)" }}
                   >
                     {filteredFlights.length.toLocaleString()} / {flights.length.toLocaleString()}
                   </span>
@@ -1112,7 +1112,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                     onClick={() => exportCSV(filteredFlights, "aerointel_filtered")}
                     disabled={exportProgress.active || filteredFlights.length === 0}
                     className={btnPrimary + " flex-1 justify-center"}
-                    style={{ ...btnPrimaryStyle, background: "linear-gradient(135deg, #fbbf24, #f59e0b)", fontSize: "11px" }}
+                    style={{ ...btnPrimaryStyle, background: "linear-gradient(135deg, #94a3b8, #94a3b8)", fontSize: "11px" }}
                   >
                     <IconDownload />
                     CSV
@@ -1121,7 +1121,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                     onClick={() => exportJSON(filteredFlights, "aerointel_filtered")}
                     disabled={exportProgress.active || filteredFlights.length === 0}
                     className={btnPrimary + " flex-1 justify-center"}
-                    style={{ ...btnPrimaryStyle, background: "linear-gradient(135deg, #fbbf24, #f59e0b)", fontSize: "11px" }}
+                    style={{ ...btnPrimaryStyle, background: "linear-gradient(135deg, #94a3b8, #94a3b8)", fontSize: "11px" }}
                   >
                     <IconDownload />
                     JSON
@@ -1156,7 +1156,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
               <div className="flex items-center gap-3 mb-4">
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                  style={{ background: "rgba(52,211,153,0.1)", color: "#34d399" }}
+                  style={{ background: "rgba(203,213,225,0.1)", color: "#cbd5e1" }}
                 >
                   <IconReport />
                 </div>
@@ -1177,7 +1177,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   {["Summary & totals", "Aircraft type table", "Altitude distribution bars", "Top airlines table", "Data quality audit"].map(
                     (item) => (
                       <div key={item} className="flex items-center gap-2">
-                        <div className="w-1 h-1 rounded-full" style={{ background: "#34d399" }} />
+                        <div className="w-1 h-1 rounded-full" style={{ background: "#cbd5e1" }} />
                         <span className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>
                           {item}
                         </span>
@@ -1189,7 +1189,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   onClick={() => generateHTMLReport(flights)}
                   disabled={exportProgress.active}
                   className={btnPrimary + " w-full justify-center"}
-                  style={{ ...btnPrimaryStyle, background: "linear-gradient(135deg, #34d399, #10b981)" }}
+                  style={{ ...btnPrimaryStyle, background: "linear-gradient(135deg, #cbd5e1, #cbd5e1)" }}
                 >
                   <IconDownload />
                   Generate Report
@@ -1202,7 +1202,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
               <div className="flex items-center gap-3 mb-4">
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                  style={{ background: "rgba(96,165,250,0.1)", color: "#60a5fa" }}
+                  style={{ background: "rgba(148,163,184,0.1)", color: "#94a3b8" }}
                 >
                   <IconCompare />
                 </div>
@@ -1260,10 +1260,10 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   {/* New flights */}
                   <div className="rounded-lg p-3" style={{ background: "var(--surface-2)" }}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#34d399" }}>
+                      <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#cbd5e1" }}>
                         New Flights
                       </span>
-                      <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "#34d399" }}>
+                      <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "#cbd5e1" }}>
                         +{comparisonData.newFlights.length}
                       </span>
                     </div>
@@ -1284,10 +1284,10 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   {/* Departed flights */}
                   <div className="rounded-lg p-3" style={{ background: "var(--surface-2)" }}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#f87171" }}>
+                      <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#e2e8f0" }}>
                         Departed
                       </span>
-                      <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "#f87171" }}>
+                      <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "#e2e8f0" }}>
                         -{comparisonData.departedFlights.length}
                       </span>
                     </div>
@@ -1308,10 +1308,10 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   {/* Altitude changes */}
                   <div className="rounded-lg p-3" style={{ background: "var(--surface-2)" }}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#22d3ee" }}>
+                      <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#cbd5e1" }}>
                         Alt Changes
                       </span>
-                      <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "#22d3ee" }}>
+                      <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "#cbd5e1" }}>
                         {comparisonData.altitudeChanges.length}
                       </span>
                     </div>
@@ -1319,7 +1319,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                       {comparisonData.altitudeChanges.slice(0, 6).map((c) => (
                         <div key={c.icao24} className="text-[10px] font-mono flex justify-between gap-1" style={{ color: "var(--text-muted)" }}>
                           <span className="truncate">{c.callsign}</span>
-                          <span style={{ color: c.delta > 0 ? "#34d399" : "#f87171" }}>
+                          <span style={{ color: c.delta > 0 ? "#cbd5e1" : "#e2e8f0" }}>
                             {c.delta > 0 ? "+" : ""}
                             {c.delta.toLocaleString()} ft
                           </span>
@@ -1331,10 +1331,10 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   {/* Speed changes */}
                   <div className="rounded-lg p-3" style={{ background: "var(--surface-2)" }}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#fbbf24" }}>
+                      <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#94a3b8" }}>
                         Speed Changes
                       </span>
-                      <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "#fbbf24" }}>
+                      <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "#94a3b8" }}>
                         {comparisonData.speedChanges.length}
                       </span>
                     </div>
@@ -1342,7 +1342,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                       {comparisonData.speedChanges.slice(0, 6).map((c) => (
                         <div key={c.icao24} className="text-[10px] font-mono flex justify-between gap-1" style={{ color: "var(--text-muted)" }}>
                           <span className="truncate">{c.callsign}</span>
-                          <span style={{ color: c.delta > 0 ? "#34d399" : "#f87171" }}>
+                          <span style={{ color: c.delta > 0 ? "#cbd5e1" : "#e2e8f0" }}>
                             {c.delta > 0 ? "+" : ""}
                             {c.delta} kts
                           </span>
@@ -1359,7 +1359,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
               <div className="flex items-center gap-3 mb-4">
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                  style={{ background: "rgba(244,114,182,0.1)", color: "#f472b6" }}
+                  style={{ background: "rgba(226,232,240,0.1)", color: "#e2e8f0" }}
                 >
                   <IconSchedule />
                 </div>
@@ -1413,8 +1413,8 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   style={{
                     ...btnPrimaryStyle,
                     background: scheduleActive
-                      ? "linear-gradient(135deg, #f87171, #ef4444)"
-                      : "linear-gradient(135deg, #f472b6, #ec4899)",
+                      ? "linear-gradient(135deg, #e2e8f0, #e2e8f0)"
+                      : "linear-gradient(135deg, #e2e8f0, #e2e8f0)",
                   }}
                 >
                   <IconSchedule />
@@ -1424,10 +1424,10 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                 {scheduleActive && (
                   <div
                     className="rounded-lg px-3 py-2 flex items-center gap-2"
-                    style={{ background: "rgba(244,114,182,0.06)", border: "1px solid rgba(244,114,182,0.15)" }}
+                    style={{ background: "rgba(226,232,240,0.06)", border: "1px solid rgba(226,232,240,0.15)" }}
                   >
-                    <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: "#f472b6" }} />
-                    <span className="text-[10px]" style={{ color: "#f472b6" }}>
+                    <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: "#e2e8f0" }} />
+                    <span className="text-[10px]" style={{ color: "#e2e8f0" }}>
                       Scheduled: {scheduleFormat.toUpperCase()} every {scheduleFreq} min
                     </span>
                   </div>

@@ -345,9 +345,9 @@ function CopyButton({ text }: { text: string }) {
       onClick={handleCopy}
       className="flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md transition-all duration-200"
       style={{
-        background: copied ? "rgba(52, 211, 153, 0.15)" : "rgba(148, 163, 184, 0.08)",
+        background: copied ? "rgba(148, 163, 184, 0.15)" : "rgba(148, 163, 184, 0.08)",
         color: copied ? "var(--status-nominal)" : "var(--text-tertiary)",
-        border: `1px solid ${copied ? "rgba(52, 211, 153, 0.2)" : "var(--border-subtle)"}`,
+        border: `1px solid ${copied ? "rgba(148, 163, 184, 0.2)" : "var(--border-subtle)"}`,
       }}
     >
       {copied ? (
@@ -535,7 +535,7 @@ function DocsTab() {
                                 <code
                                   className="text-xs px-1.5 py-0.5 rounded"
                                   style={{
-                                    background: "rgba(56, 189, 248, 0.08)",
+                                    background: "rgba(148, 163, 184, 0.08)",
                                     color: "var(--accent-primary)",
                                     fontFamily: "'Geist Mono', monospace",
                                   }}
@@ -740,7 +740,7 @@ function PlaygroundTab({ apiKey }: { apiKey: string | null }) {
         <div
           className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs"
           style={{
-            background: "rgba(56, 189, 248, 0.04)",
+            background: "rgba(148, 163, 184, 0.04)",
             border: "1px solid var(--border-accent)",
             color: "var(--text-tertiary)",
             fontFamily: "'Geist Mono', monospace",
@@ -763,7 +763,7 @@ function PlaygroundTab({ apiKey }: { apiKey: string | null }) {
           disabled={loading}
           className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200"
           style={{
-            background: loading ? "rgba(56, 189, 248, 0.08)" : "var(--accent-primary)",
+            background: loading ? "rgba(148, 163, 184, 0.08)" : "var(--accent-primary)",
             color: loading ? "var(--accent-primary)" : "var(--surface-0)",
             cursor: loading ? "not-allowed" : "pointer",
           }}
@@ -803,10 +803,10 @@ function PlaygroundTab({ apiKey }: { apiKey: string | null }) {
                 style={{
                   background:
                     response.status >= 200 && response.status < 300
-                      ? "rgba(52, 211, 153, 0.12)"
+                      ? "rgba(148, 163, 184, 0.12)"
                       : response.status >= 400
-                      ? "rgba(248, 113, 113, 0.12)"
-                      : "rgba(251, 191, 36, 0.12)",
+                      ? "rgba(148, 163, 184, 0.12)"
+                      : "rgba(148, 163, 184, 0.12)",
                   color:
                     response.status >= 200 && response.status < 300
                       ? "var(--status-nominal)"
@@ -932,9 +932,9 @@ function KeysTab({
               onClick={handleRevoke}
               className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md transition-colors"
               style={{
-                background: "rgba(248, 113, 113, 0.08)",
+                background: "rgba(148, 163, 184, 0.08)",
                 color: "var(--status-critical)",
-                border: "1px solid rgba(248, 113, 113, 0.15)",
+                border: "1px solid rgba(148, 163, 184, 0.15)",
               }}
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -948,7 +948,7 @@ function KeysTab({
           <div className="text-center py-8">
             <div
               className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4"
-              style={{ background: "rgba(56, 189, 248, 0.08)", border: "1px solid var(--border-accent)" }}
+              style={{ background: "rgba(148, 163, 184, 0.08)", border: "1px solid var(--border-accent)" }}
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
@@ -1034,7 +1034,7 @@ function PricingTab() {
             className="rounded-xl p-5 flex flex-col transition-all duration-300"
             style={{
               background: tier.highlighted
-                ? "linear-gradient(180deg, rgba(56, 189, 248, 0.06) 0%, var(--surface-1) 100%)"
+                ? "linear-gradient(180deg, rgba(148, 163, 184, 0.06) 0%, var(--surface-1) 100%)"
                 : "var(--surface-1)",
               border: `1px solid ${tier.highlighted ? "var(--border-accent)" : "var(--border-default)"}`,
               position: "relative",
@@ -1404,7 +1404,7 @@ export default function ApiPortalMode({ onExitMode }: ApiPortalModeProps) {
           <div className="flex items-center gap-2.5">
             <div
               className="flex items-center justify-center w-8 h-8 rounded-lg"
-              style={{ background: "rgba(56, 189, 248, 0.1)", border: "1px solid var(--border-accent)" }}
+              style={{ background: "rgba(148, 163, 184, 0.1)", border: "1px solid var(--border-accent)" }}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="16 18 22 12 16 6" />
@@ -1426,9 +1426,9 @@ export default function ApiPortalMode({ onExitMode }: ApiPortalModeProps) {
           <span
             className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full"
             style={{
-              background: "rgba(52, 211, 153, 0.1)",
+              background: "rgba(148, 163, 184, 0.1)",
               color: "var(--status-nominal)",
-              border: "1px solid rgba(52, 211, 153, 0.15)",
+              border: "1px solid rgba(148, 163, 184, 0.15)",
             }}
           >
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--status-nominal)" }} />
@@ -1437,9 +1437,9 @@ export default function ApiPortalMode({ onExitMode }: ApiPortalModeProps) {
           <span
             className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full"
             style={{
-              background: apiKey ? "rgba(52, 211, 153, 0.08)" : "rgba(148, 163, 184, 0.06)",
+              background: apiKey ? "rgba(148, 163, 184, 0.08)" : "rgba(148, 163, 184, 0.06)",
               color: apiKey ? "var(--status-nominal)" : "var(--text-muted)",
-              border: `1px solid ${apiKey ? "rgba(52, 211, 153, 0.12)" : "var(--border-subtle)"}`,
+              border: `1px solid ${apiKey ? "rgba(148, 163, 184, 0.12)" : "var(--border-subtle)"}`,
             }}
           >
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -1464,7 +1464,7 @@ export default function ApiPortalMode({ onExitMode }: ApiPortalModeProps) {
             onClick={() => setActiveTab(tab.key)}
             className="flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
             style={{
-              background: activeTab === tab.key ? "rgba(56, 189, 248, 0.08)" : "transparent",
+              background: activeTab === tab.key ? "rgba(148, 163, 184, 0.08)" : "transparent",
               color: activeTab === tab.key ? "var(--accent-primary)" : "var(--text-muted)",
               border: activeTab === tab.key ? "1px solid var(--border-accent)" : "1px solid transparent",
             }}
@@ -1488,10 +1488,10 @@ export default function ApiPortalMode({ onExitMode }: ApiPortalModeProps) {
 
       {/* ── JSON Syntax Colors (injected via style tag) ── */}
       <style>{`
-        .json-key { color: #fbbf24; }
-        .json-string { color: #34d399; }
-        .json-number { color: #22d3ee; }
-        .json-boolean { color: #c084fc; }
+        .json-key { color: #94a3b8; }
+        .json-string { color: #cbd5e1; }
+        .json-number { color: #cbd5e1; }
+        .json-boolean { color: #94a3b8; }
         .json-null { color: #64748b; }
 
         /* Scrollbar styling */

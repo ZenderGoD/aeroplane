@@ -26,10 +26,10 @@ import type { AirportBaseline } from "@/types/baseline";
 // ── Helpers ─────────────────────────────────────────────────────────────
 
 function getPressureColor(score: number): string {
-  if (score >= 80) return "#ef4444";
-  if (score >= 60) return "#f97316";
-  if (score >= 40) return "#eab308";
-  if (score >= 20) return "#22c55e";
+  if (score >= 80) return "#e2e8f0";
+  if (score >= 60) return "#94a3b8";
+  if (score >= 40) return "#94a3b8";
+  if (score >= 20) return "#cbd5e1";
   return "#6b7280";
 }
 
@@ -43,17 +43,17 @@ function getPressureLabel(score: number): string {
 
 function getStatusColor(status: string): string {
   switch (status) {
-    case "disrupted": return "#ef4444";
-    case "congested": return "#f97316";
-    case "compressed": return "#eab308";
-    default: return "#22c55e";
+    case "disrupted": return "#e2e8f0";
+    case "congested": return "#94a3b8";
+    case "compressed": return "#94a3b8";
+    default: return "#cbd5e1";
   }
 }
 
 const SEVERITY_CONFIG: Record<string, { bg: string; border: string; text: string; icon: string }> = {
-  critical: { bg: "bg-red-950/30", border: "border-red-500/20", text: "text-red-300", icon: "text-red-400" },
-  warning: { bg: "bg-amber-950/20", border: "border-amber-500/20", text: "text-amber-300", icon: "text-amber-400" },
-  info: { bg: "bg-blue-950/20", border: "border-blue-500/20", text: "text-blue-300", icon: "text-blue-400" },
+  critical: { bg: "bg-slate-950/30", border: "border-slate-500/20", text: "text-slate-300", icon: "text-slate-400" },
+  warning: { bg: "bg-slate-950/20", border: "border-slate-500/20", text: "text-slate-300", icon: "text-slate-400" },
+  info: { bg: "bg-slate-950/20", border: "border-slate-500/20", text: "text-slate-300", icon: "text-slate-400" },
 };
 
 // ── Component ───────────────────────────────────────────────────────────
@@ -137,8 +137,8 @@ export default function AirportDetailSheet({
       >
         <SheetHeader className="px-5 pt-5 pb-0">
           <SheetTitle className="flex items-center gap-2.5" style={{ color: "var(--text-primary)" }}>
-            <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-              <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-8 h-8 rounded-lg bg-slate-500/10 border border-slate-500/20 flex items-center justify-center">
+              <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               </svg>
             </div>
@@ -203,8 +203,8 @@ export default function AirportDetailSheet({
                   <div className="space-y-1">
                     {freqData.frequencies.map((f, i) => {
                       const typeColors: Record<string, string> = {
-                        ATIS: "#60a5fa", GND: "#4ade80", TWR: "#fbbf24",
-                        DEP: "#22d3ee", APP: "#c084fc", CTR: "#f87171", UNICOM: "#94a3b8",
+                        ATIS: "#94a3b8", GND: "#cbd5e1", TWR: "#94a3b8",
+                        DEP: "#94a3b8", APP: "#94a3b8", CTR: "#e2e8f0", UNICOM: "#94a3b8",
                       };
                       const color = typeColors[f.type] || "#94a3b8";
                       return (
@@ -230,8 +230,8 @@ export default function AirportDetailSheet({
                   <div className="space-y-1">
                     {approachData.approaches.map((app) => {
                       const typeColors: Record<string, string> = {
-                        ILS: "#4ade80", RNAV: "#60a5fa", VOR: "#fbbf24",
-                        NDB: "#c084fc", VISUAL: "#94a3b8", LOC: "#22d3ee",
+                        ILS: "#cbd5e1", RNAV: "#94a3b8", VOR: "#94a3b8",
+                        NDB: "#94a3b8", VISUAL: "#94a3b8", LOC: "#94a3b8",
                       };
                       const color = typeColors[app.type] || "#94a3b8";
                       return (
@@ -266,7 +266,7 @@ export default function AirportDetailSheet({
                 <div className="space-y-1.5">
                   {airportTurnarounds.map((t) => {
                     const elapsed = Math.round((Date.now() - new Date(t.arrival_time).getTime()) / 60000);
-                    const timeColor = elapsed > 120 ? "text-red-400" : elapsed > 60 ? "text-orange-400" : elapsed > 30 ? "text-yellow-400" : "text-emerald-400";
+                    const timeColor = elapsed > 120 ? "text-slate-400" : elapsed > 60 ? "text-slate-400" : elapsed > 30 ? "text-slate-400" : "text-slate-400";
                     return (
                       <div key={t.icao24} className="flex items-center justify-between rounded-xl px-3.5 py-2.5 transition-all" style={{ background: "var(--surface-2)" }}>
                         <div>
@@ -346,7 +346,7 @@ export default function AirportDetailSheet({
                         <div className="flex items-center gap-3 text-[10px] tabular-nums" style={{ color: "var(--text-muted)" }}>
                           {alt !== null && <span>{alt.toLocaleString()} ft</span>}
                           <span>{dist.toFixed(1)} NM</span>
-                          <span className={f.onGround ? "text-amber-400 font-bold" : "text-emerald-400 font-bold"}>
+                          <span className={f.onGround ? "text-slate-400 font-bold" : "text-slate-400 font-bold"}>
                             {f.onGround ? "GND" : "AIR"}
                           </span>
                         </div>
@@ -404,7 +404,7 @@ function PressureSection({
           </div>
           {pressure.baselineDeviation !== null && (
             <div className={`text-[10px] font-semibold mt-0.5 ${
-              pressure.baselineDeviation > 20 ? "text-red-400" : pressure.baselineDeviation > 0 ? "text-amber-400" : "text-emerald-400"
+              pressure.baselineDeviation > 20 ? "text-slate-400" : pressure.baselineDeviation > 0 ? "text-slate-400" : "text-slate-400"
             }`}>
               {pressure.baselineDeviation > 0 ? "+" : ""}{Math.round(pressure.baselineDeviation)}% vs baseline
             </div>
@@ -454,7 +454,7 @@ function BaselineBar({ label, current, avg, stddev }: { label: string; current: 
     <div>
       <div className="flex items-center justify-between mb-1">
         <span style={{ color: "var(--text-tertiary)" }}>{label}</span>
-        <span className={`font-bold tabular-nums ${isAboveNormal ? "text-red-400" : isBelowNormal ? "text-blue-400" : "text-emerald-400"}`}>
+        <span className={`font-bold tabular-nums ${isAboveNormal ? "text-slate-400" : isBelowNormal ? "text-slate-400" : "text-slate-400"}`}>
           {current}
         </span>
       </div>

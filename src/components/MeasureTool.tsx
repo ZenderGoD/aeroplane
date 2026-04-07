@@ -29,8 +29,8 @@ export default function MeasureTool({ active, onDeactivate }: MeasureToolProps) 
     (latlng: L.LatLng): L.CircleMarker => {
       return L.circleMarker(latlng, {
         radius: 6,
-        color: "#00ffff",
-        fillColor: "#00ffff",
+        color: "#94a3b8",
+        fillColor: "#94a3b8",
         fillOpacity: 0.8,
         weight: 2,
       });
@@ -42,7 +42,7 @@ export default function MeasureTool({ active, onDeactivate }: MeasureToolProps) 
   const createMeasureLine = useCallback(
     (a: L.LatLng, b: L.LatLng): L.Polyline => {
       return L.polyline([a, b], {
-        color: "#00ffff",
+        color: "#94a3b8",
         weight: 2,
         dashArray: "8, 6",
         opacity: 0.9,
@@ -74,7 +74,7 @@ export default function MeasureTool({ active, onDeactivate }: MeasureToolProps) 
           font-size: 13px;
           font-weight: 600;
           white-space: nowrap;
-          border: 1px solid rgba(0, 255, 255, 0.4);
+          border: 1px solid rgba(148, 163, 184, 0.4);
           font-family: monospace;
           pointer-events: none;
         ">${formattedDistance} NM</div>`,

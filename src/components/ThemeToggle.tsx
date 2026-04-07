@@ -38,7 +38,7 @@ export default function ThemeToggle() {
         strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"
-        className={`absolute h-4 w-4 text-amber-400 transition-all duration-300 ease-[var(--ease-spring)]
+        className={`absolute h-4 w-4 text-slate-400 transition-all duration-300 ease-[var(--ease-spring)]
           ${isDark ? "rotate-0 scale-100 opacity-100" : "rotate-90 scale-0 opacity-0"}`}
       >
         <circle cx="12" cy="12" r="4" />
@@ -61,7 +61,7 @@ export default function ThemeToggle() {
         strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"
-        className={`absolute h-4 w-4 text-sky-700 transition-all duration-300 ease-[var(--ease-spring)]
+        className={`absolute h-4 w-4 text-slate-700 transition-all duration-300 ease-[var(--ease-spring)]
           ${isDark ? "-rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"}`}
       >
         <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />

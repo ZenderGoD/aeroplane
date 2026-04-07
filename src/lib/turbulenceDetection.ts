@@ -75,9 +75,9 @@ export function classifySeverity(vrVariance: number, spdVariance: number): Turbu
 
 export function severityColor(severity: TurbulenceSeverity): string {
   switch (severity) {
-    case "light": return "#34d399";
-    case "moderate": return "#fbbf24";
-    case "severe": return "#f87171";
+    case "light": return "#cbd5e1";
+    case "moderate": return "#94a3b8";
+    case "severe": return "#e2e8f0";
   }
 }
 

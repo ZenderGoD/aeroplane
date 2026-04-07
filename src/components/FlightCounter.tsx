@@ -20,10 +20,10 @@ export default function FlightCounter({
   inline = false,
 }: Props) {
   const statusColor = isRateLimited
-    ? "bg-orange-400 animate-pulse"
+    ? "bg-slate-400 animate-pulse"
     : isRefreshing
-      ? "bg-yellow-400 animate-pulse"
-      : "bg-green-500";
+      ? "bg-slate-400 animate-pulse"
+      : "bg-slate-300";
 
   return (
     <div className={inline

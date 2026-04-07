@@ -120,7 +120,7 @@ function AirplaneModel({
       {/* Cockpit windows */}
       <mesh position={[0, 0.15, -1.9]} rotation={[0.3, 0, 0]}>
         <boxGeometry args={[0.35, 0.12, 0.3]} />
-        <meshStandardMaterial color="#87CEEB" metalness={0.8} roughness={0.1} transparent opacity={0.7} />
+        <meshStandardMaterial color="#cbd5e1" metalness={0.8} roughness={0.1} transparent opacity={0.7} />
       </mesh>
     </group>
   );
@@ -137,12 +137,12 @@ function HeadingArrow({ heading }: { heading: number | null }) {
       {/* Arrow shaft */}
       <mesh position={[0, 0, -3]}>
         <boxGeometry args={[0.08, 0.02, 4]} />
-        <meshStandardMaterial color="#facc15" emissive="#facc15" emissiveIntensity={0.3} />
+        <meshStandardMaterial color="#94a3b8" emissive="#94a3b8" emissiveIntensity={0.3} />
       </mesh>
       {/* Arrow head */}
       <mesh position={[0, 0, -5.2]} rotation={[-Math.PI / 2, 0, 0]}>
         <coneGeometry args={[0.25, 0.6, 8]} />
-        <meshStandardMaterial color="#facc15" emissive="#facc15" emissiveIntensity={0.3} />
+        <meshStandardMaterial color="#94a3b8" emissive="#94a3b8" emissiveIntensity={0.3} />
       </mesh>
     </group>
   );
@@ -153,7 +153,7 @@ function HeadingArrow({ heading }: { heading: number | null }) {
 function GroundPlane() {
   return (
     <group position={[0, -2.5, 0]}>
-      <gridHelper args={[40, 40, "#1e3a5f", "#0f1f33"]} />
+      <gridHelper args={[40, 40, "#334155", "#1e293b"]} />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]}>
         <planeGeometry args={[40, 40]} />
         <meshStandardMaterial color="#0a1628" transparent opacity={0.8} />
@@ -180,7 +180,7 @@ function CompassRose() {
           position={l.pos}
           rotation={[-Math.PI / 2, 0, 0]}
           fontSize={0.8}
-          color="#4a7ab5"
+          color="#94a3b8"
           anchorX="center"
           anchorY="middle"
         >
@@ -202,7 +202,7 @@ function Scene({ flight }: { flight: FlightState }) {
       <ambientLight intensity={0.4} />
       <directionalLight position={[5, 10, 5]} intensity={1} castShadow />
       <directionalLight position={[-3, 5, -3]} intensity={0.3} />
-      <pointLight position={[0, 5, 0]} intensity={0.5} color="#87CEEB" />
+      <pointLight position={[0, 5, 0]} intensity={0.5} color="#cbd5e1" />
 
       {/* Environment for reflections */}
       <Environment preset="night" />
@@ -262,7 +262,7 @@ function HUD({ flight }: { flight: FlightState }) {
 function HUDItem({ label, value }: { label: string; value: string }) {
   return (
     <div className="text-center">
-      <div className="text-[10px] font-bold text-blue-400/80 tracking-wider">
+      <div className="text-[10px] font-bold text-slate-400/80 tracking-wider">
         {label}
       </div>
       <div className="text-sm font-mono font-semibold text-white">{value}</div>
@@ -282,7 +282,7 @@ export default function Flight3DViewer({ flight, onClose }: Flight3DViewerProps)
       <div className="flex items-center justify-between px-4 py-3 bg-gray-900/90 border-b border-gray-800 backdrop-blur-sm">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
             </svg>
             <span className="text-white font-bold text-lg tracking-wide">{callsign}</span>
@@ -297,7 +297,7 @@ export default function Flight3DViewer({ flight, onClose }: Flight3DViewerProps)
             {flight.originCountry}
           </span>
           {flight.onGround && (
-            <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-yellow-500/20 text-yellow-400">
+            <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-500/20 text-slate-400">
               ON GROUND
             </span>
           )}

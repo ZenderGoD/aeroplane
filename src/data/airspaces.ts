@@ -20,14 +20,14 @@ export interface Airspace {
 
 // ---------- Color constants ----------
 
-const FIR_COLOR = "rgba(59,130,246,0.25)";
-const UIR_COLOR = "rgba(59,130,246,0.25)";
-const TMA_COLOR = "rgba(34,211,238,0.25)";
-const CTR_COLOR = "rgba(34,211,238,0.25)";
-const RESTRICTED_COLOR = "rgba(239,68,68,0.3)";
-const PROHIBITED_COLOR = "rgba(239,68,68,0.5)";
-const DANGER_COLOR = "rgba(245,158,11,0.3)";
-const MOA_COLOR = "rgba(168,85,247,0.25)";
+const FIR_COLOR = "rgba(148,163,184,0.25)";
+const UIR_COLOR = "rgba(148,163,184,0.25)";
+const TMA_COLOR = "rgba(203,213,225,0.25)";
+const CTR_COLOR = "rgba(203,213,225,0.25)";
+const RESTRICTED_COLOR = "rgba(226,232,240,0.3)";
+const PROHIBITED_COLOR = "rgba(226,232,240,0.5)";
+const DANGER_COLOR = "rgba(148,163,184,0.3)";
+const MOA_COLOR = "rgba(148,163,184,0.25)";
 
 // ---------- FIR (Flight Information Regions) ----------
 
@@ -1037,18 +1037,18 @@ export function getBorderColor(type: Airspace["type"]): string {
   switch (type) {
     case "FIR":
     case "UIR":
-      return "#3b82f6";
+      return "#94a3b8";
     case "TMA":
     case "CTR":
-      return "#22d3ee";
+      return "#cbd5e1";
     case "RESTRICTED":
-      return "#ef4444";
+      return "#e2e8f0";
     case "PROHIBITED":
-      return "#dc2626";
+      return "#e2e8f0";
     case "DANGER":
-      return "#f59e0b";
+      return "#94a3b8";
     case "MOA":
-      return "#a855f7";
+      return "#94a3b8";
     default:
       return "#6b7280";
   }

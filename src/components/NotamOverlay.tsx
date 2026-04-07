@@ -6,15 +6,15 @@ import { NOTAMS, type Notam } from "@/data/notams";
 
 // ── Severity palette ────────────────────────────────────────────────
 const SEVERITY_COLORS: Record<Notam["severity"], string> = {
-  critical: "#ef4444",
-  warning: "#f59e0b",
-  info: "#3b82f6",
+  critical: "#e2e8f0",
+  warning: "#94a3b8",
+  info: "#94a3b8",
 };
 
 const SEVERITY_BG: Record<Notam["severity"], string> = {
-  critical: "rgba(239,68,68,0.15)",
-  warning: "rgba(245,158,11,0.12)",
-  info: "rgba(59,130,246,0.10)",
+  critical: "rgba(226,232,240,0.15)",
+  warning: "rgba(148,163,184,0.12)",
+  info: "rgba(148,163,184,0.10)",
 };
 
 // ── Helpers ─────────────────────────────────────────────────────────
@@ -92,7 +92,7 @@ function popupHtml(n: Notam): string {
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
         <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0"></span>
         <span style="font-size:11px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:0.05em">${n.type} &mdash; ${n.severity}</span>
-        ${active ? '<span style="margin-left:auto;font-size:9px;background:#22c55e;color:#000;padding:1px 6px;border-radius:4px;font-weight:600">ACTIVE</span>' : '<span style="margin-left:auto;font-size:9px;background:#64748b;color:#fff;padding:1px 6px;border-radius:4px;font-weight:600">SCHED</span>'}
+        ${active ? '<span style="margin-left:auto;font-size:9px;background:#cbd5e1;color:#000;padding:1px 6px;border-radius:4px;font-weight:600">ACTIVE</span>' : '<span style="margin-left:auto;font-size:9px;background:#64748b;color:#fff;padding:1px 6px;border-radius:4px;font-weight:600">SCHED</span>'}
       </div>
       <div style="font-size:12px;font-weight:600;margin-bottom:6px">${n.title}</div>
       <div style="font-size:10.5px;color:#94a3b8;margin-bottom:8px">${n.description}</div>
@@ -335,20 +335,20 @@ export default function NotamOverlay({ map, visible }: NotamOverlayProps) {
             {/* ── Header ─────────────────────────────────────────── */}
             <div className="px-4 py-3 border-b border-gray-700/30">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-slate-500 animate-pulse" />
                 <h3 className="text-sm font-semibold text-gray-100 tracking-wide">
                   NOTAM / TFR Overlay
                 </h3>
               </div>
               <div className="flex items-center gap-3 text-[10px] text-gray-400 font-mono">
                 <span>
-                  <span className="text-red-400 font-bold">{tfrCount}</span> TFR
+                  <span className="text-slate-400 font-bold">{tfrCount}</span> TFR
                 </span>
                 <span>
-                  <span className="text-amber-400 font-bold">{notamCount}</span> NOTAM
+                  <span className="text-slate-400 font-bold">{notamCount}</span> NOTAM
                 </span>
                 {criticalCount > 0 && (
-                  <span className="text-red-400 font-bold animate-pulse">
+                  <span className="text-slate-400 font-bold animate-pulse">
                     {criticalCount} CRITICAL
                   </span>
                 )}
@@ -362,7 +362,7 @@ export default function NotamOverlay({ map, visible }: NotamOverlayProps) {
                 onClick={() => setShowTFR((v) => !v)}
                 className={`px-2 py-0.5 rounded text-[10px] font-semibold border transition-colors ${
                   showTFR
-                    ? "bg-red-500/20 border-red-500/40 text-red-300"
+                    ? "bg-slate-500/20 border-slate-500/40 text-slate-300"
                     : "bg-gray-800/40 border-gray-700/30 text-gray-500"
                 }`}
               >
@@ -372,7 +372,7 @@ export default function NotamOverlay({ map, visible }: NotamOverlayProps) {
                 onClick={() => setShowNOTAM((v) => !v)}
                 className={`px-2 py-0.5 rounded text-[10px] font-semibold border transition-colors ${
                   showNOTAM
-                    ? "bg-blue-500/20 border-blue-500/40 text-blue-300"
+                    ? "bg-slate-500/20 border-slate-500/40 text-slate-300"
                     : "bg-gray-800/40 border-gray-700/30 text-gray-500"
                 }`}
               >
@@ -412,7 +412,7 @@ export default function NotamOverlay({ map, visible }: NotamOverlayProps) {
                 onClick={() => setActiveOnly((v) => !v)}
                 className={`px-2 py-0.5 rounded text-[10px] font-semibold border transition-colors ${
                   activeOnly
-                    ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-300"
+                    ? "bg-slate-500/20 border-slate-500/40 text-slate-300"
                     : "bg-gray-800/40 border-gray-700/30 text-gray-500"
                 }`}
               >
@@ -456,7 +456,7 @@ export default function NotamOverlay({ map, visible }: NotamOverlayProps) {
                         {n.id}
                       </span>
                       {active && (
-                        <span className="ml-auto text-[8px] bg-emerald-500/20 text-emerald-400 px-1.5 py-px rounded font-semibold">
+                        <span className="ml-auto text-[8px] bg-slate-500/20 text-slate-400 px-1.5 py-px rounded font-semibold">
                           ACTIVE
                         </span>
                       )}
@@ -466,7 +466,7 @@ export default function NotamOverlay({ map, visible }: NotamOverlayProps) {
                     </div>
                     <div className="flex items-center gap-2 text-[9px] text-gray-500 font-mono">
                       {n.affectedAirport && (
-                        <span className="text-sky-400">{n.affectedAirport}</span>
+                        <span className="text-slate-400">{n.affectedAirport}</span>
                       )}
                       <span>{fmtDate(n.effectiveFrom).split(",")[0]}</span>
                       {n.radius && <span>{n.radius} NM</span>}

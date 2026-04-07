@@ -71,14 +71,14 @@ export default function ShareButton({ selectedFlightIcao }: ShareButtonProps) {
         height: 32,
         padding: copied ? "0 12px" : "0 8px",
         borderRadius: 8,
-        border: `1px solid ${copied ? "rgba(34,197,94,0.3)" : "rgba(255,255,255,0.08)"}`,
+        border: `1px solid ${copied ? "rgba(226,232,240,0.3)" : "rgba(255,255,255,0.08)"}`,
         background: copied
-          ? "rgba(34,197,94,0.12)"
+          ? "rgba(226,232,240,0.12)"
           : "rgba(10,12,16,0.8)",
         backdropFilter: "blur(8px)",
         WebkitBackdropFilter: "blur(8px)",
         cursor: "pointer",
-        color: copied ? "#22c55e" : "#94a3b8",
+        color: copied ? "#e2e8f0" : "#94a3b8",
         transition: "all 0.2s ease",
         fontSize: 11,
         fontWeight: 500,

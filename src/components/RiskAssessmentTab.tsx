@@ -45,10 +45,10 @@ interface Props {
 }
 
 const RISK_COLORS: Record<string, { bg: string; border: string; text: string; dot: string }> = {
-  critical: { bg: "bg-red-950/60", border: "border-red-700/50", text: "text-red-300", dot: "bg-red-500" },
-  high: { bg: "bg-orange-950/50", border: "border-orange-700/40", text: "text-orange-300", dot: "bg-orange-500" },
-  moderate: { bg: "bg-amber-950/40", border: "border-amber-700/30", text: "text-amber-300", dot: "bg-amber-500" },
-  low: { bg: "bg-green-950/30", border: "border-green-800/30", text: "text-green-300", dot: "bg-green-500" },
+  critical: { bg: "bg-gray-900/60", border: "border-gray-600/50", text: "text-gray-200", dot: "bg-gray-400" },
+  high: { bg: "bg-gray-900/50", border: "border-gray-600/40", text: "text-gray-300", dot: "bg-gray-400" },
+  moderate: { bg: "bg-gray-900/40", border: "border-gray-700/30", text: "text-gray-300", dot: "bg-gray-500" },
+  low: { bg: "bg-gray-900/30", border: "border-gray-700/30", text: "text-gray-400", dot: "bg-gray-500" },
 };
 
 const ENTITY_ICONS: Record<string, string> = {
@@ -58,10 +58,10 @@ const ENTITY_ICONS: Record<string, string> = {
 };
 
 const OVERALL_LABELS: Record<string, { text: string; color: string }> = {
-  high: { text: "HIGH RISK", color: "text-red-400" },
-  elevated: { text: "ELEVATED", color: "text-orange-400" },
-  moderate: { text: "MODERATE", color: "text-amber-400" },
-  low: { text: "LOW RISK", color: "text-green-400" },
+  high: { text: "HIGH RISK", color: "text-gray-200" },
+  elevated: { text: "ELEVATED", color: "text-gray-300" },
+  moderate: { text: "MODERATE", color: "text-gray-300" },
+  low: { text: "LOW RISK", color: "text-gray-400" },
 };
 
 export default function RiskAssessmentTab({ riskyFlights, airports, corridors }: Props) {
@@ -104,8 +104,8 @@ export default function RiskAssessmentTab({ riskyFlights, airports, corridors }:
         {/* Generate button or overall risk */}
         {assessments.length === 0 && !isLoading && !error && (
           <div className="text-center py-8">
-            <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-purple-900/30 border border-purple-800/40 flex items-center justify-center">
-              <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gray-800/30 border border-gray-700/40 flex items-center justify-center">
+              <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
             </div>
@@ -113,7 +113,7 @@ export default function RiskAssessmentTab({ riskyFlights, airports, corridors }:
             <button
               onClick={generate}
               disabled={remaining === 0}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 border border-purple-700/30 text-purple-300 text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-700/20 hover:bg-gray-700/30 border border-gray-600/30 text-gray-300 text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -126,15 +126,15 @@ export default function RiskAssessmentTab({ riskyFlights, airports, corridors }:
 
         {isLoading && (
           <div className="flex items-center justify-center gap-2 py-12">
-            <div className="w-5 h-5 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
-            <span className="text-xs text-purple-400">Assessing risks...</span>
+            <div className="w-5 h-5 border-2 border-gray-500/30 border-t-gray-400 rounded-full animate-spin" />
+            <span className="text-xs text-gray-400">Assessing risks...</span>
           </div>
         )}
 
         {error && (
           <div className="text-center py-8">
-            <p className="text-xs text-red-400">Failed to generate assessment</p>
-            <button onClick={generate} className="text-[10px] text-purple-400 hover:underline mt-1">
+            <p className="text-xs text-gray-400">Failed to generate assessment</p>
+            <button onClick={generate} className="text-[10px] text-gray-300 hover:underline mt-1">
               Retry
             </button>
           </div>
@@ -155,7 +155,7 @@ export default function RiskAssessmentTab({ riskyFlights, airports, corridors }:
               <button
                 onClick={generate}
                 disabled={remaining === 0}
-                className="text-[10px] text-purple-400 hover:text-purple-300 disabled:opacity-40"
+                className="text-[10px] text-gray-400 hover:text-gray-300 disabled:opacity-40"
               >
                 ↻ Refresh
               </button>
@@ -183,7 +183,7 @@ export default function RiskAssessmentTab({ riskyFlights, airports, corridors }:
                     </span>
                   </div>
                   <p className="text-xs text-gray-300 leading-relaxed">{a.reason}</p>
-                  <p className="text-[10px] text-cyan-400/70 leading-relaxed">→ {a.recommendation}</p>
+                  <p className="text-[10px] text-gray-400/70 leading-relaxed">→ {a.recommendation}</p>
                 </div>
               );
             })}

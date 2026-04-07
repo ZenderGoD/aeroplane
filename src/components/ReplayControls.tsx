@@ -318,7 +318,7 @@ export default function ReplayControls({
             <span
               className={`inline-block w-2 h-2 rounded-full ${
                 isPlaying
-                  ? "bg-red-500 animate-pulse"
+                  ? "bg-slate-400 animate-pulse"
                   : "bg-gray-500"
               }`}
             />
@@ -331,7 +331,7 @@ export default function ReplayControls({
             <span className="text-xs text-gray-500">
               {activeCount} flight{activeCount !== 1 ? "s" : ""}
             </span>
-            <span className="text-sm font-mono text-blue-400 tabular-nums">
+            <span className="text-sm font-mono text-slate-300 tabular-nums">
               {formatTime(currentReplayTime)}
             </span>
           </div>
@@ -353,7 +353,7 @@ export default function ReplayControls({
             />
             {/* Progress glow effect */}
             <div
-              className="absolute top-1/2 left-0 h-1 -translate-y-1/2 rounded-full bg-blue-500/20 blur-sm pointer-events-none"
+              className="absolute top-1/2 left-0 h-1 -translate-y-1/2 rounded-full bg-slate-500/20 blur-sm pointer-events-none"
               style={{ width: `${playhead * 100}%` }}
             />
           </div>
@@ -422,7 +422,7 @@ export default function ReplayControls({
             variant="ghost"
             size="icon-sm"
             onClick={handleClose}
-            className="text-gray-500 hover:text-red-400 hover:bg-gray-800/80"
+            className="text-gray-500 hover:text-slate-300 hover:bg-gray-800/80"
             aria-label="Close replay"
           >
             <svg

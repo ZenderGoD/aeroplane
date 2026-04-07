@@ -55,7 +55,7 @@ export default function WeatherLayer({ visible }: Props) {
             onClick={() => setActiveLayer(key)}
             className={`px-2 py-1 rounded text-[10px] font-medium transition-colors ${
               activeLayer === key
-                ? "bg-blue-600 text-white"
+                ? "bg-slate-600 text-white"
                 : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
             }`}
           >

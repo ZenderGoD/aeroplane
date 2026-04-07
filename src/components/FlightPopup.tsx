@@ -13,7 +13,7 @@ export default function FlightPopup({ flight }: { flight: FlightState }) {
   const airline = getAirlineName(flight.callsign);
   return (
     <div className="p-3 min-w-[200px] text-sm">
-      <div className="font-bold text-base text-blue-700">
+      <div className="font-bold text-base text-slate-400">
         {formatCallsign(flight.callsign)}
       </div>
       {airline && (

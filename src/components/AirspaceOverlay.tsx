@@ -103,7 +103,7 @@ function buildPopupHtml(airspace: Airspace): string {
 
   if (airspace.icao) {
     html += `<span style="color:#9ca3af">ICAO</span>`;
-    html += `<span style="font-weight:600;font-family:monospace;color:#60a5fa">${airspace.icao}</span>`;
+    html += `<span style="font-weight:600;font-family:monospace;color:#cbd5e1">${airspace.icao}</span>`;
   }
 
   html += `<span style="color:#9ca3af">Lower</span>`;

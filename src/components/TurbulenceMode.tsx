@@ -301,10 +301,10 @@ function TurbulenceMapInner({
 
       // Color by altitude
       let color = "#64748b";
-      if (altFt < 10000) color = "#34d399";
-      else if (altFt < 25000) color = "#fbbf24";
-      else if (altFt < 40000) color = "#22d3ee";
-      else color = "#a78bfa";
+      if (altFt < 10000) color = "#cbd5e1";
+      else if (altFt < 25000) color = "#94a3b8";
+      else if (altFt < 40000) color = "#cbd5e1";
+      else color = "#94a3b8";
 
       // Turbulent aircraft get a red outline glow
       const glowFilter = isTurbulent
@@ -363,7 +363,7 @@ const TurbulenceMap = dynamic(() => Promise.resolve(TurbulenceMapInner), {
       style={{ background: "var(--surface-0)" }}
     >
       <div className="text-center">
-        <div className="w-8 h-8 border-2 border-red-400/30 border-t-red-400 rounded-full animate-spin mx-auto mb-3" />
+        <div className="w-8 h-8 border-2 border-slate-300/30 border-t-slate-300 rounded-full animate-spin mx-auto mb-3" />
         <span style={{ color: "var(--text-muted)", fontSize: "12px" }}>
           Loading turbulence map...
         </span>
@@ -504,14 +504,14 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
             <div className="relative">
               <div
                 className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ background: "rgba(248,113,113,0.15)", border: "1px solid rgba(248,113,113,0.25)" }}
+                style={{ background: "rgba(226,232,240,0.15)", border: "1px solid rgba(226,232,240,0.25)" }}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e2e8f0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M4 14h4l3-8 4 16 3-8h4" />
                 </svg>
               </div>
               {turbulencePoints.length > 0 && (
-                <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-red-400 animate-anomaly-pulse" />
+                <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-slate-300 animate-anomaly-pulse" />
               )}
             </div>
             <div>
@@ -584,7 +584,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
               className="text-[10px] font-semibold px-2 py-1.5 rounded-md transition-all"
               style={{
                 background: altitudeFilter === "all" ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.04)",
-                color: altitudeFilter === "all" ? "#38bdf8" : "var(--text-muted)",
+                color: altitudeFilter === "all" ? "#cbd5e1" : "var(--text-muted)",
                 border: `1px solid ${altitudeFilter === "all" ? "rgba(56,189,248,0.3)" : "transparent"}`,
               }}
             >
@@ -600,7 +600,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
                     altitudeFilter === band.label
                       ? "rgba(56,189,248,0.2)"
                       : "rgba(255,255,255,0.04)",
-                  color: altitudeFilter === band.label ? "#38bdf8" : "var(--text-muted)",
+                  color: altitudeFilter === band.label ? "#cbd5e1" : "var(--text-muted)",
                   border: `1px solid ${altitudeFilter === band.label ? "rgba(56,189,248,0.3)" : "transparent"}`,
                 }}
               >
@@ -633,7 +633,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
                 className="absolute top-0.5 w-3 h-3 rounded-full transition-all"
                 style={{
                   left: showAllAircraft ? "calc(100% - 14px)" : "2px",
-                  background: showAllAircraft ? "#38bdf8" : "#64748b",
+                  background: showAllAircraft ? "#cbd5e1" : "#64748b",
                 }}
               />
             </div>
@@ -654,7 +654,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
                 className="text-[10px] font-semibold px-2 py-1 rounded-md transition-all"
                 style={{
                   background: refreshInterval === opt ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.04)",
-                  color: refreshInterval === opt ? "#38bdf8" : "var(--text-muted)",
+                  color: refreshInterval === opt ? "#cbd5e1" : "var(--text-muted)",
                   border: `1px solid ${refreshInterval === opt ? "rgba(56,189,248,0.3)" : "transparent"}`,
                 }}
               >
@@ -746,8 +746,8 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
           <div
             className="w-1.5 h-1.5 rounded-full"
             style={{
-              background: totalReports > 0 ? "#f87171" : "#34d399",
-              boxShadow: totalReports > 0 ? "0 0 6px #f8717160" : "0 0 6px #34d39960",
+              background: totalReports > 0 ? "#e2e8f0" : "#cbd5e1",
+              boxShadow: totalReports > 0 ? "0 0 6px #e2e8f060" : "0 0 6px #cbd5e160",
             }}
           />
           <span className="text-[10px] font-medium" style={{ color: "var(--text-muted)" }}>
@@ -783,7 +783,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
           <span
             className="text-[10px] font-bold data-value px-1.5 py-0.5 rounded"
             style={{
-              color: "#38bdf8",
+              color: "#cbd5e1",
               background: "rgba(56,189,248,0.1)",
               border: "1px solid rgba(56,189,248,0.2)",
             }}

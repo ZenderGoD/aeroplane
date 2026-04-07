@@ -17,12 +17,12 @@ export default function PricingCard({ name, price, period, description, features
     <div
       className={`relative rounded-2xl p-[1px] ${
         highlighted
-          ? "bg-[linear-gradient(135deg,rgba(56,189,248,0.4),rgba(139,92,246,0.4),rgba(56,189,248,0.2))]"
+          ? "bg-[linear-gradient(135deg,rgba(148,163,184,0.4),rgba(203,213,225,0.4),rgba(148,163,184,0.2))]"
           : ""
       }`}
     >
       {highlighted && (
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[linear-gradient(135deg,#38bdf8,#8b5cf6)] text-xs font-semibold text-white">
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[linear-gradient(135deg,#94a3b8,#cbd5e1)] text-xs font-semibold text-white">
           Most Popular
         </div>
       )}
@@ -45,7 +45,7 @@ export default function PricingCard({ name, price, period, description, features
         <button
           className={`w-full py-2.5 rounded-lg font-medium text-sm transition-colors mb-6 ${
             highlighted
-              ? "bg-[var(--accent-primary)] text-[var(--surface-0)] hover:bg-sky-300"
+              ? "bg-[var(--accent-primary)] text-[var(--surface-0)] hover:bg-slate-300"
               : "bg-[var(--surface-3)] text-[var(--text-secondary)] hover:bg-[var(--surface-4)] border border-[var(--border-default)]"
           }`}
         >

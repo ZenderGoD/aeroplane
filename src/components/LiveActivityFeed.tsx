@@ -71,14 +71,14 @@ function soundForKind(kind: EventKind): "emergency" | "military" | "alert" | "in
   }
 }
 const BORDER_COLORS: Record<string, string> = {
-  emergency: "#ef4444",
-  military: "#f59e0b",
-  entered: "#22c55e",
+  emergency: "#e2e8f0",
+  military: "#94a3b8",
+  entered: "#cbd5e1",
   departed: "#94a3b8",
-  rapid_descent: "#06b6d4",
-  rapid_climb: "#06b6d4",
-  landed: "#06b6d4",
-  takeoff: "#06b6d4",
+  rapid_descent: "#cbd5e1",
+  rapid_climb: "#cbd5e1",
+  landed: "#cbd5e1",
+  takeoff: "#cbd5e1",
 };
 
 /* ------------------------------------------------------------------ */
@@ -386,8 +386,8 @@ const styles: Record<string, React.CSSProperties> = {
   badge: {
     fontSize: 10,
     fontWeight: 600,
-    color: "#0ea5e9",
-    background: "rgba(14, 165, 233, 0.12)",
+    color: "#94a3b8",
+    background: "rgba(148, 163, 184, 0.12)",
     borderRadius: 8,
     padding: "1px 6px",
     fontFamily: "monospace",
@@ -407,7 +407,7 @@ const styles: Record<string, React.CSSProperties> = {
     width: 6,
     height: 6,
     borderRadius: "50%",
-    background: "#ef4444",
+    background: "#e2e8f0",
     display: "inline-block",
     animation: "livefeed-pulse 1.8s ease-in-out infinite",
     flexShrink: 0,

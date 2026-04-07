@@ -24,10 +24,10 @@ import type { FlightEvent } from "@/types/events";
 
 function getStatusColor(status: string): string {
   switch (status) {
-    case "disrupted": return "#ef4444";
-    case "congested": return "#f97316";
-    case "compressed": return "#eab308";
-    default: return "#22c55e";
+    case "disrupted": return "#e2e8f0";
+    case "congested": return "#94a3b8";
+    case "compressed": return "#94a3b8";
+    default: return "#cbd5e1";
   }
 }
 
@@ -41,17 +41,17 @@ function getStatusLabel(status: string): string {
 }
 
 function getPressureColor(score: number): string {
-  if (score >= 80) return "#ef4444";
-  if (score >= 60) return "#f97316";
-  if (score >= 40) return "#eab308";
-  if (score >= 20) return "#22c55e";
+  if (score >= 80) return "#e2e8f0";
+  if (score >= 60) return "#94a3b8";
+  if (score >= 40) return "#94a3b8";
+  if (score >= 20) return "#cbd5e1";
   return "#6b7280";
 }
 
 function getTrendColor(label: string): string {
   switch (label) {
-    case "improving": return "#22c55e";
-    case "degrading": return "#ef4444";
+    case "improving": return "#cbd5e1";
+    case "degrading": return "#e2e8f0";
     default: return "#94a3b8";
   }
 }
@@ -65,9 +65,9 @@ function getTrendIcon(label: string): string {
 }
 
 const SEVERITY_CONFIG: Record<string, { bg: string; border: string; text: string }> = {
-  critical: { bg: "bg-red-950/30", border: "border-red-500/20", text: "text-red-300" },
-  warning: { bg: "bg-amber-950/20", border: "border-amber-500/20", text: "text-amber-300" },
-  info: { bg: "bg-blue-950/20", border: "border-blue-500/20", text: "text-blue-300" },
+  critical: { bg: "bg-slate-950/30", border: "border-slate-500/20", text: "text-slate-300" },
+  warning: { bg: "bg-slate-950/20", border: "border-slate-500/20", text: "text-slate-300" },
+  info: { bg: "bg-slate-950/20", border: "border-slate-500/20", text: "text-slate-300" },
 };
 
 // ── Component ───────────────────────────────────────────────────────────
@@ -136,8 +136,8 @@ export default function CorridorDetailSheet({
       >
         <SheetHeader className="px-5 pt-5 pb-0">
           <SheetTitle className="flex items-center gap-2.5" style={{ color: "var(--text-primary)" }}>
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-              <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-8 h-8 rounded-lg bg-slate-500/10 border border-slate-500/20 flex items-center justify-center">
+              <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
             </div>
@@ -295,7 +295,7 @@ function HealthSection({ health, pred }: { health: CorridorHealth; pred: Corrido
           { label: "Anomalies", value: String(health.anomalyCount), highlight: health.anomalyCount > 0 },
         ].map((item) => (
           <div key={item.label} className="rounded-xl px-2 py-2 text-center" style={{ background: "var(--surface-2)" }}>
-            <div className={`text-sm font-bold tabular-nums ${"highlight" in item && item.highlight ? "text-red-400" : ""}`} style={!("highlight" in item && item.highlight) ? { color: "var(--text-primary)" } : undefined}>
+            <div className={`text-sm font-bold tabular-nums ${"highlight" in item && item.highlight ? "text-slate-400" : ""}`} style={!("highlight" in item && item.highlight) ? { color: "var(--text-primary)" } : undefined}>
               {item.value}
             </div>
             <div className="text-[8px] uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>{item.label}</div>
@@ -368,8 +368,8 @@ function AirportMiniCard({ icao, label, pressureScore, onClick }: { icao: string
       style={{ background: "var(--surface-2)" }}
     >
       <div className="flex items-center gap-2.5">
-        <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-          <span className="text-[9px] font-bold text-blue-400">{label === "Origin" ? "ORG" : "DST"}</span>
+        <div className="w-7 h-7 rounded-lg bg-slate-500/10 border border-slate-500/20 flex items-center justify-center">
+          <span className="text-[9px] font-bold text-slate-400">{label === "Origin" ? "ORG" : "DST"}</span>
         </div>
         <div>
           <span className="text-xs font-mono transition-colors" style={{ color: "var(--text-primary)" }}>{icao}</span>

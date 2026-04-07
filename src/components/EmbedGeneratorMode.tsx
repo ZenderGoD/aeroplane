@@ -84,9 +84,9 @@ export default function EmbedGeneratorMode({ onExitMode }: Props) {
   /* ---- Syntax-highlighted code ---------------------------------- */
   function highlightIframe(code: string) {
     return code
-      .replace(/(&lt;|<)(iframe|\/iframe)/g, (_, br, tag) => `${br}<span style="color:#38bdf8">${tag}</span>`)
-      .replace(/(src|width|height|style|loading|allowfullscreen)(=)/g, '<span style="color:#c084fc">$1</span><span style="color:#94a3b8">$2</span>')
-      .replace(/"([^"]*)"/g, '<span style="color:#34d399">"$1"</span>');
+      .replace(/(&lt;|<)(iframe|\/iframe)/g, (_, br, tag) => `${br}<span style="color:#cbd5e1">${tag}</span>`)
+      .replace(/(src|width|height|style|loading|allowfullscreen)(=)/g, '<span style="color:#94a3b8">$1</span><span style="color:#94a3b8">$2</span>')
+      .replace(/"([^"]*)"/g, '<span style="color:#cbd5e1">"$1"</span>');
   }
 
   /* ---- Render --------------------------------------------------- */
@@ -115,7 +115,7 @@ export default function EmbedGeneratorMode({ onExitMode }: Props) {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="2" y="3" width="20" height="14" rx="2" />
             <path d="M8 21h8M12 17v4" />
           </svg>
@@ -133,9 +133,9 @@ export default function EmbedGeneratorMode({ onExitMode }: Props) {
             style={{
               fontSize: 10,
               fontWeight: 600,
-              color: "#38bdf8",
-              background: "rgba(56,189,248,0.1)",
-              border: "1px solid rgba(56,189,248,0.2)",
+              color: "#cbd5e1",
+              background: "rgba(203,213,225,0.1)",
+              border: "1px solid rgba(203,213,225,0.2)",
               borderRadius: 4,
               padding: "1px 6px",
               letterSpacing: "0.04em",
@@ -243,7 +243,7 @@ export default function EmbedGeneratorMode({ onExitMode }: Props) {
                 max={15}
                 value={zoom}
                 onChange={(e) => setZoom(Number(e.target.value))}
-                style={{ flex: 1, accentColor: "#38bdf8" }}
+                style={{ flex: 1, accentColor: "#cbd5e1" }}
               />
               <span style={{ fontFamily: "monospace", fontSize: 12, color: "var(--text-primary, #f1f5f9)", minWidth: 24, textAlign: "right" }}>
                 {zoom}
@@ -261,7 +261,7 @@ export default function EmbedGeneratorMode({ onExitMode }: Props) {
                 step={25}
                 value={radius}
                 onChange={(e) => setRadius(Number(e.target.value))}
-                style={{ flex: 1, accentColor: "#38bdf8" }}
+                style={{ flex: 1, accentColor: "#cbd5e1" }}
               />
               <span style={{ fontFamily: "monospace", fontSize: 12, color: "var(--text-primary, #f1f5f9)", minWidth: 36, textAlign: "right" }}>
                 {radius}
@@ -422,7 +422,7 @@ export default function EmbedGeneratorMode({ onExitMode }: Props) {
             <CodeBlock
               title="Direct Link"
               code={fullUrl}
-              highlightedHtml={`<span style="color:#34d399">${fullUrl}</span>`}
+              highlightedHtml={`<span style="color:#cbd5e1">${fullUrl}</span>`}
               charCount={fullUrl.length}
               onCopy={() => urlCopy.copy(fullUrl)}
               copied={urlCopy.copied}
@@ -520,7 +520,7 @@ function Input({
         boxSizing: "border-box",
       }}
       onFocus={(e) => {
-        if (!disabled) e.currentTarget.style.borderColor = "rgba(56,189,248,0.3)";
+        if (!disabled) e.currentTarget.style.borderColor = "rgba(203,213,225,0.3)";
       }}
       onBlur={(e) => {
         e.currentTarget.style.borderColor = "var(--border-default, rgba(148,163,184,0.1))";
@@ -544,12 +544,12 @@ function ToggleButton({
       style={{
         padding: "5px 12px",
         borderRadius: 6,
-        border: `1px solid ${active ? "rgba(56,189,248,0.3)" : "var(--border-default, rgba(148,163,184,0.1))"}`,
+        border: `1px solid ${active ? "rgba(203,213,225,0.3)" : "var(--border-default, rgba(148,163,184,0.1))"}`,
         background: active
-          ? "rgba(56,189,248,0.1)"
+          ? "rgba(203,213,225,0.1)"
           : "var(--surface-0, #06080d)",
         color: active
-          ? "#38bdf8"
+          ? "#94a3b8"
           : "var(--text-secondary, #cbd5e1)",
         fontSize: 11,
         fontWeight: active ? 600 : 500,
@@ -619,11 +619,11 @@ function CodeBlock({
             gap: 4,
             padding: "3px 10px",
             borderRadius: 6,
-            border: `1px solid ${copied ? "rgba(52,211,153,0.3)" : "var(--border-default, rgba(148,163,184,0.1))"}`,
+            border: `1px solid ${copied ? "rgba(203,213,225,0.3)" : "var(--border-default, rgba(148,163,184,0.1))"}`,
             background: copied
-              ? "rgba(52,211,153,0.1)"
+              ? "rgba(203,213,225,0.1)"
               : "var(--surface-2, #111827)",
-            color: copied ? "#34d399" : "var(--text-secondary, #cbd5e1)",
+            color: copied ? "#cbd5e1" : "var(--text-secondary, #cbd5e1)",
             fontSize: 11,
             fontWeight: 500,
             cursor: "pointer",

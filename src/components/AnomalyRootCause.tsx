@@ -45,9 +45,9 @@ interface RootCauseResult {
 }
 
 const CONFIDENCE_COLORS = {
-  high: { bg: "bg-green-900/30", text: "text-green-400", label: "High Confidence" },
-  medium: { bg: "bg-amber-900/30", text: "text-amber-400", label: "Medium Confidence" },
-  low: { bg: "bg-red-900/30", text: "text-red-400", label: "Low Confidence" },
+  high: { bg: "bg-gray-800/30", text: "text-gray-300", label: "High Confidence" },
+  medium: { bg: "bg-gray-800/30", text: "text-gray-400", label: "Medium Confidence" },
+  low: { bg: "bg-gray-800/30", text: "text-gray-300", label: "Low Confidence" },
 };
 
 export default function AnomalyRootCause({ flight, anomalies, instability, nearbyAnomalies, airport, corridor }: Props) {
@@ -110,7 +110,7 @@ export default function AnomalyRootCause({ flight, anomalies, instability, nearb
       {!result && !isLoading && !error && (
         <button
           onClick={analyze}
-          className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-teal-600/15 hover:bg-teal-600/25 border border-teal-700/30 text-teal-300 text-xs font-medium transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-gray-700/15 hover:bg-gray-700/25 border border-gray-600/30 text-gray-300 text-xs font-medium transition-colors"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -121,23 +121,23 @@ export default function AnomalyRootCause({ flight, anomalies, instability, nearb
 
       {isLoading && (
         <div className="flex items-center justify-center gap-2 py-4">
-          <div className="w-3.5 h-3.5 border-2 border-teal-500/30 border-t-teal-500 rounded-full animate-spin" />
-          <span className="text-[10px] text-teal-400">Analyzing root causes...</span>
+          <div className="w-3.5 h-3.5 border-2 border-gray-500/30 border-t-gray-400 rounded-full animate-spin" />
+          <span className="text-[10px] text-gray-400">Analyzing root causes...</span>
         </div>
       )}
 
       {error && (
         <div className="text-center py-2">
-          <p className="text-[10px] text-red-400">Analysis failed</p>
-          <button onClick={analyze} className="text-[10px] text-teal-400 hover:underline">Retry</button>
+          <p className="text-[10px] text-gray-400">Analysis failed</p>
+          <button onClick={analyze} className="text-[10px] text-gray-300 hover:underline">Retry</button>
         </div>
       )}
 
       {result && !isLoading && (
-        <div className="rounded-lg border border-teal-800/40 bg-teal-950/20 px-3 py-2.5 space-y-2">
+        <div className="rounded-lg border border-gray-700/40 bg-gray-900/20 px-3 py-2.5 space-y-2">
           {/* Header with confidence */}
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold text-teal-400 uppercase tracking-wider">Root Cause Analysis</span>
+            <span className="text-[10px] font-bold text-gray-300 uppercase tracking-wider">Root Cause Analysis</span>
             <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded ${CONFIDENCE_COLORS[result.confidence].bg} ${CONFIDENCE_COLORS[result.confidence].text}`}>
               {CONFIDENCE_COLORS[result.confidence].label}
             </span>
@@ -152,7 +152,7 @@ export default function AnomalyRootCause({ flight, anomalies, instability, nearb
               <div className="text-[9px] font-semibold text-gray-500 uppercase">Contributing Factors</div>
               {result.factors.map((f, i) => (
                 <div key={i} className="flex items-start gap-1.5">
-                  <span className="text-teal-500 text-[10px] mt-0.5">•</span>
+                  <span className="text-gray-500 text-[10px] mt-0.5">•</span>
                   <span className="text-[10px] text-gray-400 leading-relaxed">{f}</span>
                 </div>
               ))}
@@ -164,7 +164,7 @@ export default function AnomalyRootCause({ flight, anomalies, instability, nearb
             <div className="flex items-center gap-1 flex-wrap">
               <span className="text-[9px] text-gray-500">Related:</span>
               {result.relatedFlights.map((f) => (
-                <span key={f} className="text-[9px] font-mono text-teal-400 bg-teal-900/30 px-1.5 py-0.5 rounded">
+                <span key={f} className="text-[9px] font-mono text-gray-300 bg-gray-800/30 px-1.5 py-0.5 rounded">
                   {f}
                 </span>
               ))}
@@ -173,7 +173,7 @@ export default function AnomalyRootCause({ flight, anomalies, instability, nearb
 
           {/* Watch suggestion */}
           {result.suggestion && (
-            <p className="text-[10px] text-amber-400/80 leading-relaxed">
+            <p className="text-[10px] text-gray-400/80 leading-relaxed">
               ⚠ {result.suggestion}
             </p>
           )}

@@ -22,33 +22,33 @@ function barPct(value: number, max: number): number {
   return Math.min((value / max) * 100, 100);
 }
 
-// ── Altitude bin colors (green -> yellow -> cyan -> purple) ─────────────────
+// ── Altitude bin colors (monochrome slate scale) ─────────────────
 
 const ALT_BIN_COLORS = [
-  "#34d399", // 0-5k   green
-  "#4ade80", // 5-10k  light green
-  "#facc15", // 10-15k yellow
-  "#fbbf24", // 15-20k amber
-  "#22d3ee", // 20-25k cyan
-  "#38bdf8", // 25-30k light blue
-  "#818cf8", // 30-35k indigo
-  "#a78bfa", // 35-40k purple
-  "#c084fc", // 40k+   violet
+  "#cbd5e1", // 0-5k   green
+  "#cbd5e1", // 5-10k  light green
+  "#94a3b8", // 10-15k yellow
+  "#94a3b8", // 15-20k amber
+  "#cbd5e1", // 20-25k cyan
+  "#cbd5e1", // 25-30k light blue
+  "#94a3b8", // 30-35k indigo
+  "#94a3b8", // 35-40k purple
+  "#94a3b8", // 40k+   violet
 ];
 
 const SPD_BIN_COLORS = [
-  "#34d399", // 0-100
-  "#4ade80", // 100-200
-  "#facc15", // 200-300
-  "#f97316", // 300-400
-  "#38bdf8", // 400-500
-  "#a78bfa", // 500+
+  "#cbd5e1", // 0-100
+  "#cbd5e1", // 100-200
+  "#94a3b8", // 200-300
+  "#94a3b8", // 300-400
+  "#cbd5e1", // 400-500
+  "#94a3b8", // 500+
 ];
 
 const TYPE_COLORS = [
-  "#38bdf8", "#34d399", "#facc15", "#a78bfa", "#22d3ee",
-  "#f97316", "#818cf8", "#4ade80", "#f472b6", "#fbbf24",
-  "#60a5fa", "#c084fc", "#fb923c", "#2dd4bf", "#e879f9",
+  "#cbd5e1", "#cbd5e1", "#94a3b8", "#94a3b8", "#cbd5e1",
+  "#94a3b8", "#94a3b8", "#cbd5e1", "#e2e8f0", "#94a3b8",
+  "#cbd5e1", "#94a3b8", "#94a3b8", "#cbd5e1", "#e2e8f0",
 ];
 
 // ── Types ───────────────────────────────────────────────────────────────────
@@ -619,7 +619,7 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
               <KpiCard
                 label="AVG ALTITUDE"
                 value={`${fmt(Math.round(stats.avgAltFt))} ft`}
-                color="#22d3ee"
+                color="#cbd5e1"
               />
               <KpiCard
                 label="AVG SPEED"
@@ -768,10 +768,10 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
                     {stats.positionSources.map((src, i) => {
                       const srcColor =
                         src.source.toLowerCase().includes("adsb") || src.source.toLowerCase().includes("ads-b")
-                          ? "#34d399"
+                          ? "#cbd5e1"
                           : src.source.toLowerCase().includes("mlat")
-                          ? "#facc15"
-                          : "#60a5fa";
+                          ? "#94a3b8"
+                          : "#cbd5e1";
                       return (
                         <div key={src.source} className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
@@ -836,7 +836,7 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
                 <div className="space-y-1.5">
                   {stats.quadrants.map((q) => {
                     const qColor =
-                      q.label === "NE" ? "#38bdf8" : q.label === "NW" ? "#34d399" : q.label === "SE" ? "#facc15" : "#a78bfa";
+                      q.label === "NE" ? "#cbd5e1" : q.label === "NW" ? "#cbd5e1" : q.label === "SE" ? "#94a3b8" : "#94a3b8";
                     return (
                       <div key={q.label} className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -876,7 +876,7 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
                       label={f.callsign}
                       value={fmt(f.alt)}
                       unit="ft"
-                      color="#22d3ee"
+                      color="#cbd5e1"
                     />
                   ))}
                   {stats.highestAlt.length === 0 && (
@@ -922,7 +922,7 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
                       label={p.prefix}
                       value={fmt(p.count)}
                       unit="flights"
-                      color="#a78bfa"
+                      color="#94a3b8"
                     />
                   ))}
                   {stats.topPrefixes.length === 0 && (

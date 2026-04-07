@@ -52,17 +52,17 @@ export default function DataTicker() {
         {items.map((flight, i) => (
           <span key={`${flight.callsign}-${i}`} className="inline-flex items-center gap-2 text-xs font-mono">
             {flight.emergency && (
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse flex-shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-200 animate-pulse flex-shrink-0" />
             )}
             {flight.military && (
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0" />
             )}
             <span
               className={`font-semibold ${
                 flight.emergency
-                  ? "text-red-400"
+                  ? "text-slate-200"
                   : flight.military
-                  ? "text-amber-400"
+                  ? "text-slate-400"
                   : "text-[var(--accent-primary)]"
               }`}
             >

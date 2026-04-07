@@ -3,26 +3,26 @@
 import { useEffect, useRef } from "react";
 
 const aircraftPositions = [
-  { x: 15, y: 25, size: 2.5, color: "#38bdf8" },
-  { x: 35, y: 18, size: 2, color: "#38bdf8" },
-  { x: 52, y: 42, size: 3, color: "#34d399" },
-  { x: 78, y: 30, size: 2, color: "#38bdf8" },
-  { x: 22, y: 55, size: 2.5, color: "#fbbf24" },
-  { x: 65, y: 60, size: 2, color: "#38bdf8" },
-  { x: 88, y: 48, size: 2.5, color: "#38bdf8" },
-  { x: 42, y: 72, size: 2, color: "#34d399" },
-  { x: 70, y: 78, size: 3, color: "#ef4444" },
-  { x: 25, y: 80, size: 2, color: "#38bdf8" },
-  { x: 55, y: 20, size: 2, color: "#38bdf8" },
-  { x: 82, y: 65, size: 2.5, color: "#38bdf8" },
-  { x: 10, y: 40, size: 2, color: "#34d399" },
-  { x: 48, y: 50, size: 2, color: "#38bdf8" },
-  { x: 92, y: 22, size: 2, color: "#38bdf8" },
-  { x: 30, y: 35, size: 2.5, color: "#38bdf8" },
-  { x: 60, y: 85, size: 2, color: "#38bdf8" },
-  { x: 75, y: 15, size: 2, color: "#fbbf24" },
-  { x: 40, y: 90, size: 2.5, color: "#38bdf8" },
-  { x: 58, y: 35, size: 2, color: "#38bdf8" },
+  { x: 15, y: 25, size: 2.5, color: "#cbd5e1" },
+  { x: 35, y: 18, size: 2, color: "#cbd5e1" },
+  { x: 52, y: 42, size: 3, color: "#cbd5e1" },
+  { x: 78, y: 30, size: 2, color: "#cbd5e1" },
+  { x: 22, y: 55, size: 2.5, color: "#94a3b8" },
+  { x: 65, y: 60, size: 2, color: "#cbd5e1" },
+  { x: 88, y: 48, size: 2.5, color: "#cbd5e1" },
+  { x: 42, y: 72, size: 2, color: "#cbd5e1" },
+  { x: 70, y: 78, size: 3, color: "#e2e8f0" },
+  { x: 25, y: 80, size: 2, color: "#cbd5e1" },
+  { x: 55, y: 20, size: 2, color: "#cbd5e1" },
+  { x: 82, y: 65, size: 2.5, color: "#cbd5e1" },
+  { x: 10, y: 40, size: 2, color: "#cbd5e1" },
+  { x: 48, y: 50, size: 2, color: "#cbd5e1" },
+  { x: 92, y: 22, size: 2, color: "#cbd5e1" },
+  { x: 30, y: 35, size: 2.5, color: "#cbd5e1" },
+  { x: 60, y: 85, size: 2, color: "#cbd5e1" },
+  { x: 75, y: 15, size: 2, color: "#94a3b8" },
+  { x: 40, y: 90, size: 2.5, color: "#cbd5e1" },
+  { x: 58, y: 35, size: 2, color: "#cbd5e1" },
 ];
 
 export default function MapPreview() {
@@ -48,7 +48,7 @@ export default function MapPreview() {
       t += 0.015;
 
       // Grid lines
-      ctx.strokeStyle = "rgba(56,189,248,0.04)";
+      ctx.strokeStyle = "rgba(203,213,225,0.04)";
       ctx.lineWidth = 0.5;
       for (let x = 0; x < W; x += 40) {
         ctx.beginPath();
@@ -64,7 +64,7 @@ export default function MapPreview() {
       }
 
       // Continent-like shapes (subtle, darker)
-      ctx.fillStyle = "rgba(56,189,248,0.02)";
+      ctx.fillStyle = "rgba(203,213,225,0.02)";
       ctx.beginPath();
       ctx.ellipse(180, 120, 100, 60, -0.2, 0, Math.PI * 2);
       ctx.fill();
@@ -110,9 +110,9 @@ export default function MapPreview() {
     <div className="relative w-full">
       {/* Browser-window chrome bar */}
       <div className="flex items-center gap-1.5 px-3 py-2 bg-[rgba(15,23,42,0.8)] border-b border-[var(--border-subtle)]">
-        <span className="w-2 h-2 rounded-full bg-[#ef4444] opacity-60" />
-        <span className="w-2 h-2 rounded-full bg-[#fbbf24] opacity-60" />
-        <span className="w-2 h-2 rounded-full bg-[#34d399] opacity-60" />
+        <span className="w-2 h-2 rounded-full bg-[#e2e8f0] opacity-60" />
+        <span className="w-2 h-2 rounded-full bg-[#94a3b8] opacity-60" />
+        <span className="w-2 h-2 rounded-full bg-[#cbd5e1] opacity-60" />
         <span className="ml-3 text-[10px] font-mono text-[var(--text-faint)]">
           aerointel.io/map
         </span>
@@ -128,7 +128,7 @@ export default function MapPreview() {
         {/* HUD overlay */}
         <div className="absolute top-3 left-3 px-2.5 py-1.5 rounded-md bg-[rgba(6,8,13,0.85)] border border-[var(--border-subtle)] backdrop-blur-sm">
           <span className="text-[10px] font-mono text-[var(--text-muted)] block">LIVE TRACKING</span>
-          <span className="text-sm font-mono font-bold text-emerald-400">2,847</span>
+          <span className="text-sm font-mono font-bold text-slate-300">2,847</span>
         </div>
 
         {/* Mini controls */}
@@ -141,7 +141,7 @@ export default function MapPreview() {
         <div className="absolute bottom-0 left-0 right-0 px-3 py-1.5 bg-[rgba(6,8,13,0.85)] border-t border-[var(--border-subtle)] flex items-center justify-between">
           <span className="text-[9px] font-mono text-[var(--text-faint)]">METAR: ACTIVE</span>
           <span className="text-[9px] font-mono text-[var(--text-faint)]">LAYERS: 6</span>
-          <span className="text-[9px] font-mono text-emerald-400/70">3s REFRESH</span>
+          <span className="text-[9px] font-mono text-slate-300/70">3s REFRESH</span>
         </div>
       </div>
     </div>

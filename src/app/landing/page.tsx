@@ -94,12 +94,12 @@ const testimonials = [
 ];
 
 const dataLayers = [
-  { icon: <Cloud size={20} />, name: "METAR Weather", description: "Surface weather observations from 7,000+ stations worldwide", color: "text-sky-400" },
-  { icon: <Map size={20} />, name: "Airport Runways", description: "Active runway configurations, ILS approaches, and taxiway data", color: "text-emerald-400" },
-  { icon: <Activity size={20} />, name: "Route Density", description: "Traffic corridor heatmaps showing congestion patterns", color: "text-purple-400" },
-  { icon: <Wind size={20} />, name: "Wind Aloft", description: "Upper-level wind analysis from FL100 to FL450", color: "text-amber-400" },
-  { icon: <Mountain size={20} />, name: "Terrain", description: "High-resolution elevation data with CFIT warning zones", color: "text-orange-400" },
-  { icon: <CloudLightning size={20} />, name: "PIREPs", description: "Pilot reports for turbulence, icing, and visibility", color: "text-red-400" },
+  { icon: <Cloud size={20} />, name: "METAR Weather", description: "Surface weather observations from 7,000+ stations worldwide", color: "text-slate-300" },
+  { icon: <Map size={20} />, name: "Airport Runways", description: "Active runway configurations, ILS approaches, and taxiway data", color: "text-slate-300" },
+  { icon: <Activity size={20} />, name: "Route Density", description: "Traffic corridor heatmaps showing congestion patterns", color: "text-slate-400" },
+  { icon: <Wind size={20} />, name: "Wind Aloft", description: "Upper-level wind analysis from FL100 to FL450", color: "text-slate-400" },
+  { icon: <Mountain size={20} />, name: "Terrain", description: "High-resolution elevation data with CFIT warning zones", color: "text-slate-400" },
+  { icon: <CloudLightning size={20} />, name: "PIREPs", description: "Pilot reports for turbulence, icing, and visibility", color: "text-slate-200" },
 ];
 
 /* ────────────────────────────────────────────────────────────
@@ -115,7 +115,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <a href="/landing" className="flex items-center gap-2.5 group">
-              <div className="w-8 h-8 rounded-lg bg-[linear-gradient(135deg,#38bdf8,#818cf8,#c084fc)] flex items-center justify-center shadow-[0_0_16px_rgba(56,189,248,0.3)]">
+              <div className="w-8 h-8 rounded-lg bg-[linear-gradient(135deg,#94a3b8,#cbd5e1,#e2e8f0)] flex items-center justify-center shadow-[0_0_16px_rgba(148,163,184,0.3)]">
                 <Plane size={16} className="text-white -rotate-45" />
               </div>
               <span className="font-semibold text-[var(--text-primary)] tracking-tight text-lg">
@@ -133,7 +133,7 @@ export default function LandingPage() {
             <AuthModal />
             <a
               href="/"
-              className="hidden sm:inline-flex items-center gap-1.5 px-5 py-2 rounded-lg bg-[linear-gradient(135deg,#38bdf8,#818cf8)] text-white font-medium text-sm hover:shadow-[0_0_24px_rgba(56,189,248,0.4)] transition-all duration-300"
+              className="hidden sm:inline-flex items-center gap-1.5 px-5 py-2 rounded-lg bg-[linear-gradient(135deg,#94a3b8,#cbd5e1)] text-white font-medium text-sm hover:shadow-[0_0_24px_rgba(148,163,184,0.4)] transition-all duration-300"
             >
               Launch Platform
               <span>&rarr;</span>
@@ -147,7 +147,7 @@ export default function LandingPage() {
         <HeroBackground />
 
         {/* Top radial glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-[radial-gradient(ellipse,rgba(56,189,248,0.08)_0%,transparent_70%)] pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-[radial-gradient(ellipse,rgba(148,163,184,0.08)_0%,transparent_70%)] pointer-events-none" />
 
         {/* Bottom fade to surface */}
         <div className="absolute bottom-0 left-0 right-0 h-48 bg-[linear-gradient(to_top,var(--surface-0),transparent)] pointer-events-none z-[1]" />
@@ -160,7 +160,7 @@ export default function LandingPage() {
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 leading-[1.05]">
             <span className="block text-[var(--text-primary)]">The Aviation</span>
             <span
-              className="block bg-[linear-gradient(135deg,#38bdf8_0%,#818cf8_50%,#c084fc_100%)] bg-clip-text text-transparent"
+              className="block bg-[linear-gradient(135deg,#94a3b8_0%,#cbd5e1_50%,#e2e8f0_100%)] bg-clip-text text-transparent"
               style={{ backgroundSize: "200% 200%", animation: "gradient-shift 6s ease infinite" }}
             >
               Intelligence Platform
@@ -175,7 +175,7 @@ export default function LandingPage() {
           <div className="flex items-center justify-center gap-4 mb-8 flex-wrap">
             <a
               href="/"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-[linear-gradient(135deg,#38bdf8,#818cf8)] text-white font-semibold text-sm hover:shadow-[0_0_40px_rgba(56,189,248,0.35)] transition-all duration-300 hover:scale-[1.02]"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-[linear-gradient(135deg,#94a3b8,#cbd5e1)] text-white font-semibold text-sm hover:shadow-[0_0_40px_rgba(148,163,184,0.35)] transition-all duration-300 hover:scale-[1.02]"
             >
               Open Flight Map
               <span className="text-base">&rarr;</span>
@@ -202,7 +202,7 @@ export default function LandingPage() {
 
           {/* Mock screenshot of the platform */}
           <ScrollAnimator>
-            <div className="max-w-3xl mx-auto rounded-xl overflow-hidden border border-[var(--border-default)] shadow-[0_0_60px_rgba(56,189,248,0.08)] bg-[var(--surface-1)]">
+            <div className="max-w-3xl mx-auto rounded-xl overflow-hidden border border-[var(--border-default)] shadow-[0_0_60px_rgba(148,163,184,0.08)] bg-[var(--surface-1)]">
               <MapPreview />
             </div>
           </ScrollAnimator>
@@ -218,13 +218,13 @@ export default function LandingPage() {
       <section id="features" className="relative py-32 px-6">
         {/* Subtle background glow */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.03)_0%,transparent_70%)]" />
-          <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.03)_0%,transparent_70%)]" />
+          <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(148,163,184,0.03)_0%,transparent_70%)]" />
+          <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(148,163,184,0.03)_0%,transparent_70%)]" />
         </div>
 
         <div className="relative max-w-7xl mx-auto">
           <ScrollAnimator className="text-center mb-16">
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-mono font-semibold text-[var(--accent-primary)] border border-[rgba(56,189,248,0.2)] bg-[rgba(56,189,248,0.06)] mb-4 tracking-wider uppercase">
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-mono font-semibold text-[var(--accent-primary)] border border-[rgba(148,163,184,0.2)] bg-[rgba(148,163,184,0.06)] mb-4 tracking-wider uppercase">
               Platform Features
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--text-primary)] mb-4">
@@ -269,10 +269,10 @@ export default function LandingPage() {
                 {/* Mini chat preview */}
                 <div className="p-3 space-y-2">
                   <div className="flex items-start gap-2">
-                    <div className="w-5 h-5 rounded-full bg-[rgba(56,189,248,0.15)] flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-5 h-5 rounded-full bg-[rgba(148,163,184,0.15)] flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Bot size={10} className="text-[var(--accent-primary)]" />
                     </div>
-                    <div className="px-3 py-1.5 rounded-lg bg-[rgba(56,189,248,0.06)] border border-[rgba(56,189,248,0.1)]">
+                    <div className="px-3 py-1.5 rounded-lg bg-[rgba(148,163,184,0.06)] border border-[rgba(148,163,184,0.1)]">
                       <p className="text-[10px] text-[var(--text-secondary)]">Show me all Emirates A380s currently over Europe</p>
                     </div>
                   </div>
@@ -296,9 +296,9 @@ export default function LandingPage() {
                 {/* Mini airline list */}
                 <div className="p-3 space-y-1.5">
                   {[
-                    { code: "UAE", name: "Emirates", count: 287, color: "text-amber-400" },
-                    { code: "SIA", name: "Singapore Airlines", count: 143, color: "text-sky-400" },
-                    { code: "QFA", name: "Qantas", count: 198, color: "text-red-400" },
+                    { code: "UAE", name: "Emirates", count: 287, color: "text-slate-400" },
+                    { code: "SIA", name: "Singapore Airlines", count: 143, color: "text-slate-300" },
+                    { code: "QFA", name: "Qantas", count: 198, color: "text-slate-200" },
                   ].map((airline) => (
                     <div key={airline.code} className="flex items-center justify-between px-2 py-1 rounded bg-[rgba(255,255,255,0.02)]">
                       <div className="flex items-center gap-2">
@@ -320,17 +320,17 @@ export default function LandingPage() {
               >
                 {/* Mini notification badges */}
                 <div className="p-3 space-y-1.5">
-                  <div className="flex items-center gap-2 px-2 py-1.5 rounded bg-[rgba(239,68,68,0.06)] border border-[rgba(239,68,68,0.1)]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                    <span className="text-[10px] text-red-400 font-mono">SQK 7700 - UAL2843 near KATL</span>
+                  <div className="flex items-center gap-2 px-2 py-1.5 rounded bg-[rgba(226,232,240,0.06)] border border-[rgba(226,232,240,0.1)]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-200 animate-pulse" />
+                    <span className="text-[10px] text-slate-200 font-mono">SQK 7700 - UAL2843 near KATL</span>
                   </div>
-                  <div className="flex items-center gap-2 px-2 py-1.5 rounded bg-[rgba(251,191,36,0.06)] border border-[rgba(251,191,36,0.1)]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                    <span className="text-[10px] text-amber-400 font-mono">Military activity - CZQX FIR</span>
+                  <div className="flex items-center gap-2 px-2 py-1.5 rounded bg-[rgba(148,163,184,0.06)] border border-[rgba(148,163,184,0.1)]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                    <span className="text-[10px] text-slate-400 font-mono">Military activity - CZQX FIR</span>
                   </div>
-                  <div className="flex items-center gap-2 px-2 py-1.5 rounded bg-[rgba(56,189,248,0.06)] border border-[rgba(56,189,248,0.1)]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
-                    <span className="text-[10px] text-sky-400 font-mono">N172SP entered your watchlist zone</span>
+                  <div className="flex items-center gap-2 px-2 py-1.5 rounded bg-[rgba(148,163,184,0.06)] border border-[rgba(148,163,184,0.1)]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+                    <span className="text-[10px] text-slate-300 font-mono">N172SP entered your watchlist zone</span>
                   </div>
                 </div>
               </BentoFeatureCard>
@@ -346,12 +346,12 @@ export default function LandingPage() {
                 {/* Data layer icons row */}
                 <div className="p-3 grid grid-cols-3 sm:grid-cols-6 gap-2">
                   {[
-                    { icon: <Cloud size={14} />, label: "METAR", color: "text-sky-400" },
-                    { icon: <CloudLightning size={14} />, label: "PIREPs", color: "text-red-400" },
-                    { icon: <Wind size={14} />, label: "Winds", color: "text-amber-400" },
-                    { icon: <Mountain size={14} />, label: "Terrain", color: "text-orange-400" },
-                    { icon: <Map size={14} />, label: "Runways", color: "text-emerald-400" },
-                    { icon: <Activity size={14} />, label: "Density", color: "text-purple-400" },
+                    { icon: <Cloud size={14} />, label: "METAR", color: "text-slate-300" },
+                    { icon: <CloudLightning size={14} />, label: "PIREPs", color: "text-slate-200" },
+                    { icon: <Wind size={14} />, label: "Winds", color: "text-slate-400" },
+                    { icon: <Mountain size={14} />, label: "Terrain", color: "text-slate-400" },
+                    { icon: <Map size={14} />, label: "Runways", color: "text-slate-300" },
+                    { icon: <Activity size={14} />, label: "Density", color: "text-slate-400" },
                   ].map((layer) => (
                     <div key={layer.label} className="flex flex-col items-center gap-1 p-2 rounded-lg bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.04)] transition-colors">
                       <span className={layer.color}>{layer.icon}</span>
@@ -382,12 +382,12 @@ export default function LandingPage() {
       {/* ═══════════════════════ E. DATA SECTION ═══════════════════════ */}
       <section id="data" className="relative py-32 px-6">
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full bg-[radial-gradient(circle,rgba(52,211,153,0.04)_0%,transparent_70%)]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full bg-[radial-gradient(circle,rgba(203,213,225,0.04)_0%,transparent_70%)]" />
         </div>
 
         <div className="relative max-w-7xl mx-auto">
           <ScrollAnimator className="text-center mb-16">
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-mono font-semibold text-emerald-400 border border-[rgba(52,211,153,0.2)] bg-[rgba(52,211,153,0.06)] mb-4 tracking-wider uppercase">
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-mono font-semibold text-slate-300 border border-[rgba(203,213,225,0.2)] bg-[rgba(203,213,225,0.06)] mb-4 tracking-wider uppercase">
               Data Sources
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--text-primary)] mb-4">
@@ -421,7 +421,7 @@ export default function LandingPage() {
               {dataLayers.map((layer) => (
                 <div
                   key={layer.name}
-                  className="flex items-start gap-4 p-5 rounded-xl border border-[var(--border-subtle)] bg-[rgba(15,23,42,0.4)] hover:border-[rgba(56,189,248,0.15)] transition-colors duration-300"
+                  className="flex items-start gap-4 p-5 rounded-xl border border-[var(--border-subtle)] bg-[rgba(15,23,42,0.4)] hover:border-[rgba(148,163,184,0.15)] transition-colors duration-300"
                 >
                   <div className={`w-10 h-10 rounded-xl bg-[rgba(255,255,255,0.03)] border border-[var(--border-subtle)] flex items-center justify-center flex-shrink-0 ${layer.color}`}>
                     {layer.icon}
@@ -462,7 +462,7 @@ export default function LandingPage() {
       <section id="compare" className="relative py-32 px-6">
         <div className="max-w-4xl mx-auto">
           <ScrollAnimator className="text-center mb-16">
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-mono font-semibold text-purple-400 border border-[rgba(168,85,247,0.2)] bg-[rgba(168,85,247,0.06)] mb-4 tracking-wider uppercase">
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-mono font-semibold text-slate-400 border border-[rgba(148,163,184,0.2)] bg-[rgba(148,163,184,0.06)] mb-4 tracking-wider uppercase">
               Comparison
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--text-primary)] mb-4">
@@ -478,8 +478,8 @@ export default function LandingPage() {
               {/* Table header */}
               <div className="grid grid-cols-4 gap-0 border-b border-[var(--border-default)]">
                 <div className="p-5 text-sm font-semibold text-[var(--text-tertiary)]">Feature</div>
-                <div className="p-5 text-sm font-semibold text-center bg-[linear-gradient(180deg,rgba(56,189,248,0.06)_0%,transparent_100%)]">
-                  <span className="bg-[linear-gradient(135deg,#38bdf8,#818cf8)] bg-clip-text text-transparent">AeroIntel</span>
+                <div className="p-5 text-sm font-semibold text-center bg-[linear-gradient(180deg,rgba(148,163,184,0.06)_0%,transparent_100%)]">
+                  <span className="bg-[linear-gradient(135deg,#94a3b8,#cbd5e1)] bg-clip-text text-transparent">AeroIntel</span>
                 </div>
                 <div className="p-5 text-sm font-semibold text-[var(--text-muted)] text-center">FR24 Free</div>
                 <div className="p-5 text-sm font-semibold text-[var(--text-muted)] text-center">FR24 Business</div>
@@ -493,30 +493,30 @@ export default function LandingPage() {
                   } hover:bg-[var(--surface-2)] transition-colors`}
                 >
                   <div className="p-4 text-sm text-[var(--text-secondary)]">{row.feature}</div>
-                  <div className="p-4 text-center bg-[rgba(56,189,248,0.02)]">
-                    <span className="text-emerald-400 text-base font-bold">&#10003;</span>
+                  <div className="p-4 text-center bg-[rgba(148,163,184,0.02)]">
+                    <span className="text-slate-300 text-base font-bold">&#10003;</span>
                   </div>
                   <div className="p-4 text-center">
                     {row.fr24Free ? (
-                      <span className="text-emerald-400/60 text-base">&#10003;</span>
+                      <span className="text-slate-300/60 text-base">&#10003;</span>
                     ) : (
-                      <span className="text-red-400/40 text-base">&#10005;</span>
+                      <span className="text-slate-400/40 text-base">&#10005;</span>
                     )}
                   </div>
                   <div className="p-4 text-center">
                     {row.fr24Biz ? (
-                      <span className="text-emerald-400/60 text-base">&#10003;</span>
+                      <span className="text-slate-300/60 text-base">&#10003;</span>
                     ) : (
-                      <span className="text-red-400/40 text-base">&#10005;</span>
+                      <span className="text-slate-400/40 text-base">&#10005;</span>
                     )}
                   </div>
                 </div>
               ))}
               {/* Winner row */}
-              <div className="grid grid-cols-4 gap-0 border-t border-[var(--border-default)] bg-[rgba(56,189,248,0.03)]">
+              <div className="grid grid-cols-4 gap-0 border-t border-[var(--border-default)] bg-[rgba(148,163,184,0.03)]">
                 <div className="p-4 text-sm font-semibold text-[var(--text-primary)]">Score</div>
                 <div className="p-4 text-center">
-                  <span className="font-mono font-bold text-emerald-400">10/10</span>
+                  <span className="font-mono font-bold text-slate-300">10/10</span>
                 </div>
                 <div className="p-4 text-center">
                   <span className="font-mono font-bold text-[var(--text-muted)]">2/10</span>
@@ -533,12 +533,12 @@ export default function LandingPage() {
       {/* ═══════════════════════ G. PRICING ═══════════════════════ */}
       <section id="pricing" className="relative py-32 px-6">
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.04)_0%,transparent_70%)]" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full bg-[radial-gradient(circle,rgba(148,163,184,0.04)_0%,transparent_70%)]" />
         </div>
 
         <div className="relative max-w-5xl mx-auto">
           <ScrollAnimator className="text-center mb-16">
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-mono font-semibold text-amber-400 border border-[rgba(251,191,36,0.2)] bg-[rgba(251,191,36,0.06)] mb-4 tracking-wider uppercase">
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-mono font-semibold text-slate-400 border border-[rgba(148,163,184,0.2)] bg-[rgba(148,163,184,0.06)] mb-4 tracking-wider uppercase">
               Pricing
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--text-primary)] mb-4">
@@ -610,7 +610,7 @@ export default function LandingPage() {
       <section className="relative py-32 px-6">
         <div className="max-w-6xl mx-auto">
           <ScrollAnimator className="text-center mb-16">
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-mono font-semibold text-sky-400 border border-[rgba(56,189,248,0.2)] bg-[rgba(56,189,248,0.06)] mb-4 tracking-wider uppercase">
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-mono font-semibold text-slate-300 border border-[rgba(148,163,184,0.2)] bg-[rgba(148,163,184,0.06)] mb-4 tracking-wider uppercase">
               Testimonials
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--text-primary)] mb-4">
@@ -630,7 +630,7 @@ export default function LandingPage() {
                   {/* Star ratings */}
                   <div className="flex items-center gap-0.5 mb-4">
                     {[...Array(5)].map((_, j) => (
-                      <Star key={j} size={14} className="text-amber-400 fill-amber-400" />
+                      <Star key={j} size={14} className="text-slate-400 fill-slate-400" />
                     ))}
                   </div>
 
@@ -639,7 +639,7 @@ export default function LandingPage() {
                   </p>
 
                   <div className="flex items-center gap-3 mt-auto pt-4 border-t border-[var(--border-subtle)]">
-                    <div className="w-11 h-11 rounded-full bg-[linear-gradient(135deg,rgba(56,189,248,0.15),rgba(139,92,246,0.15))] border border-[var(--border-default)] flex items-center justify-center">
+                    <div className="w-11 h-11 rounded-full bg-[linear-gradient(135deg,rgba(148,163,184,0.15),rgba(148,163,184,0.15))] border border-[var(--border-default)] flex items-center justify-center">
                       <span className="text-xs font-bold text-[var(--accent-primary)]">{t.avatar}</span>
                     </div>
                     <div>
@@ -659,14 +659,14 @@ export default function LandingPage() {
         <div className="max-w-3xl mx-auto text-center">
           <ScrollAnimator>
             <div
-              className="relative p-16 rounded-3xl border border-[rgba(56,189,248,0.15)] overflow-hidden"
+              className="relative p-16 rounded-3xl border border-[rgba(148,163,184,0.15)] overflow-hidden"
               style={{
-                background: "linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(139, 92, 246, 0.08) 50%, rgba(192, 132, 252, 0.06) 100%)",
+                background: "linear-gradient(135deg, rgba(148, 163, 184, 0.08) 0%, rgba(148, 163, 184, 0.08) 50%, rgba(226, 232, 240, 0.06) 100%)",
               }}
             >
               {/* Animated glow orbs */}
-              <div className="absolute top-0 left-1/4 w-[300px] h-[200px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.12)_0%,transparent_70%)] pointer-events-none" />
-              <div className="absolute bottom-0 right-1/4 w-[300px] h-[200px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.1)_0%,transparent_70%)] pointer-events-none" />
+              <div className="absolute top-0 left-1/4 w-[300px] h-[200px] rounded-full bg-[radial-gradient(circle,rgba(148,163,184,0.12)_0%,transparent_70%)] pointer-events-none" />
+              <div className="absolute bottom-0 right-1/4 w-[300px] h-[200px] rounded-full bg-[radial-gradient(circle,rgba(148,163,184,0.1)_0%,transparent_70%)] pointer-events-none" />
 
               <div className="relative">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-4">
@@ -679,7 +679,7 @@ export default function LandingPage() {
                 </p>
                 <a
                   href="/"
-                  className="inline-flex items-center gap-2 px-10 py-4 rounded-xl bg-[linear-gradient(135deg,#38bdf8,#818cf8)] text-white font-semibold text-base hover:shadow-[0_0_40px_rgba(56,189,248,0.4)] transition-all duration-300 hover:scale-[1.02]"
+                  className="inline-flex items-center gap-2 px-10 py-4 rounded-xl bg-[linear-gradient(135deg,#94a3b8,#cbd5e1)] text-white font-semibold text-base hover:shadow-[0_0_40px_rgba(148,163,184,0.4)] transition-all duration-300 hover:scale-[1.02]"
                 >
                   Launch AeroIntel
                   <span>&rarr;</span>
@@ -700,7 +700,7 @@ export default function LandingPage() {
             {/* Brand */}
             <div className="md:col-span-1">
               <div className="flex items-center gap-2.5 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-[linear-gradient(135deg,#38bdf8,#818cf8,#c084fc)] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[linear-gradient(135deg,#94a3b8,#cbd5e1,#e2e8f0)] flex items-center justify-center">
                   <Plane size={16} className="text-white -rotate-45" />
                 </div>
                 <span className="font-semibold text-[var(--text-primary)] tracking-tight text-lg">
@@ -768,7 +768,7 @@ export default function LandingPage() {
               &copy; {new Date().getFullYear()} AeroIntel. All rights reserved.
             </p>
             <p className="text-xs text-[var(--text-faint)]">
-              Built with <span className="text-red-400">&hearts;</span> for aviation
+              Built with <span className="text-slate-200">&hearts;</span> for aviation
             </p>
           </div>
         </div>

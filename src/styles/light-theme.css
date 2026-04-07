@@ -22,7 +22,7 @@ html.light {
   --border-subtle: rgba(15, 23, 42, 0.05);
   --border-default: rgba(15, 23, 42, 0.09);
   --border-strong: rgba(15, 23, 42, 0.15);
-  --border-accent: rgba(8, 145, 178, 0.22);
+  --border-accent: rgba(51, 65, 85, 0.22);
 
   /* Text hierarchy */
   --text-primary: #0f172a;
@@ -31,17 +31,17 @@ html.light {
   --text-muted: #64748b;
   --text-faint: #94a3b8;
 
-  /* Accent — slightly deeper cyan for light backgrounds */
-  --accent-primary: #0891b2;
-  --accent-primary-dim: rgba(8, 145, 178, 0.10);
-  --accent-primary-glow: rgba(8, 145, 178, 0.05);
+  /* Accent — monochrome */
+  --accent-primary: #334155;
+  --accent-primary-dim: rgba(51, 65, 85, 0.10);
+  --accent-primary-glow: rgba(51, 65, 85, 0.05);
 
-  /* Status — slightly saturated for legibility on white */
-  --status-nominal: #059669;
-  --status-caution: #d97706;
-  --status-warning: #ea580c;
-  --status-critical: #dc2626;
-  --status-info: #2563eb;
+  /* Status — monochrome grayscale */
+  --status-nominal: #475569;
+  --status-caution: #64748b;
+  --status-warning: #64748b;
+  --status-critical: #334155;
+  --status-info: #64748b;
 }
 
 /* ── Surface class overrides ─────────────────────────── */

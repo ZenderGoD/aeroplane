@@ -66,11 +66,11 @@ const airports = airportsData as Airport[];
 const REFRESH_OPTIONS = [3, 5, 10, 15, 30, 60];
 
 const STATUS_CONFIG: Record<FlightStatus, { bg: string; text: string; glow: string }> = {
-  "APPROACHING": { bg: "rgba(251, 191, 36, 0.15)", text: "#fbbf24", glow: "rgba(251, 191, 36, 0.25)" },
-  "ON FINAL":    { bg: "rgba(52, 211, 153, 0.15)", text: "#34d399", glow: "rgba(52, 211, 153, 0.25)" },
-  "LANDED":      { bg: "rgba(34, 211, 238, 0.15)", text: "#22d3ee", glow: "rgba(34, 211, 238, 0.25)" },
-  "DEPARTING":   { bg: "rgba(96, 165, 250, 0.15)", text: "#60a5fa", glow: "rgba(96, 165, 250, 0.25)" },
-  "CLIMBING":    { bg: "rgba(167, 139, 250, 0.15)", text: "#a78bfa", glow: "rgba(167, 139, 250, 0.25)" },
+  "APPROACHING": { bg: "rgba(251, 191, 36, 0.15)", text: "#94a3b8", glow: "rgba(251, 191, 36, 0.25)" },
+  "ON FINAL":    { bg: "rgba(52, 211, 153, 0.15)", text: "#cbd5e1", glow: "rgba(52, 211, 153, 0.25)" },
+  "LANDED":      { bg: "rgba(34, 211, 238, 0.15)", text: "#cbd5e1", glow: "rgba(34, 211, 238, 0.25)" },
+  "DEPARTING":   { bg: "rgba(96, 165, 250, 0.15)", text: "#cbd5e1", glow: "rgba(96, 165, 250, 0.25)" },
+  "CLIMBING":    { bg: "rgba(167, 139, 250, 0.15)", text: "#94a3b8", glow: "rgba(167, 139, 250, 0.25)" },
   "EN ROUTE":    { bg: "rgba(100, 116, 139, 0.15)", text: "#94a3b8", glow: "rgba(100, 116, 139, 0.25)" },
 };
 
@@ -287,7 +287,7 @@ function FlightDetailOverlay({
             <StatusBadge status={cf.status} />
             <span
               className="data-value"
-              style={{ color: "#22d3ee", fontWeight: 700, fontSize: "15px" }}
+              style={{ color: "#cbd5e1", fontWeight: 700, fontSize: "15px" }}
             >
               {cs}
             </span>
@@ -496,7 +496,7 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
   const SortArrow = ({ col }: { col: SortKey }) => {
     if (sortKey !== col) return null;
     return (
-      <span className="ml-1 inline-block" style={{ fontSize: "9px", color: "#22d3ee" }}>
+      <span className="ml-1 inline-block" style={{ fontSize: "9px", color: "#cbd5e1" }}>
         {sortDir === "asc" ? "\u25B2" : "\u25BC"}
       </span>
     );
@@ -566,11 +566,11 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center"
             style={{
-              background: "rgba(34,211,238,0.1)",
-              border: "1px solid rgba(34,211,238,0.2)",
+              background: "rgba(203,213,225,0.1)",
+              border: "1px solid rgba(203,213,225,0.2)",
             }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="2" y="3" width="20" height="14" rx="2" />
               <line x1="8" y1="21" x2="16" y2="21" />
               <line x1="12" y1="17" x2="12" y2="21" />
@@ -640,7 +640,7 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
                   <div className="flex-shrink-0 text-center" style={{ minWidth: "40px" }}>
                     <span
                       className="data-value"
-                      style={{ color: "#22d3ee", fontSize: "11px", fontWeight: 700 }}
+                      style={{ color: "#cbd5e1", fontSize: "11px", fontWeight: 700 }}
                     >
                       {apt.icao}
                     </span>
@@ -666,11 +666,11 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
             <div
               className="flex items-center gap-2 px-3 py-1 rounded-lg"
               style={{
-                background: "rgba(34,211,238,0.08)",
-                border: "1px solid rgba(34,211,238,0.15)",
+                background: "rgba(203,213,225,0.08)",
+                border: "1px solid rgba(203,213,225,0.15)",
               }}
             >
-              <span className="data-value" style={{ color: "#22d3ee", fontSize: "12px", fontWeight: 700 }}>
+              <span className="data-value" style={{ color: "#cbd5e1", fontSize: "12px", fontWeight: 700 }}>
                 {selectedAirport.icao}
               </span>
               {selectedAirport.iata && (
@@ -698,7 +698,7 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
             style={{ fontSize: "12px", color: "var(--text-secondary)" }}
           >
             <span style={{ color: "var(--text-muted)", fontSize: "9px", letterSpacing: "0.08em" }}>UTC</span>
-            <span style={{ color: "#22d3ee", fontWeight: 700, fontSize: "13px", letterSpacing: "0.02em" }}>
+            <span style={{ color: "#cbd5e1", fontWeight: 700, fontSize: "13px", letterSpacing: "0.02em" }}>
               {utcStr}
             </span>
             {localStr && (
@@ -733,9 +733,9 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
                   onClick={() => setActiveTab(tab)}
                   className="flex items-center gap-2 px-4 py-1.5 rounded-lg transition-all duration-200"
                   style={{
-                    background: isActive ? "rgba(34,211,238,0.1)" : "transparent",
-                    border: isActive ? "1px solid rgba(34,211,238,0.2)" : "1px solid transparent",
-                    color: isActive ? "#22d3ee" : "var(--text-muted)",
+                    background: isActive ? "rgba(203,213,225,0.1)" : "transparent",
+                    border: isActive ? "1px solid rgba(203,213,225,0.2)" : "1px solid transparent",
+                    color: isActive ? "#cbd5e1" : "var(--text-muted)",
                     fontSize: "12px",
                     fontWeight: isActive ? 700 : 500,
                     letterSpacing: "0.04em",
@@ -758,8 +758,8 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
                   <span
                     className="data-value px-1.5 py-0.5 rounded text-[10px] font-bold"
                     style={{
-                      background: isActive ? "rgba(34,211,238,0.15)" : "rgba(100,116,139,0.15)",
-                      color: isActive ? "#22d3ee" : "var(--text-muted)",
+                      background: isActive ? "rgba(203,213,225,0.15)" : "rgba(148,163,184,0.15)",
+                      color: isActive ? "#cbd5e1" : "var(--text-muted)",
                     }}
                   >
                     {count}
@@ -781,9 +781,9 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
                   onClick={() => setRefreshRate(r)}
                   className="px-1.5 py-0.5 rounded text-[10px] transition-all data-value"
                   style={{
-                    background: refreshRate === r ? "rgba(34,211,238,0.12)" : "transparent",
-                    color: refreshRate === r ? "#22d3ee" : "var(--text-muted)",
-                    border: refreshRate === r ? "1px solid rgba(34,211,238,0.2)" : "1px solid transparent",
+                    background: refreshRate === r ? "rgba(203,213,225,0.12)" : "transparent",
+                    color: refreshRate === r ? "#cbd5e1" : "var(--text-muted)",
+                    border: refreshRate === r ? "1px solid rgba(203,213,225,0.2)" : "1px solid transparent",
                     fontWeight: refreshRate === r ? 700 : 400,
                   }}
                 >
@@ -804,11 +804,11 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
               <div
                 className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center"
                 style={{
-                  background: "rgba(34,211,238,0.06)",
-                  border: "1px solid rgba(34,211,238,0.12)",
+                  background: "rgba(203,213,225,0.06)",
+                  border: "1px solid rgba(203,213,225,0.12)",
                 }}
               >
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.7">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.7">
                   <rect x="2" y="3" width="20" height="14" rx="2" />
                   <line x1="8" y1="21" x2="16" y2="21" />
                   <line x1="12" y1="17" x2="12" y2="21" />
@@ -861,7 +861,7 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
                         padding: "10px 12px",
                         fontSize: "10px",
                         fontWeight: 700,
-                        color: sortKey === col.key ? "#22d3ee" : "var(--text-muted)",
+                        color: sortKey === col.key ? "#cbd5e1" : "var(--text-muted)",
                         letterSpacing: "0.08em",
                         width: col.width,
                         whiteSpace: "nowrap",
@@ -898,14 +898,14 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
                         }}
                         onMouseEnter={(e) => {
                           (e.currentTarget as HTMLTableRowElement).style.background =
-                            "rgba(34,211,238,0.04)";
+                            "rgba(203,213,225,0.04)";
                         }}
                         onMouseLeave={(e) => {
                           (e.currentTarget as HTMLTableRowElement).style.background =
                             idx % 2 === 0 ? "transparent" : "rgba(255,255,255,0.015)";
                         }}
                       >
-                        <td style={{ padding: "8px 12px", color: "#22d3ee", fontWeight: 700, fontSize: "12px" }}>
+                        <td style={{ padding: "8px 12px", color: "#cbd5e1", fontWeight: 700, fontSize: "12px" }}>
                           {cs}
                         </td>
                         <td style={{ padding: "8px 12px", color: "var(--text-secondary)" }}>
@@ -948,7 +948,7 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
                           <td
                             style={{
                               padding: "8px 12px",
-                              color: cf.etaMinutes !== null && cf.etaMinutes < 10 ? "#34d399" : "var(--text-secondary)",
+                              color: cf.etaMinutes !== null && cf.etaMinutes < 10 ? "#cbd5e1" : "var(--text-secondary)",
                               fontWeight: cf.etaMinutes !== null && cf.etaMinutes < 10 ? 700 : 400,
                               fontVariantNumeric: "tabular-nums",
                             }}
@@ -985,7 +985,7 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
             </span>
             <span style={{ color: "var(--text-muted)" }}>
               {activeTab === "arrivals" ? "Arrivals" : "Departures"}:{" "}
-              <span style={{ color: "#22d3ee", fontWeight: 600 }}>
+              <span style={{ color: "#cbd5e1", fontWeight: 600 }}>
                 {activeTab === "arrivals" ? arrivals.length : departures.length}
               </span>
             </span>
@@ -1011,8 +1011,8 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
             <div
               className="w-1.5 h-1.5 rounded-full"
               style={{
-                background: "#34d399",
-                boxShadow: "0 0 6px rgba(52,211,153,0.5)",
+                background: "#cbd5e1",
+                boxShadow: "0 0 6px rgba(203,213,225,0.5)",
                 animation: "pulse-dot 2s ease-in-out infinite",
               }}
             />

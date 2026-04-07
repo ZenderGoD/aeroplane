@@ -106,7 +106,7 @@ function StatCard({
   value,
   sub,
   icon,
-  color = "text-blue-400",
+  color = "text-slate-300",
 }: {
   label: string;
   value: string | number;
@@ -306,19 +306,19 @@ export default function StatsPanel({ flights }: Props) {
   // ── colour palettes for charts ──────────────────────────────────────
 
   const COUNTRY_COLORS = [
-    "#60a5fa", "#34d399", "#f97316", "#a78bfa",
-    "#22d3ee", "#e879f9", "#facc15", "#f87171",
-    "#4ade80", "#818cf8",
+    "#cbd5e1", "#94a3b8", "#e2e8f0", "#94a3b8",
+    "#cbd5e1", "#e2e8f0", "#94a3b8", "#e2e8f0",
+    "#cbd5e1", "#94a3b8",
   ];
 
   const AIRLINE_COLORS = [
-    "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6",
-    "#06b6d4", "#ec4899", "#eab308", "#ef4444",
-    "#14b8a6", "#6366f1",
+    "#cbd5e1", "#94a3b8", "#94a3b8", "#94a3b8",
+    "#cbd5e1", "#e2e8f0", "#94a3b8", "#e2e8f0",
+    "#cbd5e1", "#94a3b8",
   ];
 
-  const ALT_COLORS = ["#22d3ee", "#34d399", "#60a5fa", "#a78bfa", "#f97316"];
-  const SPD_COLORS = ["#34d399", "#60a5fa", "#f97316"];
+  const ALT_COLORS = ["#cbd5e1", "#94a3b8", "#cbd5e1", "#94a3b8", "#e2e8f0"];
+  const SPD_COLORS = ["#94a3b8", "#cbd5e1", "#e2e8f0"];
 
   // ── render ──────────────────────────────────────────────────────────
 
@@ -328,7 +328,7 @@ export default function StatsPanel({ flights }: Props) {
         onClick={() => setOpen(true)}
         className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium transition-all ${
           open
-            ? "bg-blue-600 text-white"
+            ? "bg-slate-600 text-white"
             : "hover:bg-gray-800/50"
         }`}
         style={!open ? { color: "var(--text-tertiary)" } : undefined}
@@ -347,7 +347,7 @@ export default function StatsPanel({ flights }: Props) {
         <SheetHeader className="px-5 pt-5 pb-0">
           <SheetTitle className="flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
             <svg
-              className="w-5 h-5 text-blue-400"
+              className="w-5 h-5 text-slate-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -408,7 +408,7 @@ export default function StatsPanel({ flights }: Props) {
                     label="Total Flights"
                     value={stats.total}
                     icon={PlaneIcon}
-                    color="text-blue-400"
+                    color="text-slate-300"
                   />
                   <StatCard
                     label="In Air"
@@ -429,7 +429,7 @@ export default function StatsPanel({ flights }: Props) {
                         />
                       </svg>
                     }
-                    color="text-emerald-400"
+                    color="text-slate-300"
                   />
                   <StatCard
                     label="On Ground"
@@ -450,14 +450,14 @@ export default function StatsPanel({ flights }: Props) {
                         />
                       </svg>
                     }
-                    color="text-orange-400"
+                    color="text-slate-400"
                   />
                   <StatCard
                     label="Countries"
                     value={stats.topCountries.length}
                     sub="origins tracked"
                     icon={GlobeIcon}
-                    color="text-purple-400"
+                    color="text-slate-400"
                   />
                 </div>
 
@@ -467,13 +467,13 @@ export default function StatsPanel({ flights }: Props) {
                     label="Avg Altitude"
                     value={`${Math.round(stats.avgAltFt).toLocaleString()} ft`}
                     icon={AltitudeIcon}
-                    color="text-cyan-400"
+                    color="text-slate-300"
                   />
                   <StatCard
                     label="Avg Speed"
                     value={`${Math.round(stats.avgSpdKts)} kts`}
                     icon={SpeedIcon}
-                    color="text-yellow-400"
+                    color="text-slate-400"
                   />
                 </div>
 
@@ -662,7 +662,7 @@ export default function StatsPanel({ flights }: Props) {
                       <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                         High-altitude flights (30k+ ft)
                       </span>
-                      <span className="text-xs font-bold text-cyan-400 tabular-nums">
+                      <span className="text-xs font-bold text-slate-300 tabular-nums">
                         {formatNumber(
                           stats.altBuckets[3] + stats.altBuckets[4]
                         )}
@@ -672,7 +672,7 @@ export default function StatsPanel({ flights }: Props) {
                       <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                         High-speed flights (400+ kts)
                       </span>
-                      <span className="text-xs font-bold text-orange-400 tabular-nums">
+                      <span className="text-xs font-bold text-slate-400 tabular-nums">
                         {formatNumber(stats.spdBuckets[2])}
                       </span>
                     </div>
@@ -680,7 +680,7 @@ export default function StatsPanel({ flights }: Props) {
                       <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                         Unique airlines detected
                       </span>
-                      <span className="text-xs font-bold text-purple-400 tabular-nums">
+                      <span className="text-xs font-bold text-slate-400 tabular-nums">
                         {formatNumber(stats.topAirlines.length > 0 ? stats.topAirlines.length : 0)}
                       </span>
                     </div>
@@ -688,7 +688,7 @@ export default function StatsPanel({ flights }: Props) {
                       <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                         Ground-to-air ratio
                       </span>
-                      <span className="text-xs font-bold text-emerald-400 tabular-nums">
+                      <span className="text-xs font-bold text-slate-300 tabular-nums">
                         {stats.inAir > 0
                           ? `1 : ${(stats.inAir / Math.max(stats.onGround, 1)).toFixed(1)}`
                           : "N/A"}

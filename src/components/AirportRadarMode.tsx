@@ -57,12 +57,12 @@ const CARDINAL_BEARINGS: Record<string, number> = {
 };
 
 const TYPE_LABELS: Record<string, { label: string; color: string; icon: string }> = {
-  large: { label: "Large", color: "#22d3ee", icon: "\u2708" },
-  medium: { label: "Medium", color: "#60a5fa", icon: "\u2708" },
-  small: { label: "Small", color: "#a3e635", icon: "\ud83d\udee9" },
-  heliport: { label: "Heliport", color: "#f472b6", icon: "\ud83d\ude81" },
-  seaplane: { label: "Seaplane", color: "#38bdf8", icon: "\ud83c\udf0a" },
-  balloon: { label: "Balloon", color: "#fbbf24", icon: "\ud83c\udf88" },
+  large: { label: "Large", color: "#cbd5e1", icon: "\u2708" },
+  medium: { label: "Medium", color: "#cbd5e1", icon: "\u2708" },
+  small: { label: "Small", color: "#cbd5e1", icon: "\ud83d\udee9" },
+  heliport: { label: "Heliport", color: "#e2e8f0", icon: "\ud83d\ude81" },
+  seaplane: { label: "Seaplane", color: "#cbd5e1", icon: "\ud83c\udf0a" },
+  balloon: { label: "Balloon", color: "#94a3b8", icon: "\ud83c\udf88" },
 };
 
 const airports = airportsData as Airport[];
@@ -89,10 +89,10 @@ function destinationPoint(
 function altitudeColor(alt: number | null): string {
   if (alt === null) return "#64748b";
   const ft = alt * 3.28084;
-  if (ft < 10000) return "#34d399";
-  if (ft < 25000) return "#fbbf24";
-  if (ft < 40000) return "#22d3ee";
-  return "#a78bfa";
+  if (ft < 10000) return "#cbd5e1";
+  if (ft < 25000) return "#94a3b8";
+  if (ft < 40000) return "#cbd5e1";
+  return "#94a3b8";
 }
 
 function fuzzyMatch(airport: Airport, query: string): number {
@@ -122,9 +122,9 @@ function AirportMapInner({
   const layersRef = useRef<L.LayerGroup | null>(null);
 
   const ringColors = [
-    "rgba(34,211,238,0.50)", "rgba(34,211,238,0.45)", "rgba(34,211,238,0.40)",
-    "rgba(34,211,238,0.35)", "rgba(34,211,238,0.30)", "rgba(34,211,238,0.25)",
-    "rgba(34,211,238,0.20)", "rgba(34,211,238,0.15)", "rgba(34,211,238,0.10)",
+    "rgba(203,213,225,0.50)", "rgba(203,213,225,0.45)", "rgba(203,213,225,0.40)",
+    "rgba(203,213,225,0.35)", "rgba(203,213,225,0.30)", "rgba(203,213,225,0.25)",
+    "rgba(203,213,225,0.20)", "rgba(203,213,225,0.15)", "rgba(203,213,225,0.10)",
   ];
 
   useEffect(() => {
@@ -140,13 +140,13 @@ function AirportMapInner({
 
     RANGE_RINGS.forEach((ringNm, i) => {
       L.circle([airport.lat, airport.lon], {
-        radius: ringNm * NM_TO_METERS, color: ringColors[i] || "rgba(34,211,238,0.10)",
+        radius: ringNm * NM_TO_METERS, color: ringColors[i] || "rgba(203,213,225,0.10)",
         weight: 1, dashArray: "6 4", fill: false,
       }).addTo(map);
       const northLat = airport.lat + (ringNm / 60);
       const labelIcon = L.divIcon({
         className: "range-ring-label",
-        html: `<div style="color:#22d3ee;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;background:rgba(6,8,13,0.88);padding:1px 6px;border-radius:3px;border:1px solid rgba(34,211,238,0.25);white-space:nowrap;text-align:center;letter-spacing:0.5px">${ringNm} NM</div>`,
+        html: `<div style="color:#cbd5e1;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;background:rgba(6,8,13,0.88);padding:1px 6px;border-radius:3px;border:1px solid rgba(203,213,225,0.25);white-space:nowrap;text-align:center;letter-spacing:0.5px">${ringNm} NM</div>`,
         iconSize: [0, 0], iconAnchor: [0, 8],
       });
       L.marker([northLat, airport.lon], { icon: labelIcon, interactive: false }).addTo(map);
@@ -155,10 +155,10 @@ function AirportMapInner({
     const airportIcon = L.divIcon({
       className: "leaflet-div-icon",
       html: `<div style="position:relative;width:28px;height:28px;">
-        <div style="position:absolute;inset:0;border:2px solid #22d3ee;border-radius:50%;animation:pulse 2s ease-in-out infinite;opacity:0.6;"></div>
-        <div style="position:absolute;inset:4px;border:2px solid #22d3ee;border-radius:50%;background:rgba(34,211,238,0.15);"></div>
-        <div style="position:absolute;top:50%;left:0;right:0;height:1px;background:#22d3ee;opacity:0.5;"></div>
-        <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:#22d3ee;opacity:0.5;"></div>
+        <div style="position:absolute;inset:0;border:2px solid #cbd5e1;border-radius:50%;animation:pulse 2s ease-in-out infinite;opacity:0.6;"></div>
+        <div style="position:absolute;inset:4px;border:2px solid #cbd5e1;border-radius:50%;background:rgba(203,213,225,0.15);"></div>
+        <div style="position:absolute;top:50%;left:0;right:0;height:1px;background:#cbd5e1;opacity:0.5;"></div>
+        <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:#cbd5e1;opacity:0.5;"></div>
       </div>`,
       iconSize: [28, 28], iconAnchor: [14, 14],
     });
@@ -223,7 +223,7 @@ function AirportMapInner({
       }
 
       const isMilitary = (f.dbFlags ?? 0) & 1;
-      const planeColor = isMilitary ? "#f59e0b" : color;
+      const planeColor = isMilitary ? "#94a3b8" : color;
       const planeIcon = L.divIcon({
         className: "",
         html: `<div style="transform:rotate(${hdgDeg}deg);display:flex;align-items:center;justify-content:center;width:22px;height:22px;filter:drop-shadow(0 0 3px ${planeColor}80);">
@@ -263,16 +263,16 @@ function AirportMapInner({
     });
     const endpointIcon = L.divIcon({
       className: "leaflet-div-icon",
-      html: `<div style="width:10px;height:10px;background:#f59e0b;border:1.5px solid #fbbf24;transform:rotate(45deg);box-shadow:0 0 6px rgba(245,158,11,0.5);"></div>`,
+      html: `<div style="width:10px;height:10px;background:#94a3b8;border:1.5px solid #94a3b8;transform:rotate(45deg);box-shadow:0 0 6px rgba(148,163,184,0.5);"></div>`,
       iconSize: [10, 10], iconAnchor: [5, 5],
     });
     bearingLines.forEach((line) => {
       const polyline = L.polyline([line.from, line.to], {
-        color: "#f59e0b", weight: 2, opacity: 0.9,
+        color: "#94a3b8", weight: 2, opacity: 0.9,
       }) as L.Polyline & { _bearingLine?: boolean };
       polyline._bearingLine = true;
       polyline.bindTooltip(
-        `<span style="font-family:monospace;font-size:10px;color:#fbbf24;background:rgba(6,8,13,0.9);padding:2px 6px;border-radius:4px;border:1px solid rgba(245,158,11,0.3)">${line.distanceNm.toFixed(1)} NM / ${Math.round(line.bearingDeg)}\u00B0</span>`,
+        `<span style="font-family:monospace;font-size:10px;color:#94a3b8;background:rgba(6,8,13,0.9);padding:2px 6px;border-radius:4px;border:1px solid rgba(148,163,184,0.3)">${line.distanceNm.toFixed(1)} NM / ${Math.round(line.bearingDeg)}\u00B0</span>`,
         { permanent: true, direction: "center", className: "range-ring-label" }
       );
       polyline.addTo(mapRef.current!);
@@ -290,7 +290,7 @@ const AirportMap = dynamic(() => Promise.resolve(AirportMapInner), {
   loading: () => (
     <div className="h-full w-full flex items-center justify-center" style={{ background: "var(--surface-0)" }}>
       <div className="text-center">
-        <div className="w-8 h-8 border-2 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin mx-auto mb-3" />
+        <div className="w-8 h-8 border-2 border-slate-300/30 border-t-slate-300 rounded-full animate-spin mx-auto mb-3" />
         <span style={{ color: "var(--text-muted)", fontSize: "12px" }}>Loading map...</span>
       </div>
     </div>
@@ -317,7 +317,7 @@ function FlightDetailPanel({
     <div className="absolute bottom-16 right-4 z-[1000] w-56 rounded-xl overflow-hidden"
       style={{ background: "rgba(6,8,13,0.95)", border: "1px solid var(--border-default)", backdropFilter: "blur(12px)" }}>
       <div className="flex items-center justify-between px-3 py-2" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
-        <span style={{ color: "#22d3ee", fontWeight: 700, fontSize: "13px", fontFamily: "monospace" }}>{cs}</span>
+        <span style={{ color: "#cbd5e1", fontWeight: 700, fontSize: "13px", fontFamily: "monospace" }}>{cs}</span>
         <button onClick={onClose} className="w-5 h-5 flex items-center justify-center rounded hover:bg-white/10" style={{ color: "var(--text-muted)" }}>x</button>
       </div>
       <div className="px-3 py-2 space-y-1" style={{ fontSize: "11px", fontFamily: "monospace" }}>
@@ -490,8 +490,8 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
         {/* Radar icon */}
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg flex items-center justify-center"
-            style={{ background: "rgba(34,211,238,0.1)", border: "1px solid rgba(34,211,238,0.2)" }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="2">
+            style={{ background: "rgba(203,213,225,0.1)", border: "1px solid rgba(203,213,225,0.2)" }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2">
               <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
               <line x1="12" y1="2" x2="12" y2="12" />
             </svg>
@@ -520,7 +520,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
                   className="w-full text-left px-3 py-2 hover:bg-white/5 transition-colors flex items-center gap-3"
                   style={{ borderBottom: "1px solid var(--border-subtle)" }}>
                   <div className="flex-shrink-0 text-center" style={{ minWidth: "40px" }}>
-                    <span className="data-value" style={{ color: TYPE_LABELS[apt.type || "large"]?.color || "#22d3ee", fontSize: "11px", fontWeight: 700 }}>{apt.icao}</span>
+                    <span className="data-value" style={{ color: TYPE_LABELS[apt.type || "large"]?.color || "#cbd5e1", fontSize: "11px", fontWeight: 700 }}>{apt.icao}</span>
                     {apt.type && apt.type !== "large" && apt.type !== "medium" && (
                       <div style={{ fontSize: "9px", color: TYPE_LABELS[apt.type]?.color || "#888", marginTop: "1px" }}>
                         {TYPE_LABELS[apt.type]?.icon} {TYPE_LABELS[apt.type]?.label}
@@ -543,8 +543,8 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
         {selectedAirport && (
           <div className="flex items-center gap-2 ml-3">
             <div className="flex items-center gap-2 px-3 py-1 rounded-lg"
-              style={{ background: "rgba(34,211,238,0.08)", border: "1px solid rgba(34,211,238,0.15)" }}>
-              <span className="data-value" style={{ color: "#22d3ee", fontSize: "12px", fontWeight: 700 }}>{selectedAirport.icao}</span>
+              style={{ background: "rgba(203,213,225,0.08)", border: "1px solid rgba(203,213,225,0.15)" }}>
+              <span className="data-value" style={{ color: "#cbd5e1", fontSize: "12px", fontWeight: 700 }}>{selectedAirport.icao}</span>
               {selectedAirport.iata && (
                 <><span style={{ color: "var(--text-muted)", fontSize: "10px" }}>/</span>
                 <span className="data-value" style={{ color: "var(--text-secondary)", fontSize: "11px" }}>{selectedAirport.iata}</span></>
@@ -566,9 +566,9 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
             onClick={() => setShowATCPanel((v) => !v)}
             className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all hover:brightness-125"
             style={{
-              background: showATCPanel ? "rgba(168,85,247,0.15)" : "rgba(168,85,247,0.06)",
-              border: `1px solid ${showATCPanel ? "rgba(168,85,247,0.35)" : "rgba(168,85,247,0.15)"}`,
-              color: showATCPanel ? "#c084fc" : "var(--text-muted)",
+              background: showATCPanel ? "rgba(148,163,184,0.15)" : "rgba(148,163,184,0.06)",
+              border: `1px solid ${showATCPanel ? "rgba(148,163,184,0.35)" : "rgba(148,163,184,0.15)"}`,
+              color: showATCPanel ? "#94a3b8" : "var(--text-muted)",
               fontSize: "11px",
               fontWeight: 600,
             }}
@@ -607,11 +607,11 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
                 {/* Mode tabs */}
                 <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid var(--border-default)" }}>
                   <button onClick={() => setBearingMode("latlon")} className="flex-1 py-1.5 text-center transition-colors"
-                    style={{ fontSize: "10px", fontWeight: 600, background: bearingMode === "latlon" ? "rgba(34,211,238,0.12)" : "transparent",
-                      color: bearingMode === "latlon" ? "#22d3ee" : "var(--text-muted)" }}>LAT/LON</button>
+                    style={{ fontSize: "10px", fontWeight: 600, background: bearingMode === "latlon" ? "rgba(203,213,225,0.12)" : "transparent",
+                      color: bearingMode === "latlon" ? "#cbd5e1" : "var(--text-muted)" }}>LAT/LON</button>
                   <button onClick={() => setBearingMode("cardinal")} className="flex-1 py-1.5 text-center transition-colors"
-                    style={{ fontSize: "10px", fontWeight: 600, background: bearingMode === "cardinal" ? "rgba(34,211,238,0.12)" : "transparent",
-                      color: bearingMode === "cardinal" ? "#22d3ee" : "var(--text-muted)", borderLeft: "1px solid var(--border-default)" }}>DIRECTION</button>
+                    style={{ fontSize: "10px", fontWeight: 600, background: bearingMode === "cardinal" ? "rgba(203,213,225,0.12)" : "transparent",
+                      color: bearingMode === "cardinal" ? "#cbd5e1" : "var(--text-muted)", borderLeft: "1px solid var(--border-default)" }}>DIRECTION</button>
                 </div>
 
                 {bearingMode === "latlon" && (
@@ -629,7 +629,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
                         style={{ background: "var(--surface-2)", border: "1px solid var(--border-default)", color: "var(--text-primary)", fontSize: "11px" }} />
                     </div>
                     <button onClick={drawLatLonLine} className="w-full h-7 rounded-md transition-colors"
-                      style={{ background: "rgba(245,158,11,0.15)", border: "1px solid rgba(245,158,11,0.3)", color: "#f59e0b", fontSize: "11px", fontWeight: 600 }}>Draw Line</button>
+                      style={{ background: "rgba(148,163,184,0.15)", border: "1px solid rgba(148,163,184,0.3)", color: "#94a3b8", fontSize: "11px", fontWeight: 600 }}>Draw Line</button>
                   </div>
                 )}
 
@@ -641,9 +641,9 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
                         {Object.keys(CARDINAL_BEARINGS).map((dir) => (
                           <button key={dir} onClick={() => setCardinalDir(dir)} className="h-7 rounded-md transition-colors"
                             style={{ fontSize: "10px", fontWeight: 700,
-                              background: cardinalDir === dir ? "rgba(34,211,238,0.15)" : "var(--surface-2)",
-                              border: `1px solid ${cardinalDir === dir ? "rgba(34,211,238,0.3)" : "var(--border-default)"}`,
-                              color: cardinalDir === dir ? "#22d3ee" : "var(--text-muted)" }}>{dir}</button>
+                              background: cardinalDir === dir ? "rgba(203,213,225,0.15)" : "var(--surface-2)",
+                              border: `1px solid ${cardinalDir === dir ? "rgba(203,213,225,0.3)" : "var(--border-default)"}`,
+                              color: cardinalDir === dir ? "#cbd5e1" : "var(--text-muted)" }}>{dir}</button>
                         ))}
                       </div>
                     </div>
@@ -654,7 +654,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
                         style={{ background: "var(--surface-2)", border: "1px solid var(--border-default)", color: "var(--text-primary)", fontSize: "11px" }} />
                     </div>
                     <button onClick={drawCardinalLine} className="w-full h-7 rounded-md transition-colors"
-                      style={{ background: "rgba(245,158,11,0.15)", border: "1px solid rgba(245,158,11,0.3)", color: "#f59e0b", fontSize: "11px", fontWeight: 600 }}>Draw Line</button>
+                      style={{ background: "rgba(148,163,184,0.15)", border: "1px solid rgba(148,163,184,0.3)", color: "#94a3b8", fontSize: "11px", fontWeight: 600 }}>Draw Line</button>
                   </div>
                 )}
 
@@ -670,7 +670,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
                       <div key={line.id} className="flex items-center justify-between px-2 py-1.5 rounded-md"
                         style={{ background: "var(--surface-2)", border: "1px solid var(--border-subtle)" }}>
                         <div className="data-value" style={{ fontSize: "10px" }}>
-                          <span style={{ color: "#f59e0b" }}>{line.distanceNm.toFixed(1)} NM</span>
+                          <span style={{ color: "#94a3b8" }}>{line.distanceNm.toFixed(1)} NM</span>
                           <span style={{ color: "var(--text-muted)", margin: "0 4px" }}>/</span>
                           <span style={{ color: "var(--text-secondary)" }}>{Math.round(line.bearingDeg)}{"\u00B0"}</span>
                         </div>
@@ -686,10 +686,10 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
                   <span className="section-label">ALTITUDE LEGEND</span>
                   <div className="mt-2 space-y-1">
                     {[
-                      { color: "#34d399", label: "< 10,000 ft" },
-                      { color: "#fbbf24", label: "10,000 - 25,000 ft" },
-                      { color: "#22d3ee", label: "25,000 - 40,000 ft" },
-                      { color: "#a78bfa", label: "> 40,000 ft" },
+                      { color: "#cbd5e1", label: "< 10,000 ft" },
+                      { color: "#94a3b8", label: "10,000 - 25,000 ft" },
+                      { color: "#cbd5e1", label: "25,000 - 40,000 ft" },
+                      { color: "#94a3b8", label: "> 40,000 ft" },
                     ].map((item) => (
                       <div key={item.label} className="flex items-center gap-2">
                         <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: item.color }} />
@@ -711,8 +711,8 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
             <div className="h-full w-full flex items-center justify-center" style={{ background: "var(--surface-0)" }}>
               <div className="text-center space-y-4 max-w-md">
                 <div className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center"
-                  style={{ background: "rgba(34,211,238,0.06)", border: "1px solid rgba(34,211,238,0.12)" }}>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="1.5" opacity="0.7">
+                  style={{ background: "rgba(203,213,225,0.06)", border: "1px solid rgba(203,213,225,0.12)" }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5" opacity="0.7">
                     <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
                     <line x1="12" y1="2" x2="12" y2="12" />
                   </svg>
@@ -760,7 +760,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
               <div style={{ width: "1px", height: "12px", background: "var(--border-subtle)" }} />
               <div className="flex items-center gap-1.5">
                 <div className="w-1.5 h-1.5 rounded-full"
-                  style={{ background: flightCount > 0 ? "#34d399" : "#64748b", boxShadow: flightCount > 0 ? "0 0 6px rgba(52,211,153,0.4)" : "none" }} />
+                  style={{ background: flightCount > 0 ? "#cbd5e1" : "#64748b", boxShadow: flightCount > 0 ? "0 0 6px rgba(203,213,225,0.4)" : "none" }} />
                 <span className="data-value" style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{flightCount} flights</span>
                 <span style={{ color: "var(--text-faint)", fontSize: "10px" }}>&middot; airplanes.live</span>
               </div>

@@ -102,7 +102,7 @@ export default function FlightChart({ history }: Props) {
         }
       }
       ctx.closePath();
-      ctx.fillStyle = "rgba(59, 130, 246, 0.12)";
+      ctx.fillStyle = "rgba(148, 163, 184, 0.12)";
       ctx.fill();
     }
 
@@ -116,11 +116,11 @@ export default function FlightChart({ history }: Props) {
       if (!started) { ctx.moveTo(x, y); started = true; }
       else ctx.lineTo(x, y);
     }
-    ctx.strokeStyle = "#3b82f6";
+    ctx.strokeStyle = "#cbd5e1";
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
-    // Draw speed line (green)
+    // Draw speed line (gray)
     const spdToY = (val: number) => PADDING.top + plotH - ((val - spdMin) / spdRange) * plotH;
 
     ctx.beginPath();
@@ -132,20 +132,20 @@ export default function FlightChart({ history }: Props) {
       if (!started) { ctx.moveTo(x, y); started = true; }
       else ctx.lineTo(x, y);
     }
-    ctx.strokeStyle = "#22c55e";
+    ctx.strokeStyle = "#94a3b8";
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
     // Y-axis labels for altitude (left side)
     ctx.font = "9px system-ui, sans-serif";
     ctx.textAlign = "right";
-    ctx.fillStyle = "#3b82f6";
+    ctx.fillStyle = "#cbd5e1";
     ctx.fillText(`${Math.round(altMax / 1000)}k`, PADDING.left - 3, PADDING.top + 3);
     ctx.fillText(`${Math.round(altMin / 1000)}k`, PADDING.left - 3, PADDING.top + plotH + 3);
 
     // Speed range label (right side)
     ctx.textAlign = "left";
-    ctx.fillStyle = "#22c55e";
+    ctx.fillStyle = "#94a3b8";
     ctx.fillText(`${Math.round(spdMax)}kt`, w - PADDING.right + 1, PADDING.top + 3);
 
     // Time labels
@@ -169,11 +169,11 @@ export default function FlightChart({ history }: Props) {
     ctx.font = "bold 8px system-ui, sans-serif";
     ctx.textAlign = "left";
     // Altitude legend
-    ctx.fillStyle = "#3b82f6";
+    ctx.fillStyle = "#cbd5e1";
     ctx.fillRect(PADDING.left, 2, 6, 2);
     ctx.fillText("ALT", PADDING.left + 8, 6);
     // Speed legend
-    ctx.fillStyle = "#22c55e";
+    ctx.fillStyle = "#94a3b8";
     ctx.fillRect(PADDING.left + 35, 2, 6, 2);
     ctx.fillText("SPD", PADDING.left + 43, 6);
 

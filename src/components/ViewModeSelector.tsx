@@ -43,7 +43,7 @@ export default function ViewModeSelector({
           onClick={() => onChange(mode.key)}
           className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium transition-all ${
             value === mode.key
-              ? "bg-blue-600 text-white"
+              ? "bg-gray-600 text-white"
               : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
           }`}
         >
@@ -67,7 +67,7 @@ export default function ViewModeSelector({
               onClick={onMeasureToggle}
               className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium transition-all ${
                 measureActive
-                  ? "bg-cyan-600 text-white"
+                  ? "bg-gray-600 text-white"
                   : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
               }`}
             />
@@ -91,7 +91,7 @@ export default function ViewModeSelector({
               onClick={onReplayToggle}
               className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium transition-all ${
                 replayActive
-                  ? "bg-purple-600 text-white"
+                  ? "bg-gray-600 text-white"
                   : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
               }`}
             />

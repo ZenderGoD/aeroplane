@@ -18,13 +18,13 @@ interface CorridorOverlayProps {
 function getStatusColor(status: string): string {
   switch (status) {
     case "disrupted":
-      return "#ef4444";
+      return "#e2e8f0";
     case "congested":
-      return "#f97316";
+      return "#94a3b8";
     case "compressed":
-      return "#eab308";
+      return "#94a3b8";
     default:
-      return "#22c55e";
+      return "#cbd5e1";
   }
 }
 
@@ -62,9 +62,9 @@ function getTrendArrow(label: string): string {
 function getTrendColor(label: string): string {
   switch (label) {
     case "improving":
-      return "#22c55e";
+      return "#cbd5e1";
     case "degrading":
-      return "#ef4444";
+      return "#e2e8f0";
     default:
       return "#94a3b8";
   }
@@ -249,7 +249,7 @@ function buildTooltip(
     html += `<span>Flights: <b>${health.flightCount}</b></span>`;
     html += `<span>Spacing: <b>${health.avgSpacingNm ? `${Math.round(health.avgSpacingNm)} NM` : "—"}</b></span>`;
     html += `<span>Avg Alt: <b>${health.avgAltitude ? `${Math.round(health.avgAltitude * 3.28084)} ft` : "—"}</b></span>`;
-    html += `<span>Anomalies: <b style="color:${health.anomalyCount > 0 ? "#ef4444" : "#6b7280"}">${health.anomalyCount}</b></span>`;
+    html += `<span>Anomalies: <b style="color:${health.anomalyCount > 0 ? "#e2e8f0" : "#6b7280"}">${health.anomalyCount}</b></span>`;
     html += `</div>`;
   } else {
     html += `<div style="color:#6b7280;font-size:10px">No health data yet</div>`;

@@ -33,12 +33,12 @@ interface Airport {
 }
 
 const TYPE_LABELS: Record<string, { label: string; color: string; icon: string }> = {
-  large: { label: "Large", color: "#22d3ee", icon: "✈" },
-  medium: { label: "Medium", color: "#60a5fa", icon: "✈" },
-  small: { label: "Small", color: "#a3e635", icon: "🛩" },
-  heliport: { label: "Heliport", color: "#f472b6", icon: "🚁" },
-  seaplane: { label: "Seaplane", color: "#38bdf8", icon: "🌊" },
-  balloon: { label: "Balloon", color: "#fbbf24", icon: "🎈" },
+  large: { label: "Large", color: "#cbd5e1", icon: "✈" },
+  medium: { label: "Medium", color: "#94a3b8", icon: "✈" },
+  small: { label: "Small", color: "#cbd5e1", icon: "🛩" },
+  heliport: { label: "Heliport", color: "#e2e8f0", icon: "🚁" },
+  seaplane: { label: "Seaplane", color: "#cbd5e1", icon: "🌊" },
+  balloon: { label: "Balloon", color: "#94a3b8", icon: "🎈" },
 };
 
 interface BearingLine {
@@ -101,10 +101,10 @@ function destinationPoint(
 function altitudeColor(altMeters: number | null): string {
   if (altMeters === null) return "#6b7280";
   const ft = altMeters * 3.28084;
-  if (ft < 10000) return "#34d399"; // green
-  if (ft < 25000) return "#fbbf24"; // yellow
-  if (ft < 40000) return "#22d3ee"; // cyan
-  return "#a78bfa"; // purple
+  if (ft < 10000) return "#cbd5e1"; // low
+  if (ft < 25000) return "#94a3b8"; // mid
+  if (ft < 40000) return "#cbd5e1"; // high
+  return "#94a3b8"; // very high
 }
 
 function fuzzyMatch(airport: Airport, query: string): number {
@@ -144,15 +144,15 @@ function AirportMapInner({
 
   // Colors fade out as rings get larger: 5,10,15,20,25,50,75,100,150
   const ringColors = [
-    "rgba(34,211,238,0.50)",
-    "rgba(34,211,238,0.45)",
-    "rgba(34,211,238,0.40)",
-    "rgba(34,211,238,0.35)",
-    "rgba(34,211,238,0.30)",
-    "rgba(34,211,238,0.25)",
-    "rgba(34,211,238,0.20)",
-    "rgba(34,211,238,0.15)",
-    "rgba(34,211,238,0.10)",
+    "rgba(203,213,225,0.50)",
+    "rgba(203,213,225,0.45)",
+    "rgba(203,213,225,0.40)",
+    "rgba(203,213,225,0.35)",
+    "rgba(203,213,225,0.30)",
+    "rgba(203,213,225,0.25)",
+    "rgba(203,213,225,0.20)",
+    "rgba(203,213,225,0.15)",
+    "rgba(203,213,225,0.10)",
   ];
 
   // ── Create map imperatively ──
@@ -174,7 +174,7 @@ function AirportMapInner({
     RANGE_RINGS.forEach((ringNm, i) => {
       L.circle([airport.lat, airport.lon], {
         radius: ringNm * NM_TO_METERS,
-        color: ringColors[i] || "rgba(34,211,238,0.10)",
+        color: ringColors[i] || "rgba(203,213,225,0.10)",
         weight: 1,
         dashArray: "6 4",
         fill: false,
@@ -185,14 +185,14 @@ function AirportMapInner({
       const labelIcon = L.divIcon({
         className: "range-ring-label",
         html: `<div style="
-          color:#22d3ee;
+          color:#cbd5e1;
           font-size:10px;
           font-weight:700;
           font-family:'JetBrains Mono',monospace;
           background:rgba(6,8,13,0.88);
           padding:1px 6px;
           border-radius:3px;
-          border:1px solid rgba(34,211,238,0.25);
+          border:1px solid rgba(203,213,225,0.25);
           white-space:nowrap;
           text-align:center;
           letter-spacing:0.5px;
@@ -207,10 +207,10 @@ function AirportMapInner({
     const airportIcon = L.divIcon({
       className: "leaflet-div-icon",
       html: `<div style="position:relative;width:28px;height:28px;">
-        <div style="position:absolute;inset:0;border:2px solid #22d3ee;border-radius:50%;animation:pulse 2s ease-in-out infinite;opacity:0.6;"></div>
-        <div style="position:absolute;inset:4px;border:2px solid #22d3ee;border-radius:50%;background:rgba(34,211,238,0.15);"></div>
-        <div style="position:absolute;top:50%;left:0;right:0;height:1px;background:#22d3ee;opacity:0.5;"></div>
-        <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:#22d3ee;opacity:0.5;"></div>
+        <div style="position:absolute;inset:0;border:2px solid #cbd5e1;border-radius:50%;animation:pulse 2s ease-in-out infinite;opacity:0.6;"></div>
+        <div style="position:absolute;inset:4px;border:2px solid #cbd5e1;border-radius:50%;background:rgba(203,213,225,0.15);"></div>
+        <div style="position:absolute;top:50%;left:0;right:0;height:1px;background:#cbd5e1;opacity:0.5;"></div>
+        <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:#cbd5e1;opacity:0.5;"></div>
       </div>`,
       iconSize: [28, 28],
       iconAnchor: [14, 14],
@@ -324,7 +324,7 @@ function AirportMapInner({
 
       // ── Plane icon (rotated SVG) ──
       const isMilitary = (f.dbFlags ?? 0) & 1;
-      const planeColor = isMilitary ? "#f59e0b" : color;
+      const planeColor = isMilitary ? "#94a3b8" : color;
       const planeIcon = L.divIcon({
         className: "",
         html: `<div style="transform:rotate(${hdgDeg}deg);display:flex;align-items:center;justify-content:center;width:22px;height:22px;filter:drop-shadow(0 0 3px ${planeColor}80);">
@@ -368,20 +368,20 @@ function AirportMapInner({
 
     const endpointIcon = L.divIcon({
       className: "leaflet-div-icon",
-      html: `<div style="width:10px;height:10px;background:#f59e0b;border:1.5px solid #fbbf24;transform:rotate(45deg);box-shadow:0 0 6px rgba(245,158,11,0.5);"></div>`,
+      html: `<div style="width:10px;height:10px;background:#94a3b8;border:1.5px solid #94a3b8;transform:rotate(45deg);box-shadow:0 0 6px rgba(148,163,184,0.5);"></div>`,
       iconSize: [10, 10],
       iconAnchor: [5, 5],
     });
 
     bearingLines.forEach((line) => {
       const polyline = L.polyline([line.from, line.to], {
-        color: "#f59e0b",
+        color: "#94a3b8",
         weight: 2,
         opacity: 0.9,
       }) as L.Polyline & { _bearingLine?: boolean };
       polyline._bearingLine = true;
       polyline.bindTooltip(
-        `<span style="font-family:monospace;font-size:10px;color:#fbbf24;background:rgba(6,8,13,0.9);padding:2px 6px;border-radius:4px;border:1px solid rgba(245,158,11,0.3)">${line.distanceNm.toFixed(1)} NM / ${Math.round(line.bearingDeg)}\u00B0</span>`,
+        `<span style="font-family:monospace;font-size:10px;color:#94a3b8;background:rgba(6,8,13,0.9);padding:2px 6px;border-radius:4px;border:1px solid rgba(148,163,184,0.3)">${line.distanceNm.toFixed(1)} NM / ${Math.round(line.bearingDeg)}\u00B0</span>`,
         { permanent: true, direction: "center", className: "range-ring-label" }
       );
       polyline.addTo(mapRef.current!);
@@ -400,7 +400,7 @@ const AirportMap = dynamic(() => Promise.resolve(AirportMapInner), {
   loading: () => (
     <div className="h-full w-full flex items-center justify-center" style={{ background: "var(--surface-0)" }}>
       <div className="text-center">
-        <div className="w-8 h-8 border-2 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin mx-auto mb-3" />
+        <div className="w-8 h-8 border-2 border-slate-400/30 border-t-slate-400 rounded-full animate-spin mx-auto mb-3" />
         <span style={{ color: "var(--text-muted)", fontSize: "12px" }}>Loading map...</span>
       </div>
     </div>
@@ -762,11 +762,11 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
           <div
             className="w-8 h-8 rounded-lg flex items-center justify-center"
             style={{
-              background: "rgba(34,211,238,0.1)",
-              border: "1px solid rgba(34,211,238,0.2)",
+              background: "rgba(203,213,225,0.1)",
+              border: "1px solid rgba(203,213,225,0.2)",
             }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2">
               <circle cx="12" cy="12" r="10" />
               <circle cx="12" cy="12" r="6" />
               <circle cx="12" cy="12" r="2" />
@@ -835,7 +835,7 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                     <span
                       className="data-value"
                       style={{
-                        color: TYPE_LABELS[apt.type || "large"]?.color || "#22d3ee",
+                        color: TYPE_LABELS[apt.type || "large"]?.color || "#cbd5e1",
                         fontSize: "11px",
                         fontWeight: 700,
                       }}
@@ -874,11 +874,11 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
             <div
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
               style={{
-                background: "rgba(34,211,238,0.08)",
-                border: "1px solid rgba(34,211,238,0.15)",
+                background: "rgba(203,213,225,0.08)",
+                border: "1px solid rgba(203,213,225,0.15)",
               }}
             >
-              <span className="data-value" style={{ color: "#22d3ee", fontSize: "13px", fontWeight: 700 }}>
+              <span className="data-value" style={{ color: "#cbd5e1", fontSize: "13px", fontWeight: 700 }}>
                 {selectedAirport.icao}
               </span>
               {selectedAirport.iata && (
@@ -972,11 +972,11 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                       fontWeight: 600,
                       background:
                         bearingMode === "latlon"
-                          ? "rgba(34,211,238,0.12)"
+                          ? "rgba(203,213,225,0.12)"
                           : "transparent",
                       color:
                         bearingMode === "latlon"
-                          ? "#22d3ee"
+                          ? "#cbd5e1"
                           : "var(--text-muted)",
                     }}
                   >
@@ -990,11 +990,11 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                       fontWeight: 600,
                       background:
                         bearingMode === "cardinal"
-                          ? "rgba(34,211,238,0.12)"
+                          ? "rgba(203,213,225,0.12)"
                           : "transparent",
                       color:
                         bearingMode === "cardinal"
-                          ? "#22d3ee"
+                          ? "#cbd5e1"
                           : "var(--text-muted)",
                       borderLeft: "1px solid var(--border-default)",
                     }}
@@ -1044,9 +1044,9 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                       onClick={drawLatLonLine}
                       className="w-full h-7 rounded-md transition-colors"
                       style={{
-                        background: "rgba(245,158,11,0.15)",
-                        border: "1px solid rgba(245,158,11,0.3)",
-                        color: "#f59e0b",
+                        background: "rgba(148,163,184,0.15)",
+                        border: "1px solid rgba(148,163,184,0.3)",
+                        color: "#94a3b8",
                         fontSize: "11px",
                         fontWeight: 600,
                       }}
@@ -1072,16 +1072,16 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                               fontWeight: 700,
                               background:
                                 cardinalDir === dir
-                                  ? "rgba(34,211,238,0.15)"
+                                  ? "rgba(203,213,225,0.15)"
                                   : "var(--surface-2)",
                               border: `1px solid ${
                                 cardinalDir === dir
-                                  ? "rgba(34,211,238,0.3)"
+                                  ? "rgba(203,213,225,0.3)"
                                   : "var(--border-default)"
                               }`,
                               color:
                                 cardinalDir === dir
-                                  ? "#22d3ee"
+                                  ? "#cbd5e1"
                                   : "var(--text-muted)",
                             }}
                           >
@@ -1114,9 +1114,9 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                       onClick={drawCardinalLine}
                       className="w-full h-7 rounded-md transition-colors"
                       style={{
-                        background: "rgba(245,158,11,0.15)",
-                        border: "1px solid rgba(245,158,11,0.3)",
-                        color: "#f59e0b",
+                        background: "rgba(148,163,184,0.15)",
+                        border: "1px solid rgba(148,163,184,0.3)",
+                        color: "#94a3b8",
                         fontSize: "11px",
                         fontWeight: 600,
                       }}
@@ -1155,7 +1155,7 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                         }}
                       >
                         <div className="data-value" style={{ fontSize: "10px" }}>
-                          <span style={{ color: "#f59e0b" }}>
+                          <span style={{ color: "#94a3b8" }}>
                             {line.distanceNm.toFixed(1)} NM
                           </span>
                           <span style={{ color: "var(--text-muted)", margin: "0 4px" }}>
@@ -1185,10 +1185,10 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                   <span className="section-label">ALTITUDE LEGEND</span>
                   <div className="mt-2 space-y-1">
                     {[
-                      { color: "#34d399", label: "< 10,000 ft" },
-                      { color: "#fbbf24", label: "10,000 - 25,000 ft" },
-                      { color: "#22d3ee", label: "25,000 - 40,000 ft" },
-                      { color: "#a78bfa", label: "> 40,000 ft" },
+                      { color: "#cbd5e1", label: "< 10,000 ft" },
+                      { color: "#94a3b8", label: "10,000 - 25,000 ft" },
+                      { color: "#cbd5e1", label: "25,000 - 40,000 ft" },
+                      { color: "#94a3b8", label: "> 40,000 ft" },
                     ].map((item) => (
                       <div key={item.label} className="flex items-center gap-2">
                         <div
@@ -1225,11 +1225,11 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                 <div
                   className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center"
                   style={{
-                    background: "rgba(34,211,238,0.06)",
-                    border: "1px solid rgba(34,211,238,0.12)",
+                    background: "rgba(203,213,225,0.06)",
+                    border: "1px solid rgba(203,213,225,0.12)",
                   }}
                 >
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="1.5" opacity="0.7">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5" opacity="0.7">
                     <circle cx="12" cy="12" r="10" />
                     <circle cx="12" cy="12" r="6" />
                     <circle cx="12" cy="12" r="2" />
@@ -1329,8 +1329,8 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                 <div
                   className="w-1.5 h-1.5 rounded-full"
                   style={{
-                    background: flightCount > 0 ? "#34d399" : "#64748b",
-                    boxShadow: flightCount > 0 ? "0 0 6px rgba(52,211,153,0.4)" : "none",
+                    background: flightCount > 0 ? "#cbd5e1" : "#64748b",
+                    boxShadow: flightCount > 0 ? "0 0 6px rgba(148,163,184,0.4)" : "none",
                   }}
                 />
                 <span className="data-value" style={{ fontSize: "11px", color: "var(--text-secondary)" }}>

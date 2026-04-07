@@ -28,26 +28,18 @@ interface RouteSegment {
 }
 
 function getDensityColor(count: number): string {
-  if (count >= 16) return "rgba(239, 68, 68, 0.5)";
-  if (count >= 9) return "rgba(250, 204, 21, 0.4)";
-  if (count >= 4) return "rgba(96, 165, 250, 0.3)";
-  return "rgba(34, 211, 238, 0.15)";
+  if (count >= 16) return "rgba(226, 232, 240, 0.5)";
+  if (count >= 9) return "rgba(148, 163, 184, 0.4)";
+  if (count >= 4) return "rgba(148, 163, 184, 0.3)";
+  return "rgba(203, 213, 225, 0.15)";
 }
 
 function getSegmentColor(rank: number, total: number): string {
   const t = total > 1 ? rank / (total - 1) : 0;
-  // Interpolate from cyan to yellow to red
-  if (t < 0.5) {
-    const s = t * 2;
-    const r = Math.round(34 + (250 - 34) * s);
-    const g = Math.round(211 + (204 - 211) * s);
-    const b = Math.round(238 + (21 - 238) * s);
-    return `rgba(${r}, ${g}, ${b}, 0.4)`;
-  }
-  const s = (t - 0.5) * 2;
-  const r = Math.round(250 + (239 - 250) * s);
-  const g = Math.round(204 + (68 - 204) * s);
-  const b = Math.round(21 + (68 - 21) * s);
+  // Interpolate from slate-300 to slate-500 (monochromatic)
+  const r = Math.round(203 + (100 - 203) * t);
+  const g = Math.round(213 + (116 - 213) * t);
+  const b = Math.round(225 + (139 - 225) * t);
   return `rgba(${r}, ${g}, ${b}, 0.4)`;
 }
 
@@ -267,10 +259,10 @@ export default function RouteDensityOverlay({
     legend.appendChild(title);
 
     const levels = [
-      { color: "rgba(34, 211, 238, 0.6)", label: "Low (1-3)" },
-      { color: "rgba(96, 165, 250, 0.7)", label: "Medium (4-8)" },
-      { color: "rgba(250, 204, 21, 0.8)", label: "High (9-15)" },
-      { color: "rgba(239, 68, 68, 0.9)", label: "Very High (16+)" },
+      { color: "rgba(203, 213, 225, 0.6)", label: "Low (1-3)" },
+      { color: "rgba(148, 163, 184, 0.7)", label: "Medium (4-8)" },
+      { color: "rgba(148, 163, 184, 0.8)", label: "High (9-15)" },
+      { color: "rgba(226, 232, 240, 0.9)", label: "Very High (16+)" },
     ];
 
     for (const level of levels) {

@@ -43,24 +43,24 @@ const SEVERITY_CONFIG: Record<
   { bg: string; border: string; text: string; dot: string; label: string }
 > = {
   critical: {
-    bg: "bg-red-950/60",
-    border: "border-red-800/60",
-    text: "text-red-300",
-    dot: "bg-red-500",
+    bg: "bg-slate-950/60",
+    border: "border-slate-700/60",
+    text: "text-slate-200",
+    dot: "bg-slate-400",
     label: "CRITICAL",
   },
   warning: {
-    bg: "bg-amber-950/40",
-    border: "border-amber-800/50",
-    text: "text-amber-300",
-    dot: "bg-amber-500",
+    bg: "bg-slate-950/40",
+    border: "border-slate-700/50",
+    text: "text-slate-300",
+    dot: "bg-slate-400",
     label: "WARNING",
   },
   info: {
-    bg: "bg-blue-950/40",
-    border: "border-blue-800/40",
-    text: "text-blue-300",
-    dot: "bg-blue-500",
+    bg: "bg-slate-950/40",
+    border: "border-slate-700/40",
+    text: "text-slate-300",
+    dot: "bg-slate-400",
     label: "INFO",
   },
 };
@@ -85,11 +85,11 @@ const EVENT_ICONS: Record<string, string> = {
 };
 
 function getPressureColor(score: number): string {
-  if (score >= 80) return "#ef4444"; // red
-  if (score >= 60) return "#f97316"; // orange
-  if (score >= 40) return "#eab308"; // yellow
-  if (score >= 20) return "#22c55e"; // green
-  return "#6b7280"; // gray
+  if (score >= 80) return "#e2e8f0";
+  if (score >= 60) return "#cbd5e1";
+  if (score >= 40) return "#94a3b8";
+  if (score >= 20) return "#94a3b8";
+  return "#6b7280";
 }
 
 function getPressureLabel(score: number): string {
@@ -103,13 +103,13 @@ function getPressureLabel(score: number): string {
 function getCorridorStatusColor(status: string): string {
   switch (status) {
     case "disrupted":
-      return "#ef4444";
+      return "#e2e8f0";
     case "congested":
-      return "#f97316";
+      return "#cbd5e1";
     case "compressed":
-      return "#eab308";
+      return "#94a3b8";
     default:
-      return "#22c55e";
+      return "#94a3b8";
   }
 }
 
@@ -237,11 +237,11 @@ function PressureCard({ airport, baseline, events, turnarounds, corridors, onCli
       {/* Component breakdown */}
       <div className="grid grid-cols-5 gap-1">
         {[
-          { label: "IN", value: airport.components.inboundCount, color: "text-blue-400" },
-          { label: "OUT", value: airport.components.outboundCount, color: "text-emerald-400" },
+          { label: "IN", value: airport.components.inboundCount, color: "text-slate-300" },
+          { label: "OUT", value: airport.components.outboundCount, color: "text-slate-300" },
           { label: "GND", value: airport.components.groundCount, color: "text-gray-400" },
-          { label: "HLD", value: airport.components.holdingCount, color: "text-amber-400" },
-          { label: "G/A", value: airport.components.goAroundCount, color: "text-red-400" },
+          { label: "HLD", value: airport.components.holdingCount, color: "text-slate-400" },
+          { label: "G/A", value: airport.components.goAroundCount, color: "text-slate-300" },
         ].map((c) => (
           <div key={c.label} className="text-center">
             <div className={`text-[10px] font-bold tabular-nums ${c.color}`}>
@@ -270,18 +270,18 @@ function PressureCard({ airport, baseline, events, turnarounds, corridors, onCli
 // ── Corridor Card ────────────────────────────────────────────────────────
 
 function getPredictabilityColor(score: number): string {
-  if (score >= 80) return "#22c55e";
-  if (score >= 60) return "#eab308";
-  if (score >= 40) return "#f97316";
-  return "#ef4444";
+  if (score >= 80) return "#94a3b8";
+  if (score >= 60) return "#94a3b8";
+  if (score >= 40) return "#cbd5e1";
+  return "#e2e8f0";
 }
 
 function getTrendConfig(label: string): { arrow: string; color: string } {
   switch (label) {
     case "improving":
-      return { arrow: "\u2191", color: "#22c55e" };
+      return { arrow: "\u2191", color: "#94a3b8" };
     case "degrading":
-      return { arrow: "\u2193", color: "#ef4444" };
+      return { arrow: "\u2193", color: "#e2e8f0" };
     default:
       return { arrow: "\u2192", color: "#94a3b8" };
   }
@@ -375,25 +375,25 @@ function CorridorCard({
       {/* Stats row */}
       <div className="grid grid-cols-4 gap-1">
         {[
-          { label: "Flights", value: corridor.flightCount, color: "text-blue-400" },
+          { label: "Flights", value: corridor.flightCount, color: "text-slate-300" },
           {
             label: "Avg Alt",
             value: corridor.avgAltitude
               ? `${Math.round(corridor.avgAltitude * 3.28084 / 1000)}k`
               : "—",
-            color: "text-cyan-400",
+            color: "text-slate-300",
           },
           {
             label: "Spacing",
             value: corridor.avgSpacingNm
               ? `${Math.round(corridor.avgSpacingNm)}nm`
               : "—",
-            color: "text-purple-400",
+            color: "text-slate-400",
           },
           {
             label: "Anomaly",
             value: corridor.anomalyCount,
-            color: corridor.anomalyCount > 0 ? "text-red-400" : "text-gray-500",
+            color: corridor.anomalyCount > 0 ? "text-slate-300" : "text-gray-500",
           },
         ].map((s) => (
           <div key={s.label} className="text-center">
@@ -449,11 +449,11 @@ function CorridorCard({
 // ── Turnaround Card ─────────────────────────────────────────────────────
 
 function getTurnaroundColor(minutes: number | null): string {
-  if (minutes === null) return "#f59e0b"; // amber for active
-  if (minutes < 30) return "#22c55e";
-  if (minutes < 60) return "#eab308";
-  if (minutes < 120) return "#f97316";
-  return "#ef4444";
+  if (minutes === null) return "#94a3b8";
+  if (minutes < 30) return "#94a3b8";
+  if (minutes < 60) return "#94a3b8";
+  if (minutes < 120) return "#cbd5e1";
+  return "#e2e8f0";
 }
 
 function formatDuration(ms: number): string {
@@ -531,9 +531,9 @@ function TurnaroundCard({ record, isActive }: { record: TurnaroundRow; isActive:
 function getDeviationColor(current: number, avg: number, stddev: number): string {
   if (stddev <= 0) return "#6b7280";
   const sigma = Math.abs(current - avg) / stddev;
-  if (sigma > 2) return "#ef4444";
-  if (sigma > 1) return "#eab308";
-  return "#22c55e";
+  if (sigma > 2) return "#e2e8f0";
+  if (sigma > 1) return "#94a3b8";
+  return "#94a3b8";
 }
 
 function getDeviationLabel(current: number, avg: number, stddev: number): string {
@@ -743,7 +743,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
         onClick={() => setOpen(true)}
         className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium transition-all relative ${
           open
-            ? "bg-emerald-600 text-white"
+            ? "bg-slate-600 text-white"
             : "hover:bg-gray-800/50"
         }`}
         style={!open ? { color: "var(--text-tertiary)" } : undefined}
@@ -765,12 +765,12 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
         {/* Worker status dot */}
         <span
           className={`w-1.5 h-1.5 rounded-full ${
-            workerActive ? "bg-emerald-400 animate-pulse" : "bg-gray-600"
+            workerActive ? "bg-slate-400 animate-pulse" : "bg-gray-600"
           }`}
         />
         {/* Alert badge */}
         {alertCount > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-red-500 text-white text-[9px] font-bold px-1">
+          <span className="absolute -top-1 -right-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-slate-400 text-white text-[9px] font-bold px-1">
             {alertCount}
           </span>
         )}
@@ -786,7 +786,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
           <SheetHeader className="px-5 pt-5 pb-0">
             <SheetTitle className="flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
               <svg
-                className="w-5 h-5 text-emerald-400"
+                className="w-5 h-5 text-slate-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -801,12 +801,12 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
               Aviation Intelligence
               <span
                 className={`ml-auto flex items-center gap-1.5 text-[10px] font-normal ${
-                  workerActive ? "text-emerald-400" : "text-gray-500"
+                  workerActive ? "text-slate-400" : "text-gray-500"
                 }`}
               >
                 <span
                   className={`w-2 h-2 rounded-full ${
-                    workerActive ? "bg-emerald-400 animate-pulse" : "bg-gray-600"
+                    workerActive ? "bg-slate-400 animate-pulse" : "bg-gray-600"
                   }`}
                 />
                 {workerActive ? "Live" : "Offline"}
@@ -857,7 +857,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                 </svg>
                 Events
                 {alertCount > 0 && (
-                  <span className="ml-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-red-500/80 text-white text-[9px] font-bold px-1">
+                  <span className="ml-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-slate-500/80 text-white text-[9px] font-bold px-1">
                     {alertCount}
                   </span>
                 )}
@@ -932,7 +932,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                 </svg>
                 Gate
                 {activeTurnarounds.length > 0 && (
-                  <span className="ml-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-amber-500/80 text-white text-[9px] font-bold px-1">
+                  <span className="ml-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-slate-500/80 text-white text-[9px] font-bold px-1">
                     {activeTurnarounds.length}
                   </span>
                 )}
@@ -1011,19 +1011,19 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                   {/* Summary bar */}
                   <div className="flex items-center gap-3 text-[10px]">
                     <div className="flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-red-500" />
+                      <span className="w-2 h-2 rounded-full bg-slate-400" />
                       <span style={{ color: "var(--text-tertiary)" }}>
                         {eventCounts.critical} critical
                       </span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-amber-500" />
+                      <span className="w-2 h-2 rounded-full bg-slate-400" />
                       <span style={{ color: "var(--text-tertiary)" }}>
                         {eventCounts.warning} warning
                       </span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-blue-500" />
+                      <span className="w-2 h-2 rounded-full bg-slate-400" />
                       <span style={{ color: "var(--text-tertiary)" }}>
                         {eventCounts.info} info
                       </span>
@@ -1031,7 +1031,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                     <div className="ml-auto flex items-center gap-1">
                       <span
                         className={`w-1.5 h-1.5 rounded-full ${
-                          connected ? "bg-emerald-400" : "bg-gray-600"
+                          connected ? "bg-slate-400" : "bg-gray-600"
                         }`}
                       />
                       <span style={{ color: "var(--text-muted)" }}>
@@ -1191,10 +1191,10 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                     <div className="flex items-center gap-3 text-[10px]">
                       {(
                         [
-                          ["normal", "#22c55e"],
-                          ["compressed", "#eab308"],
-                          ["congested", "#f97316"],
-                          ["disrupted", "#ef4444"],
+                          ["normal", "#94a3b8"],
+                          ["compressed", "#94a3b8"],
+                          ["congested", "#cbd5e1"],
+                          ["disrupted", "#e2e8f0"],
                         ] as const
                       ).map(([status, color]) => {
                         const count = sortedCorridors.filter(
@@ -1301,7 +1301,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                       {/* Active on ground */}
                       {activeTurnarounds.length > 0 && (
                         <>
-                          <div className="text-[10px] text-amber-400 font-medium uppercase tracking-wider">
+                          <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
                             Currently On Ground
                           </div>
                           {activeTurnarounds.map((r, i) => (
@@ -1366,18 +1366,18 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                           <>
                             {above > 0 && (
                               <span className="flex items-center gap-1">
-                                <span className="w-2 h-2 rounded-full bg-red-500" />
+                                <span className="w-2 h-2 rounded-full bg-slate-400" />
                                 {above} above normal
                               </span>
                             )}
                             {below > 0 && (
                               <span className="flex items-center gap-1">
-                                <span className="w-2 h-2 rounded-full bg-blue-500" />
+                                <span className="w-2 h-2 rounded-full bg-slate-400" />
                                 {below} below normal
                               </span>
                             )}
                             <span className="flex items-center gap-1">
-                              <span className="w-2 h-2 rounded-full bg-green-500" />
+                              <span className="w-2 h-2 rounded-full bg-slate-400" />
                               {normal} normal
                             </span>
                           </>

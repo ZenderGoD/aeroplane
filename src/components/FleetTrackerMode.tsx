@@ -29,10 +29,10 @@ const MS_TO_KNOTS = 1.94384;
 function altitudeColor(alt: number | null): string {
   if (alt === null) return "#64748b";
   const ft = alt * METERS_TO_FEET;
-  if (ft < 10000) return "#34d399";
-  if (ft < 25000) return "#fbbf24";
-  if (ft < 40000) return "#22d3ee";
-  return "#a78bfa";
+  if (ft < 10000) return "#cbd5e1";
+  if (ft < 25000) return "#94a3b8";
+  if (ft < 40000) return "#cbd5e1";
+  return "#94a3b8";
 }
 
 function altitudeBand(alt: number | null): string {
@@ -194,7 +194,7 @@ const FleetMap = dynamic(() => Promise.resolve(FleetMapInner), {
       style={{ background: "var(--surface-0)" }}
     >
       <div className="text-center">
-        <div className="w-8 h-8 border-2 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin mx-auto mb-3" />
+        <div className="w-8 h-8 border-2 border-slate-300/30 border-t-slate-300 rounded-full animate-spin mx-auto mb-3" />
         <span style={{ color: "var(--text-muted)", fontSize: "12px" }}>
           Loading map...
         </span>
@@ -353,11 +353,11 @@ function FleetStatsHeader({ flights }: { flights: FlightState[] }) {
         background: "var(--surface-1)",
       }}
     >
-      <StatBadge label="TOTAL" value={`${stats.total}`} color="#38bdf8" />
-      <StatBadge label="AIRBORNE" value={`${stats.airborne}`} color="#34d399" />
-      <StatBadge label="GROUND" value={`${stats.onGround}`} color="#fbbf24" />
-      <StatBadge label="AVG ALT" value={fmtAlt(stats.avgAlt)} color="#22d3ee" />
-      <StatBadge label="AVG SPD" value={fmtSpd(stats.avgSpd)} color="#a78bfa" />
+      <StatBadge label="TOTAL" value={`${stats.total}`} color="#cbd5e1" />
+      <StatBadge label="AIRBORNE" value={`${stats.airborne}`} color="#cbd5e1" />
+      <StatBadge label="GROUND" value={`${stats.onGround}`} color="#94a3b8" />
+      <StatBadge label="AVG ALT" value={fmtAlt(stats.avgAlt)} color="#cbd5e1" />
+      <StatBadge label="AVG SPD" value={fmtSpd(stats.avgSpd)} color="#94a3b8" />
 
       {stats.topTypes.length > 0 && (
         <div className="flex items-center gap-2 ml-auto">
@@ -649,8 +649,8 @@ export default function FleetTrackerMode({
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center"
             style={{
-              background: "rgba(167,139,250,0.1)",
-              border: "1px solid rgba(167,139,250,0.2)",
+              background: "rgba(148,163,184,0.1)",
+              border: "1px solid rgba(148,163,184,0.2)",
             }}
           >
             <svg
@@ -658,7 +658,7 @@ export default function FleetTrackerMode({
               height="14"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#a78bfa"
+              stroke="#94a3b8"
               strokeWidth="2"
             >
               <path d="M12 2L9.5 8.5L2 10.5V12L9.5 14L12 22L14.5 14L22 12V10.5L14.5 8.5L12 2Z" />
@@ -740,7 +740,7 @@ export default function FleetTrackerMode({
                   >
                     <span
                       style={{
-                        color: "#a78bfa",
+                        color: "#94a3b8",
                         fontSize: "12px",
                         fontWeight: 700,
                         fontFamily: "'JetBrains Mono', monospace",
@@ -781,13 +781,13 @@ export default function FleetTrackerMode({
             <div
               className="flex items-center gap-2 px-3 py-1 rounded-lg"
               style={{
-                background: "rgba(167,139,250,0.08)",
-                border: "1px solid rgba(167,139,250,0.15)",
+                background: "rgba(148,163,184,0.08)",
+                border: "1px solid rgba(148,163,184,0.15)",
               }}
             >
               <span
                 style={{
-                  color: "#a78bfa",
+                  color: "#94a3b8",
                   fontSize: "12px",
                   fontWeight: 700,
                   fontFamily: "'JetBrains Mono', monospace",
@@ -829,10 +829,10 @@ export default function FleetTrackerMode({
                   style={{
                     fontSize: "10px",
                     fontFamily: "'JetBrains Mono', monospace",
-                    color: refreshRate === r ? "#a78bfa" : "var(--text-muted)",
-                    background: refreshRate === r ? "rgba(167,139,250,0.12)" : "transparent",
+                    color: refreshRate === r ? "#94a3b8" : "var(--text-muted)",
+                    background: refreshRate === r ? "rgba(148,163,184,0.12)" : "transparent",
                     borderRadius: "4px",
-                    border: refreshRate === r ? "1px solid rgba(167,139,250,0.2)" : "1px solid transparent",
+                    border: refreshRate === r ? "1px solid rgba(148,163,184,0.2)" : "1px solid transparent",
                     cursor: "pointer",
                   }}
                 >
@@ -842,7 +842,7 @@ export default function FleetTrackerMode({
             </div>
 
             {loading && (
-              <div className="w-3 h-3 border border-purple-400/30 border-t-purple-400 rounded-full animate-spin" />
+              <div className="w-3 h-3 border border-slate-300/30 border-t-slate-300 rounded-full animate-spin" />
             )}
 
             {lastUpdated && (
@@ -899,22 +899,22 @@ export default function FleetTrackerMode({
                       color:
                         filterStatus === s
                           ? s === "airborne"
-                            ? "#34d399"
+                            ? "#cbd5e1"
                             : s === "ground"
-                              ? "#fbbf24"
-                              : "#38bdf8"
+                              ? "#94a3b8"
+                              : "#cbd5e1"
                           : "var(--text-muted)",
                       background:
                         filterStatus === s
                           ? s === "airborne"
-                            ? "rgba(52,211,153,0.1)"
+                            ? "rgba(203,213,225,0.1)"
                             : s === "ground"
-                              ? "rgba(251,191,36,0.1)"
+                              ? "rgba(148,163,184,0.1)"
                               : "rgba(56,189,248,0.1)"
                           : "transparent",
                       border:
                         filterStatus === s
-                          ? `1px solid ${s === "airborne" ? "rgba(52,211,153,0.2)" : s === "ground" ? "rgba(251,191,36,0.2)" : "rgba(56,189,248,0.2)"}`
+                          ? `1px solid ${s === "airborne" ? "rgba(203,213,225,0.2)" : s === "ground" ? "rgba(148,163,184,0.2)" : "rgba(56,189,248,0.2)"}`
                           : "1px solid transparent",
                       cursor: "pointer",
                       textTransform: "uppercase",
@@ -1035,8 +1035,8 @@ export default function FleetTrackerMode({
                     className="w-full text-left flex items-center px-3 py-1.5 transition-colors hover:bg-white/[0.03]"
                     style={{
                       borderBottom: "1px solid var(--border-subtle)",
-                      background: isSelected ? "rgba(167,139,250,0.06)" : "transparent",
-                      borderLeft: isSelected ? "2px solid #a78bfa" : "2px solid transparent",
+                      background: isSelected ? "rgba(148,163,184,0.06)" : "transparent",
+                      borderLeft: isSelected ? "2px solid #94a3b8" : "2px solid transparent",
                       fontFamily: "'JetBrains Mono', monospace",
                       fontSize: "11px",
                       cursor: "pointer",
@@ -1045,7 +1045,7 @@ export default function FleetTrackerMode({
                     <span
                       style={{
                         width: "72px",
-                        color: isSelected ? "#a78bfa" : color,
+                        color: isSelected ? "#94a3b8" : color,
                         fontWeight: 600,
                         overflow: "hidden",
                         textOverflow: "ellipsis",
@@ -1099,10 +1099,10 @@ export default function FleetTrackerMode({
                         <span
                           className="px-1.5 py-0.5 rounded"
                           style={{
-                            background: "rgba(251,191,36,0.1)",
-                            color: "#fbbf24",
+                            background: "rgba(148,163,184,0.1)",
+                            color: "#94a3b8",
                             fontSize: "9px",
-                            border: "1px solid rgba(251,191,36,0.2)",
+                            border: "1px solid rgba(148,163,184,0.2)",
                           }}
                         >
                           GND
@@ -1111,10 +1111,10 @@ export default function FleetTrackerMode({
                         <span
                           className="px-1.5 py-0.5 rounded"
                           style={{
-                            background: "rgba(52,211,153,0.1)",
-                            color: "#34d399",
+                            background: "rgba(203,213,225,0.1)",
+                            color: "#cbd5e1",
                             fontSize: "9px",
-                            border: "1px solid rgba(52,211,153,0.2)",
+                            border: "1px solid rgba(203,213,225,0.2)",
                           }}
                         >
                           {altitudeBand(f.baroAltitude)}
@@ -1169,8 +1169,8 @@ export default function FleetTrackerMode({
               <div
                 className="w-16 h-16 rounded-2xl flex items-center justify-center"
                 style={{
-                  background: "rgba(167,139,250,0.08)",
-                  border: "1px solid rgba(167,139,250,0.15)",
+                  background: "rgba(148,163,184,0.08)",
+                  border: "1px solid rgba(148,163,184,0.15)",
                 }}
               >
                 <svg
@@ -1178,7 +1178,7 @@ export default function FleetTrackerMode({
                   height="32"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#a78bfa"
+                  stroke="#94a3b8"
                   strokeWidth="1.5"
                 >
                   <path d="M12 2L9.5 8.5L2 10.5V12L9.5 14L12 22L14.5 14L22 12V10.5L14.5 8.5L12 2Z" />
@@ -1221,7 +1221,7 @@ export default function FleetTrackerMode({
                       fontFamily: "'JetBrains Mono', monospace",
                     }}
                   >
-                    <span style={{ color: "#a78bfa", fontWeight: 600 }}>
+                    <span style={{ color: "#94a3b8", fontWeight: 600 }}>
                       {al.icao}
                     </span>
                     <span style={{ color: "var(--text-muted)", marginLeft: "6px" }}>
@@ -1244,9 +1244,9 @@ export default function FleetTrackerMode({
                 <div
                   className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] px-4 py-2 rounded-lg"
                   style={{
-                    background: "rgba(248,113,113,0.12)",
-                    border: "1px solid rgba(248,113,113,0.25)",
-                    color: "#f87171",
+                    background: "rgba(226,232,240,0.12)",
+                    border: "1px solid rgba(226,232,240,0.25)",
+                    color: "#e2e8f0",
                     fontSize: "12px",
                     fontFamily: "'JetBrains Mono', monospace",
                     backdropFilter: "blur(8px)",
@@ -1287,10 +1287,10 @@ export default function FleetTrackerMode({
                   Altitude
                 </div>
                 <div className="flex items-center gap-3">
-                  <LegendItem color="#34d399" label="<10k ft" />
-                  <LegendItem color="#fbbf24" label="10-25k" />
-                  <LegendItem color="#22d3ee" label="25-40k" />
-                  <LegendItem color="#a78bfa" label=">40k ft" />
+                  <LegendItem color="#cbd5e1" label="<10k ft" />
+                  <LegendItem color="#94a3b8" label="10-25k" />
+                  <LegendItem color="#cbd5e1" label="25-40k" />
+                  <LegendItem color="#94a3b8" label=">40k ft" />
                 </div>
               </div>
             </>

@@ -11,19 +11,19 @@ interface Props {
 type BoardView = "arrivals" | "departures";
 
 const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
-  "On Approach": { bg: "bg-blue-900/30", text: "text-blue-400" },
-  "Holding": { bg: "bg-amber-900/30", text: "text-amber-400" },
-  "Go Around": { bg: "bg-red-900/30", text: "text-red-400" },
+  "On Approach": { bg: "bg-gray-800/30", text: "text-gray-300" },
+  "Holding": { bg: "bg-gray-800/30", text: "text-gray-400" },
+  "Go Around": { bg: "bg-gray-800/30", text: "text-gray-300" },
   "On Ground": { bg: "bg-gray-800/50", text: "text-gray-400" },
-  "Departing": { bg: "bg-green-900/30", text: "text-green-400" },
-  "Climbing": { bg: "bg-cyan-900/30", text: "text-cyan-400" },
+  "Departing": { bg: "bg-gray-800/30", text: "text-gray-300" },
+  "Climbing": { bg: "bg-gray-800/30", text: "text-gray-300" },
 };
 
 function getPressureIndicator(score: number): { color: string; label: string } {
-  if (score >= 80) return { color: "text-red-400", label: "Critical" };
-  if (score >= 60) return { color: "text-orange-400", label: "High" };
-  if (score >= 40) return { color: "text-amber-400", label: "Moderate" };
-  if (score >= 20) return { color: "text-green-400", label: "Normal" };
+  if (score >= 80) return { color: "text-gray-200", label: "Critical" };
+  if (score >= 60) return { color: "text-gray-300", label: "High" };
+  if (score >= 40) return { color: "text-gray-300", label: "Moderate" };
+  if (score >= 20) return { color: "text-gray-400", label: "Normal" };
   return { color: "text-gray-400", label: "Low" };
 }
 
@@ -49,7 +49,7 @@ export default function FlightBoardTab({ airports }: Props) {
               onClick={() => setView("arrivals")}
               className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-[11px] font-medium transition-all ${
                 view === "arrivals"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-gray-600 text-white"
                   : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
               }`}
             >
@@ -62,7 +62,7 @@ export default function FlightBoardTab({ airports }: Props) {
               onClick={() => setView("departures")}
               className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-[11px] font-medium transition-all ${
                 view === "departures"
-                  ? "bg-green-600 text-white"
+                  ? "bg-gray-600 text-white"
                   : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
               }`}
             >
@@ -199,10 +199,10 @@ export default function FlightBoardTab({ airports }: Props) {
                 <span>OUT: {airport.components.outboundCount}</span>
                 <span>GND: {airport.components.groundCount}</span>
                 {airport.components.holdingCount > 0 && (
-                  <span className="text-amber-400">HLD: {airport.components.holdingCount}</span>
+                  <span className="text-gray-400">HLD: {airport.components.holdingCount}</span>
                 )}
                 {airport.components.goAroundCount > 0 && (
-                  <span className="text-red-400">G/A: {airport.components.goAroundCount}</span>
+                  <span className="text-gray-300">G/A: {airport.components.goAroundCount}</span>
                 )}
               </div>
             </div>
@@ -240,7 +240,7 @@ function BoardRow({
         <div className="h-1 rounded-full bg-gray-800 overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-500 ${colors.bg.replace("/30", "/60").replace("/50", "/80")}`}
-            style={{ width: `${Math.min(pct, 100)}%`, backgroundColor: colors.text === "text-blue-400" ? "#3b82f6" : colors.text === "text-amber-400" ? "#f59e0b" : colors.text === "text-red-400" ? "#ef4444" : colors.text === "text-green-400" ? "#22c55e" : colors.text === "text-cyan-400" ? "#06b6d4" : "#6b7280" }}
+            style={{ width: `${Math.min(pct, 100)}%`, backgroundColor: "#6b7280" }}
           />
         </div>
       </div>

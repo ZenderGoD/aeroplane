@@ -491,9 +491,9 @@ export default function SavedViewsPanel({
   const statusIndicator = (status: WatchlistAircraft["status"]) => {
     switch (status) {
       case "active":
-        return <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]" title="Airborne" />;
+        return <span className="inline-block w-2 h-2 rounded-full bg-gray-300 shadow-[0_0_6px_rgba(203,213,225,0.5)]" title="Airborne" />;
       case "ground":
-        return <span className="inline-block w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.4)]" title="On Ground" />;
+        return <span className="inline-block w-2 h-2 rounded-full bg-gray-500 shadow-[0_0_6px_rgba(148,163,184,0.4)]" title="On Ground" />;
       default:
         return <span className="inline-block w-2 h-2 rounded-full bg-slate-500" title="Not Seen" />;
     }
@@ -662,7 +662,7 @@ export default function SavedViewsPanel({
                             e.stopPropagation();
                             handleDeleteView(view.id);
                           }}
-                          className="p-1 rounded-md hover:bg-red-500/10 transition-colors shrink-0"
+                          className="p-1 rounded-md hover:bg-gray-500/10 transition-colors shrink-0"
                           style={{ color: "var(--status-critical)" }}
                         >
                           <IconTrash className="w-3.5 h-3.5" />
@@ -855,7 +855,7 @@ export default function SavedViewsPanel({
                           e.stopPropagation();
                           handleRemoveAircraft(ac.id);
                         }}
-                        className="p-1 rounded-md hover:bg-red-500/10 transition-colors shrink-0"
+                        className="p-1 rounded-md hover:bg-gray-500/10 transition-colors shrink-0"
                         style={{ color: "var(--status-critical)" }}
                       >
                         <IconTrash className="w-3.5 h-3.5" />
@@ -1008,7 +1008,7 @@ export default function SavedViewsPanel({
                           e.stopPropagation();
                           handleRemoveAirport(ap.icao);
                         }}
-                        className="p-1 rounded-md hover:bg-red-500/10 transition-colors shrink-0"
+                        className="p-1 rounded-md hover:bg-gray-500/10 transition-colors shrink-0"
                         style={{ color: "var(--status-critical)" }}
                       >
                         <IconTrash className="w-3.5 h-3.5" />

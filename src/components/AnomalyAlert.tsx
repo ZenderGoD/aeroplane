@@ -12,9 +12,9 @@ interface Props {
 }
 
 const SEVERITY_COLORS = {
-  critical: { bg: "bg-red-900/80", dot: "bg-red-500", text: "text-red-300", border: "border-red-700" },
-  warning: { bg: "bg-yellow-900/80", dot: "bg-yellow-500", text: "text-yellow-300", border: "border-yellow-700" },
-  info: { bg: "bg-blue-900/80", dot: "bg-blue-500", text: "text-blue-300", border: "border-blue-700" },
+  critical: { bg: "bg-slate-900/80", dot: "bg-slate-200", text: "text-slate-200", border: "border-slate-600" },
+  warning: { bg: "bg-slate-900/80", dot: "bg-slate-400", text: "text-slate-300", border: "border-slate-600" },
+  info: { bg: "bg-slate-900/80", dot: "bg-slate-400", text: "text-slate-300", border: "border-slate-700" },
 };
 
 export default function AnomalyAlert({ anomalies, onSelectFlight, flights, inline = false }: Props) {
@@ -37,13 +37,13 @@ export default function AnomalyAlert({ anomalies, onSelectFlight, flights, inlin
         onClick={() => setIsExpanded(!isExpanded)}
         className={`flex items-center gap-2 px-3 py-2 rounded-lg border backdrop-blur-md shadow-lg transition-all ${
           criticalCount > 0
-            ? "bg-red-900/90 border-red-600 animate-anomaly-pulse"
+            ? "bg-slate-900/90 border-slate-500 animate-anomaly-pulse"
             : warningCount > 0
-              ? "bg-yellow-900/90 border-yellow-700"
+              ? "bg-slate-900/90 border-slate-600"
               : "bg-gray-900/90 border-gray-700"
         }`}
       >
-        <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"

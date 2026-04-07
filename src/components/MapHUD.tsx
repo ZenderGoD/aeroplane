@@ -136,8 +136,8 @@ export default function MapHUD({
 
 const keyframes = `
 @keyframes hud-pulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(52,211,153,0.5); }
-  50%      { opacity: 0.5; box-shadow: 0 0 4px rgba(52,211,153,0.2); }
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(203,213,225,0.5); }
+  50%      { opacity: 0.5; box-shadow: 0 0 4px rgba(203,213,225,0.2); }
 }
 @keyframes hud-spin {
   to { transform: rotate(360deg); }
@@ -169,7 +169,7 @@ const panelStyle: React.CSSProperties = {
 
 const gradientBarStyle: React.CSSProperties = {
   height: 2,
-  background: "linear-gradient(90deg, #22d3ee, #3b82f6)",
+  background: "linear-gradient(90deg, #cbd5e1, #94a3b8)",
   width: "100%",
 };
 
@@ -189,8 +189,8 @@ const pulsingDotStyle: React.CSSProperties = {
   width: 7,
   height: 7,
   borderRadius: "50%",
-  backgroundColor: "#34d399",
-  boxShadow: "0 0 8px rgba(52,211,153,0.5)",
+  backgroundColor: "#cbd5e1",
+  boxShadow: "0 0 8px rgba(203,213,225,0.5)",
   animation: "hud-pulse 2s ease-in-out infinite",
   flexShrink: 0,
 };
@@ -241,7 +241,7 @@ const spinnerStyle: React.CSSProperties = {
   width: 10,
   height: 10,
   border: "1.5px solid rgba(255,255,255,0.15)",
-  borderTopColor: "#22d3ee",
+  borderTopColor: "#cbd5e1",
   borderRadius: "50%",
   animation: "hud-spin 0.8s linear infinite",
   flexShrink: 0,
@@ -266,16 +266,16 @@ const badgeBase: React.CSSProperties = {
 
 const sourceBadge: React.CSSProperties = {
   ...badgeBase,
-  background: "rgba(34, 211, 238, 0.12)",
-  color: "#22d3ee",
-  border: "1px solid rgba(34, 211, 238, 0.2)",
+  background: "rgba(203, 213, 225, 0.12)",
+  color: "#cbd5e1",
+  border: "1px solid rgba(203, 213, 225, 0.2)",
 };
 
 const adsbBadge: React.CSSProperties = {
   ...badgeBase,
-  background: "rgba(99, 102, 241, 0.12)",
-  color: "#818cf8",
-  border: "1px solid rgba(99, 102, 241, 0.2)",
+  background: "rgba(148, 163, 184, 0.12)",
+  color: "#94a3b8",
+  border: "1px solid rgba(148, 163, 184, 0.2)",
 };
 
 /* ── Divider ───────────────────────────────────── */

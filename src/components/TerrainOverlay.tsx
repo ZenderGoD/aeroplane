@@ -193,7 +193,7 @@ export default function TerrainOverlay({ visible }: TerrainOverlayProps) {
         .setLatLng(e.latlng)
         .setContent(
           `<div style="font-family:ui-monospace,monospace;font-size:11px;color:#94a3b8;padding:2px 0">
-            <span style="display:inline-block;width:10px;height:10px;border:2px solid #60a5fa;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:6px"></span>
+            <span style="display:inline-block;width:10px;height:10px;border:2px solid #94a3b8;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:6px"></span>
             Fetching elevation...
           </div>`
         )
@@ -213,14 +213,14 @@ export default function TerrainOverlay({ visible }: TerrainOverlayProps) {
         popup.setContent(
           `<div style="font-family:ui-monospace,monospace;font-size:11px;color:#e2e8f0;padding:2px 0;line-height:1.6">
             <div style="font-weight:700;font-size:12px;color:#f1f5f9;margin-bottom:2px">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px"><path d="M8 3l4 4 4-4"/><path d="M4 11l4-4 4 4 4-4 4 4"/><path d="M2 19l4-4 4 4 4-4 4 4 4-4"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px"><path d="M8 3l4 4 4-4"/><path d="M4 11l4-4 4 4 4-4 4 4"/><path d="M2 19l4-4 4 4 4-4 4 4 4-4"/></svg>
               Elevation
             </div>
             <div style="display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:10.5px">
               <span style="color:#9ca3af">Feet</span>
-              <span style="font-weight:600;color:#fbbf24">${ft.toLocaleString()} ft</span>
+              <span style="font-weight:600;color:#94a3b8">${ft.toLocaleString()} ft</span>
               <span style="color:#9ca3af">Meters</span>
-              <span style="font-weight:600;color:#fbbf24">${Math.round(elevation).toLocaleString()} m</span>
+              <span style="font-weight:600;color:#94a3b8">${Math.round(elevation).toLocaleString()} m</span>
               <span style="color:#9ca3af">Coords</span>
               <span style="color:#94a3b8;font-size:9px">${lat.toFixed(4)}, ${lon.toFixed(4)}</span>
             </div>
@@ -228,7 +228,7 @@ export default function TerrainOverlay({ visible }: TerrainOverlayProps) {
         );
       } else {
         popup.setContent(
-          `<div style="font-family:ui-monospace,monospace;font-size:11px;color:#ef4444;padding:2px 0">
+          `<div style="font-family:ui-monospace,monospace;font-size:11px;color:#e2e8f0;padding:2px 0">
             Elevation data unavailable
           </div>`
         );
@@ -307,7 +307,7 @@ export default function TerrainOverlay({ visible }: TerrainOverlayProps) {
                 onClick={() => setMode(key)}
                 className={`px-2.5 py-1 rounded text-[10px] font-semibold transition-all duration-200 ${
                   mode === key
-                    ? "bg-emerald-600/80 text-white shadow-lg shadow-emerald-900/30"
+                    ? "bg-slate-600/80 text-white shadow-lg shadow-slate-900/30"
                     : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
                 }`}
               >
@@ -330,7 +330,7 @@ export default function TerrainOverlay({ visible }: TerrainOverlayProps) {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="text-emerald-500"
+              className="text-slate-500"
             >
               <path d="M8 3l4 4 4-4" />
               <path d="M4 11l4-4 4 4 4-4 4 4" />
@@ -341,7 +341,7 @@ export default function TerrainOverlay({ visible }: TerrainOverlayProps) {
               {TILE_SOURCES[mode].label.toUpperCase()}
             </span>
             {fetchingElevation && (
-              <span className="text-blue-400 animate-pulse">
+              <span className="text-slate-400 animate-pulse">
                 QUERYING
               </span>
             )}

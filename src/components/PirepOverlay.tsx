@@ -49,22 +49,22 @@ interface PIREP {
 // ── Constants ───────────────────────────────────────────────────────
 
 const TURB_COLORS: Record<string, string> = {
-  NEG: "#34d399",
-  "SMTH-LGT": "#34d399",
-  LGT: "#22d3ee",
-  "LGT-MOD": "#fbbf24",
-  MOD: "#fbbf24",
-  "MOD-SEV": "#f97316",
-  SEV: "#f97316",
-  EXTRM: "#ef4444",
+  NEG: "#cbd5e1",
+  "SMTH-LGT": "#cbd5e1",
+  LGT: "#94a3b8",
+  "LGT-MOD": "#94a3b8",
+  MOD: "#94a3b8",
+  "MOD-SEV": "#94a3b8",
+  SEV: "#94a3b8",
+  EXTRM: "#e2e8f0",
 };
 
 const ICING_COLORS: Record<string, string> = {
-  NEG: "#34d399",
-  TRC: "#34d399",
-  LGT: "#22d3ee",
-  MOD: "#fbbf24",
-  SEV: "#ef4444",
+  NEG: "#cbd5e1",
+  TRC: "#cbd5e1",
+  LGT: "#94a3b8",
+  MOD: "#94a3b8",
+  SEV: "#e2e8f0",
 };
 
 const TURB_SEVERITY_ORDER: Record<string, number> = {
@@ -168,7 +168,7 @@ function icingMarkerSvg(
 
 function pirepPopupHtml(p: PIREP): string {
   const isUrgent = p.reportType === "UUA";
-  const badgeColor = isUrgent ? "#ef4444" : "#3b82f6";
+  const badgeColor = isUrgent ? "#e2e8f0" : "#94a3b8";
   const badgeLabel = isUrgent ? "URGENT" : "ROUTINE";
 
   let detailsHtml = "";
@@ -334,14 +334,14 @@ function clusterPireps(pireps: PIREP[], radiusKm: number): Cluster[] {
 
     // Determine color from worst severity
     const sevColors = [
-      "#34d399", // 0 - NEG
-      "#34d399", // 1 - SMTH-LGT / TRC
-      "#22d3ee", // 2 - LGT
-      "#fbbf24", // 3 - LGT-MOD
-      "#fbbf24", // 4 - MOD
-      "#f97316", // 5 - MOD-SEV
-      "#f97316", // 6 - SEV
-      "#ef4444", // 7 - EXTRM
+      "#cbd5e1", // 0 - NEG
+      "#cbd5e1", // 1 - SMTH-LGT / TRC
+      "#94a3b8", // 2 - LGT
+      "#94a3b8", // 3 - LGT-MOD
+      "#94a3b8", // 4 - MOD
+      "#94a3b8", // 5 - MOD-SEV
+      "#94a3b8", // 6 - SEV
+      "#e2e8f0", // 7 - EXTRM
     ];
 
     clusters.push({
@@ -652,10 +652,10 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
                   fontFamily: "ui-monospace, monospace",
                   background:
                     altFilter === f.key
-                      ? "rgba(56, 189, 248, 0.2)"
+                      ? "rgba(148, 163, 184, 0.2)"
                       : "transparent",
                   color:
-                    altFilter === f.key ? "#38bdf8" : "#94a3b8",
+                    altFilter === f.key ? "#cbd5e1" : "#94a3b8",
                   transition: "all 0.15s ease",
                 }}
               >
@@ -703,10 +703,10 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
                   fontFamily: "ui-monospace, monospace",
                   background:
                     typeFilter === f.key
-                      ? "rgba(56, 189, 248, 0.2)"
+                      ? "rgba(148, 163, 184, 0.2)"
                       : "transparent",
                   color:
-                    typeFilter === f.key ? "#38bdf8" : "#94a3b8",
+                    typeFilter === f.key ? "#cbd5e1" : "#94a3b8",
                   transition: "all 0.15s ease",
                 }}
               >
@@ -747,7 +747,7 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
               width: "6px",
               height: "6px",
               borderRadius: "50%",
-              background: pireps.length > 0 ? "#34d399" : "#64748b",
+              background: pireps.length > 0 ? "#cbd5e1" : "#64748b",
               display: "inline-block",
             }}
           />
@@ -766,27 +766,27 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
           }}
         >
           {summary.neg > 0 && (
-            <div style={{ color: "#34d399" }}>
+            <div style={{ color: "#cbd5e1" }}>
               NEG/LGT: {summary.neg}
             </div>
           )}
           {summary.light > 0 && (
-            <div style={{ color: "#22d3ee" }}>
+            <div style={{ color: "#94a3b8" }}>
               LIGHT: {summary.light}
             </div>
           )}
           {summary.moderate > 0 && (
-            <div style={{ color: "#fbbf24" }}>
+            <div style={{ color: "#94a3b8" }}>
               MOD: {summary.moderate}
             </div>
           )}
           {summary.severe > 0 && (
-            <div style={{ color: "#f97316" }}>
+            <div style={{ color: "#94a3b8" }}>
               SEV: {summary.severe}
             </div>
           )}
           {summary.extreme > 0 && (
-            <div style={{ color: "#ef4444" }}>
+            <div style={{ color: "#e2e8f0" }}>
               EXTRM: {summary.extreme}
             </div>
           )}

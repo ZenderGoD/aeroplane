@@ -460,7 +460,7 @@ export default function AircraftProfileMode({ onExitMode }: Props) {
             filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.6));
           ">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2L8 10L2 12L8 14L12 22L16 14L22 12L16 10L12 2Z" fill="#38bdf8" stroke="#0c4a6e" stroke-width="0.5"/>
+              <path d="M12 2L8 10L2 12L8 14L12 22L16 14L22 12L16 10L12 2Z" fill="#cbd5e1" stroke="#475569" stroke-width="0.5"/>
             </svg>
           </div>`,
           iconSize: [28, 28],
@@ -478,7 +478,7 @@ export default function AircraftProfileMode({ onExitMode }: Props) {
         trailRef.current.setLatLngs(latlngs);
       } else {
         trailRef.current = L.polyline([pos], {
-          color: "#38bdf8",
+          color: "#cbd5e1",
           weight: 2,
           opacity: 0.5,
           dashArray: "4 6",

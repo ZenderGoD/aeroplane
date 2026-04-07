@@ -122,7 +122,7 @@ function AuthModalInner() {
             setMode("signup");
             setIsOpen(true);
           }}
-          className="px-4 py-1.5 text-sm font-medium text-[var(--surface-0)] bg-[var(--accent-primary)] hover:bg-sky-300 transition-colors rounded-lg"
+          className="px-4 py-1.5 text-sm font-medium text-[var(--surface-0)] bg-[var(--accent-primary)] hover:bg-slate-300 transition-colors rounded-lg"
         >
           Sign Up
         </button>
@@ -238,13 +238,13 @@ function AuthModalInner() {
               </div>
 
               {error && (
-                <p className="text-xs text-red-400 text-center">{error}</p>
+                <p className="text-xs text-slate-400 text-center">{error}</p>
               )}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 rounded-lg bg-[var(--accent-primary)] hover:bg-sky-300 text-[var(--surface-0)] font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-2.5 rounded-lg bg-[var(--accent-primary)] hover:bg-slate-300 text-[var(--surface-0)] font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading && <Loader2 size={16} className="animate-spin" />}
                 {mode === "signin" ? "Sign In" : "Create Account"}

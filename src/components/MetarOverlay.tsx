@@ -37,10 +37,10 @@ interface MetarOverlayProps {
 // ── Flight Category Colors ───────────────────────────────────────────
 
 const FLTCAT_COLORS: Record<string, string> = {
-  VFR: "#34d399",
-  MVFR: "#60a5fa",
-  IFR: "#ef4444",
-  LIFR: "#e879f9",
+  VFR: "#cbd5e1",
+  MVFR: "#94a3b8",
+  IFR: "#e2e8f0",
+  LIFR: "#94a3b8",
 };
 
 const FLTCAT_LABELS: Record<string, string> = {
@@ -435,11 +435,11 @@ export default function MetarOverlay({ visible }: MetarOverlayProps) {
             transform: "translateX(-50%)",
             zIndex: 1000,
             background: "var(--surface-2, #111827)",
-            border: "1px solid var(--border-accent, rgba(56,189,248,0.20))",
+            border: "1px solid var(--border-default, rgba(148,163,184,0.20))",
             borderRadius: 8,
             padding: "6px 14px",
             fontSize: 11,
-            color: "var(--accent-primary, #38bdf8)",
+            color: "var(--text-secondary, #cbd5e1)",
             fontFamily: "ui-sans-serif, system-ui, sans-serif",
             pointerEvents: "none",
           }}

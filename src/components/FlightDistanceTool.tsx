@@ -151,7 +151,7 @@ export default function FlightDistanceTool({
       const line = L.polyline(
         [[a.latitude, a.longitude], [b.latitude, b.longitude]],
         {
-          color: "#f59e0b",
+          color: "#94a3b8",
           weight: 2,
           dashArray: "8, 6",
           opacity: 0.9,
@@ -173,16 +173,16 @@ export default function FlightDistanceTool({
         : closingKts < 0
           ? `Separating ${Math.round(Math.abs(closingKts))} kts`
           : "Parallel";
-      const closingColor = isClosing ? "#ef4444" : closingKts < 0 ? "#22c55e" : "#94a3b8";
+      const closingColor = isClosing ? "#e2e8f0" : closingKts < 0 ? "#cbd5e1" : "#94a3b8";
 
       const tcaLabel = tcaMin !== null ? `${tcaMin.toFixed(1)} min` : "—";
 
       // Separation alert
       let separationAlert = "";
       if (distNm < 5 && (vertSepFt === null || vertSepFt < 1000)) {
-        separationAlert = `<div style="background:#ef444430;border:1px solid #ef4444;color:#fca5a5;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;margin-top:4px;text-align:center">&#9888; SEPARATION ALERT</div>`;
+        separationAlert = `<div style="background:#e2e8f030;border:1px solid #e2e8f0;color:#e2e8f0;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;margin-top:4px;text-align:center">&#9888; SEPARATION ALERT</div>`;
       } else if (distNm < 10 && (vertSepFt === null || vertSepFt < 1000)) {
-        separationAlert = `<div style="background:#f9731630;border:1px solid #f97316;color:#fdba74;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:600;margin-top:4px;text-align:center">&#9651; PROXIMITY WARNING</div>`;
+        separationAlert = `<div style="background:#94a3b830;border:1px solid #94a3b8;color:#cbd5e1;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:600;margin-top:4px;text-align:center">&#9651; PROXIMITY WARNING</div>`;
       }
 
       // Speed info
@@ -204,11 +204,11 @@ export default function FlightDistanceTool({
           font-size: 11px;
           font-family: system-ui, sans-serif;
           white-space: nowrap;
-          border: 1px solid rgba(245,158,11,0.4);
+          border: 1px solid rgba(148,163,184,0.4);
           pointer-events: none;
           min-width: 180px;
         ">
-          <div style="font-size:18px;font-weight:800;color:#f59e0b;text-align:center;margin-bottom:6px">
+          <div style="font-size:18px;font-weight:800;color:#94a3b8;text-align:center;margin-bottom:6px">
             ${formattedDist} NM
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 12px;font-size:10px;color:#d1d5db">
@@ -218,8 +218,8 @@ export default function FlightDistanceTool({
             ${tcaMin !== null ? `<span style="color:#94a3b8">Time CPA</span><span style="text-align:right;font-weight:600">${tcaLabel}</span>` : ""}
           </div>
           <div style="border-top:1px solid #374151;margin-top:6px;padding-top:6px;display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;font-size:9px">
-            <div style="color:#60a5fa;font-weight:700">${callA}</div>
-            <div style="color:#a78bfa;font-weight:700;text-align:right">${callB}</div>
+            <div style="color:#94a3b8;font-weight:700">${callA}</div>
+            <div style="color:#94a3b8;font-weight:700;text-align:right">${callB}</div>
             <div style="color:#9ca3af">${altA} / ${speedA}</div>
             <div style="color:#9ca3af;text-align:right">${altB} / ${speedB}</div>
           </div>
@@ -252,7 +252,7 @@ export default function FlightDistanceTool({
         setFlightA(flight);
         setPair(null);
         onSelectFlight(flight);
-        drawSelectionRing(flight, "#60a5fa");
+        drawSelectionRing(flight, "#94a3b8");
       } else {
         // Second flight selected
         if (flight.icao24 === flightA.icao24) return; // same flight
@@ -260,8 +260,8 @@ export default function FlightDistanceTool({
         const pairData = computeFlightPair(flightA, flight);
         if (pairData) {
           clearLayers();
-          drawSelectionRing(flightA, "#60a5fa");
-          drawSelectionRing(flight, "#a78bfa");
+          drawSelectionRing(flightA, "#94a3b8");
+          drawSelectionRing(flight, "#cbd5e1");
           drawDistanceLine(pairData);
           setPair(pairData);
         }
@@ -291,8 +291,8 @@ export default function FlightDistanceTool({
       const newPair = computeFlightPair(updatedA, updatedB);
       if (newPair) {
         clearLayers();
-        drawSelectionRing(updatedA, "#60a5fa");
-        drawSelectionRing(updatedB, "#a78bfa");
+        drawSelectionRing(updatedA, "#94a3b8");
+        drawSelectionRing(updatedB, "#cbd5e1");
         drawDistanceLine(newPair);
         setPair(newPair);
       }

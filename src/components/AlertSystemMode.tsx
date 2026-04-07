@@ -93,22 +93,22 @@ const ALERT_TYPE_ICONS: Record<AlertType, string> = {
 
 const SEVERITY_COLORS: Record<Severity, { bg: string; text: string; border: string; dot: string }> = {
   critical: {
-    bg: "rgba(248,113,113,0.08)",
-    text: "#f87171",
-    border: "rgba(248,113,113,0.25)",
-    dot: "#f87171",
+    bg: "rgba(226,232,240,0.08)",
+    text: "#e2e8f0",
+    border: "rgba(226,232,240,0.25)",
+    dot: "#e2e8f0",
   },
   warning: {
-    bg: "rgba(251,191,36,0.08)",
-    text: "#fbbf24",
-    border: "rgba(251,191,36,0.25)",
-    dot: "#fbbf24",
+    bg: "rgba(148,163,184,0.08)",
+    text: "#94a3b8",
+    border: "rgba(148,163,184,0.25)",
+    dot: "#94a3b8",
   },
   info: {
     bg: "rgba(56,189,248,0.08)",
-    text: "#38bdf8",
+    text: "#cbd5e1",
     border: "rgba(56,189,248,0.25)",
-    dot: "#38bdf8",
+    dot: "#cbd5e1",
   },
 };
 
@@ -670,18 +670,18 @@ export default function AlertSystemMode({ onExitMode }: Props) {
         <div className="flex items-center gap-3">
           <div
             className="flex items-center justify-center w-8 h-8 rounded-lg"
-            style={{ background: "rgba(248,113,113,0.12)" }}
+            style={{ background: "rgba(226,232,240,0.12)" }}
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path
                 d="M8 1.5L1.5 14h13L8 1.5z"
-                stroke="#f87171"
+                stroke="#e2e8f0"
                 strokeWidth="1.5"
                 strokeLinejoin="round"
                 fill="none"
               />
-              <path d="M8 6v3.5" stroke="#f87171" strokeWidth="1.5" strokeLinecap="round" />
-              <circle cx="8" cy="11.5" r="0.75" fill="#f87171" />
+              <path d="M8 6v3.5" stroke="#e2e8f0" strokeWidth="1.5" strokeLinecap="round" />
+              <circle cx="8" cy="11.5" r="0.75" fill="#e2e8f0" />
             </svg>
           </div>
           <div>
@@ -699,9 +699,9 @@ export default function AlertSystemMode({ onExitMode }: Props) {
             onClick={() => setIsPolling(!isPolling)}
             className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all"
             style={{
-              background: isPolling ? "rgba(52,211,153,0.1)" : "rgba(248,113,113,0.1)",
+              background: isPolling ? "rgba(203,213,225,0.1)" : "rgba(226,232,240,0.1)",
               color: isPolling ? "var(--status-nominal)" : "var(--status-critical)",
-              border: `1px solid ${isPolling ? "rgba(52,211,153,0.2)" : "rgba(248,113,113,0.2)"}`,
+              border: `1px solid ${isPolling ? "rgba(203,213,225,0.2)" : "rgba(226,232,240,0.2)"}`,
             }}
           >
             <span
@@ -777,9 +777,9 @@ export default function AlertSystemMode({ onExitMode }: Props) {
               <p className="section-label mb-2">Quick Templates</p>
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { key: "emergency" as const, label: "Emergency\nSquawks", icon: "\u26A0", color: "#f87171" },
-                  { key: "military" as const, label: "Military\nActivity", icon: "\u2B50", color: "#fbbf24" },
-                  { key: "low_altitude" as const, label: "Low\nAltitude", icon: "\u2195", color: "#38bdf8" },
+                  { key: "emergency" as const, label: "Emergency\nSquawks", icon: "\u26A0", color: "#e2e8f0" },
+                  { key: "military" as const, label: "Military\nActivity", icon: "\u2B50", color: "#94a3b8" },
+                  { key: "low_altitude" as const, label: "Low\nAltitude", icon: "\u2195", color: "#cbd5e1" },
                 ].map((tmpl) => (
                   <button
                     key={tmpl.key}
@@ -877,7 +877,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                           <Toggle checked={alert.enabled} onChange={() => toggleAlert(alert.id)} size="sm" />
                           <button
                             onClick={() => deleteAlert(alert.id)}
-                            className="p-1 rounded transition-colors hover:bg-[rgba(248,113,113,0.15)]"
+                            className="p-1 rounded transition-colors hover:bg-[rgba(226,232,240,0.15)]"
                             style={{ color: "var(--text-muted)" }}
                           >
                             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -1221,9 +1221,9 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                   </label>
                   <div className="space-y-2">
                     {[
-                      { code: "7500", label: "Hijack", color: "#f87171" },
-                      { code: "7600", label: "Comms Failure", color: "#fbbf24" },
-                      { code: "7700", label: "Emergency", color: "#f97316" },
+                      { code: "7500", label: "Hijack", color: "#e2e8f0" },
+                      { code: "7600", label: "Comms Failure", color: "#94a3b8" },
+                      { code: "7700", label: "Emergency", color: "#94a3b8" },
                     ].map((sq) => (
                       <label
                         key={sq.code}

@@ -25,7 +25,7 @@ const MAX_AIRCRAFT = 4;
 const POLL_INTERVAL = 5_000;
 const HISTORY_WINDOW = 300; // keep 5 min of history points
 
-const AIRCRAFT_COLORS = ["#38bdf8", "#34d399", "#fbbf24", "#f87171"] as const;
+const AIRCRAFT_COLORS = ["#cbd5e1", "#cbd5e1", "#94a3b8", "#e2e8f0"] as const;
 
 /* ── Types ────────────────────────────────────────────────────────── */
 
@@ -1049,7 +1049,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
                     className="rounded-xl p-4"
                     style={{
                       background: "var(--surface-1)",
-                      border: `1px solid ${isConverging ? "rgba(251,191,36,0.2)" : "var(--border-default)"}`,
+                      border: `1px solid ${isConverging ? "rgba(148,163,184,0.2)" : "var(--border-default)"}`,
                     }}
                   >
                     {/* Header */}
@@ -1130,9 +1130,9 @@ export default function ComparisonMode({ onExitMode }: Props) {
                       <div
                         className="mt-2 flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] font-semibold"
                         style={{
-                          background: "rgba(251,191,36,0.08)",
+                          background: "rgba(148,163,184,0.08)",
                           color: "var(--status-caution)",
-                          border: "1px solid rgba(251,191,36,0.15)",
+                          border: "1px solid rgba(148,163,184,0.15)",
                         }}
                       >
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

@@ -208,18 +208,18 @@ function HomeContent() {
       {isRateLimited && !isLoading && (
         <div className={`absolute top-4 left-1/2 -translate-x-1/2 z-[1000] border px-4 py-2.5 rounded-xl text-sm max-w-lg text-center animate-slide-up ${
           isQuotaExhausted
-            ? "glass-heavy border-red-500/20 text-red-200 shadow-[0_0_24px_rgba(239,68,68,0.1)]"
-            : "glass-heavy border-amber-500/20 text-amber-200 shadow-[0_0_24px_rgba(245,158,11,0.1)]"
+            ? "glass-heavy border-slate-400/20 text-slate-200 shadow-[0_0_24px_rgba(148,163,184,0.1)]"
+            : "glass-heavy border-slate-400/20 text-slate-200 shadow-[0_0_24px_rgba(148,163,184,0.1)]"
         }`}>
           <div className="flex items-center gap-2 justify-center">
-            <svg className={`w-4 h-4 flex-shrink-0 ${isQuotaExhausted ? "text-red-400" : "text-amber-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-4 h-4 flex-shrink-0 ${isQuotaExhausted ? "text-slate-300" : "text-slate-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
             <span className="font-semibold">
               {isQuotaExhausted ? "Daily API quota exhausted" : "OpenSky API rate limited"}
             </span>
           </div>
-          <p className={`text-xs mt-1 ${isQuotaExhausted ? "text-red-300/70" : "text-amber-300/70"}`}>
+          <p className={`text-xs mt-1 ${isQuotaExhausted ? "text-slate-300/70" : "text-slate-400/70"}`}>
             {apiError ?? (dataSource === "stale" ? "Showing cached data. " : "")}
             {!isQuotaExhausted && " Auto-retrying..."}
           </p>
@@ -227,7 +227,7 @@ function HomeContent() {
       )}
 
       {error && !isLoading && !isRateLimited && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] glass-heavy border border-red-500/20 text-red-200 px-4 py-2.5 rounded-xl shadow-[0_0_24px_rgba(239,68,68,0.1)] text-sm animate-slide-up">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] glass-heavy border border-slate-400/20 text-slate-200 px-4 py-2.5 rounded-xl shadow-[0_0_24px_rgba(148,163,184,0.1)] text-sm animate-slide-up">
           Unable to fetch flight data. Retrying...
         </div>
       )}
@@ -494,16 +494,16 @@ function HomeContent() {
 
       {/* Measure mode indicator (2D only) */}
       {measureActive && viewMode !== "globe" && !FULLSCREEN_MODES.has(viewMode) && (
-        <div className={`absolute top-4 z-[1000] glass-heavy border border-cyan-500/20 text-cyan-200 px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all duration-300 shadow-[0_0_16px_rgba(34,211,238,0.1)] animate-slide-up ${sidebarCollapsed ? "left-4" : "left-[296px]"}`}>
-          <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.5)]" />
+        <div className={`absolute top-4 z-[1000] glass-heavy border border-slate-400/20 text-slate-300 px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all duration-300 shadow-[0_0_16px_rgba(148,163,184,0.1)] animate-slide-up ${sidebarCollapsed ? "left-4" : "left-[296px]"}`}>
+          <div className="w-2 h-2 rounded-full bg-slate-300 animate-pulse shadow-[0_0_8px_rgba(203,213,225,0.5)]" />
           Click two points to measure distance &middot; Press Esc to cancel
         </div>
       )}
 
       {/* Flight distance mode indicator */}
       {flightDistanceActive && viewMode !== "globe" && !FULLSCREEN_MODES.has(viewMode) && (
-        <div className={`absolute top-4 z-[1000] glass-heavy border border-amber-500/20 text-amber-200 px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all duration-300 shadow-[0_0_16px_rgba(245,158,11,0.1)] animate-slide-up ${sidebarCollapsed ? "left-4" : "left-[296px]"}`}>
-          <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
+        <div className={`absolute top-4 z-[1000] glass-heavy border border-slate-400/20 text-slate-300 px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all duration-300 shadow-[0_0_16px_rgba(148,163,184,0.1)] animate-slide-up ${sidebarCollapsed ? "left-4" : "left-[296px]"}`}>
+          <div className="w-2 h-2 rounded-full bg-slate-400 animate-pulse shadow-[0_0_8px_rgba(148,163,184,0.5)]" />
           Click two aircraft to measure separation &middot; Press Esc to cancel
         </div>
       )}

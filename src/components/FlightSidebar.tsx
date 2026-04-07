@@ -39,10 +39,10 @@ interface Props {
 }
 
 const FLIGHT_CAT_COLORS: Record<string, string> = {
-  VFR: "#22c55e",
-  MVFR: "#3b82f6",
-  IFR: "#ef4444",
-  LIFR: "#a855f7",
+  VFR: "#cbd5e1",
+  MVFR: "#94a3b8",
+  IFR: "#e2e8f0",
+  LIFR: "#94a3b8",
 };
 
 export default function FlightSidebar({ flight, onClose, anomalies = [], instability, onOpen3D, flightHistory }: Props) {
@@ -161,7 +161,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                   </span>
                 </div>
                 {airlineName && (
-                  <div className="text-cyan-400 text-sm font-medium">{airlineName}</div>
+                  <div className="text-slate-300 text-sm font-medium">{airlineName}</div>
                 )}
                 <div className="text-slate-500 text-xs">
                   {flight.originCountry}
@@ -197,16 +197,16 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                       <span
                         className="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold uppercase"
                         style={{
-                          color: flight.positionSource === "adsb_icao" ? "#22c55e"
-                            : flight.positionSource === "mlat" ? "#eab308"
+                          color: flight.positionSource === "adsb_icao" ? "#cbd5e1"
+                            : flight.positionSource === "mlat" ? "#94a3b8"
                             : "#9ca3af",
                           border: `1px solid ${
-                            flight.positionSource === "adsb_icao" ? "#22c55e30"
-                              : flight.positionSource === "mlat" ? "#eab30830"
+                            flight.positionSource === "adsb_icao" ? "#cbd5e130"
+                              : flight.positionSource === "mlat" ? "#94a3b830"
                               : "#9ca3af30"
                           }`,
-                          background: flight.positionSource === "adsb_icao" ? "#22c55e10"
-                            : flight.positionSource === "mlat" ? "#eab30810"
+                          background: flight.positionSource === "adsb_icao" ? "#cbd5e110"
+                            : flight.positionSource === "mlat" ? "#94a3b810"
                             : "#9ca3af10",
                         }}
                       >
@@ -240,7 +240,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                 {onOpen3D && (
                   <button
                     onClick={onOpen3D}
-                    className="flex items-center gap-1 px-2.5 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 hover:text-cyan-300 rounded-lg transition-all text-xs font-semibold border border-cyan-500/20"
+                    className="flex items-center gap-1 px-2.5 py-1.5 bg-slate-500/10 hover:bg-slate-500/20 text-slate-300 hover:text-slate-200 rounded-lg transition-all text-xs font-semibold border border-slate-500/20"
                     title="Open 3D View"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -379,7 +379,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                           className="w-4 h-4"
                           viewBox="0 0 24 24"
                           fill="none"
-                          stroke="#60a5fa"
+                          stroke="#94a3b8"
                           strokeWidth={2}
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -437,12 +437,12 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                 <div className="flex flex-wrap gap-1.5">
                   {flight.navModes.map((mode) => {
                     const modeColors: Record<string, string> = {
-                      autopilot: "#22c55e",
-                      vnav: "#3b82f6",
-                      lnav: "#3b82f6",
-                      althold: "#06b6d4",
-                      approach: "#f59e0b",
-                      tcas: "#ef4444",
+                      autopilot: "#cbd5e1",
+                      vnav: "#94a3b8",
+                      lnav: "#94a3b8",
+                      althold: "#cbd5e1",
+                      approach: "#94a3b8",
+                      tcas: "#e2e8f0",
                     };
                     const modeLabels: Record<string, string> = {
                       autopilot: "AP",
@@ -648,10 +648,10 @@ function GPSIntegrityIndicator({ result }: { result: GPSIntegrityResult | null }
   // Colour scheme per severity
   const config =
     severity === "compromised"
-      ? { color: "#ef4444", bg: "#ef444415", border: "#ef444430", label: "GPS Compromised", icon: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" }
+      ? { color: "#e2e8f0", bg: "#e2e8f015", border: "#e2e8f030", label: "GPS Compromised", icon: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" }
       : severity === "degraded"
-        ? { color: "#eab308", bg: "#eab30815", border: "#eab30830", label: "GPS Degraded", icon: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" }
-        : { color: "#22c55e", bg: "#22c55e15", border: "#22c55e30", label: "GPS OK", icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" };
+        ? { color: "#94a3b8", bg: "#94a3b815", border: "#94a3b830", label: "GPS Degraded", icon: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" }
+        : { color: "#cbd5e1", bg: "#cbd5e115", border: "#cbd5e130", label: "GPS OK", icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" };
 
   // Always show a compact badge; expand when there are issues
   return (
@@ -703,7 +703,7 @@ function GPSIntegrityIndicator({ result }: { result: GPSIntegrityResult | null }
 function StatMini({ icon, label, value, unit }: { icon: string; label: string; value: string; unit: string }) {
   return (
     <div className="relative overflow-hidden rounded-xl px-3 py-3 text-center" style={{ background: "var(--surface-2)", border: "1px solid var(--border-subtle)" }}>
-      <div className="absolute top-0 left-3 right-3 h-px bg-gradient-to-r from-transparent via-cyan-500/25 to-transparent" />
+      <div className="absolute top-0 left-3 right-3 h-px bg-gradient-to-r from-transparent via-slate-500/25 to-transparent" />
       <div className="data-label uppercase tracking-wider mb-1">{label}</div>
       <div className="data-readout">
         {value}<span className="text-[11px] ml-1" style={{ color: "var(--text-muted)" }}>{unit}</span>
@@ -751,15 +751,15 @@ function DelayExplainer({
 
   if (explanation) {
     return (
-      <div className="rounded-xl border border-purple-500/20 bg-purple-950/20 px-4 py-3 animate-slide-up">
+      <div className="rounded-xl border border-slate-500/20 bg-slate-950/20 px-4 py-3 animate-slide-up">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-purple-500/10 flex items-center justify-center">
-              <svg className="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-6 h-6 rounded-lg bg-slate-500/10 flex items-center justify-center">
+              <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <span className="text-[10px] font-bold text-purple-300 uppercase tracking-wider">
+            <span className="text-[10px] font-bold text-slate-300 uppercase tracking-wider">
               Flight Analysis
             </span>
           </div>
@@ -781,15 +781,15 @@ function DelayExplainer({
     <button
       onClick={analyze}
       disabled={isLoading}
-      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-purple-500/20 bg-purple-950/10 hover:bg-purple-950/30 text-purple-300 hover:text-purple-200 transition-all text-xs font-semibold disabled:opacity-50 group"
+      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-500/20 bg-slate-950/10 hover:bg-slate-950/30 text-slate-300 hover:text-slate-200 transition-all text-xs font-semibold disabled:opacity-50 group"
     >
       {isLoading ? (
         <>
-          <div className="w-3 h-3 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
+          <div className="w-3 h-3 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
           Analyzing flight...
         </>
       ) : error ? (
-        <span className="text-red-400">{error} — tap to retry</span>
+        <span className="text-slate-200">{error} — tap to retry</span>
       ) : (
         <>
           <svg className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -864,8 +864,8 @@ function RouteSection({
       <div className="space-y-2">
         {departure && (
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-              <span className="text-emerald-400 text-[10px] font-bold">DEP</span>
+            <div className="w-7 h-7 rounded-lg bg-slate-500/10 border border-slate-500/20 flex items-center justify-center">
+              <span className="text-slate-300 text-[10px] font-bold">DEP</span>
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-slate-200 truncate text-xs font-medium">
@@ -884,7 +884,7 @@ function RouteSection({
         {departure && nearest && (
           <div className="flex items-center gap-2 px-4">
             <div className="flex-1 border-t border-dashed border-slate-700/60" />
-            <svg className="w-3 h-3 text-cyan-500/50" fill="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3 h-3 text-slate-500/50" fill="currentColor" viewBox="0 0 24 24">
               <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
             </svg>
             <div className="flex-1 border-t border-dashed border-slate-700/60" />
@@ -892,8 +892,8 @@ function RouteSection({
         )}
 
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-            <span className="text-blue-400 text-[10px] font-bold">NR</span>
+          <div className="w-7 h-7 rounded-lg bg-slate-500/10 border border-slate-500/20 flex items-center justify-center">
+            <span className="text-slate-400 text-[10px] font-bold">NR</span>
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-slate-200 truncate text-xs font-medium">
@@ -1031,11 +1031,11 @@ function EmissionsSection({
             <div
               className="w-8 h-8 rounded-lg flex items-center justify-center"
               style={{
-                background: "rgba(34, 197, 94, 0.1)",
-                border: "1px solid rgba(34, 197, 94, 0.2)",
+                background: "rgba(148, 163, 184, 0.1)",
+                border: "1px solid rgba(148, 163, 184, 0.2)",
               }}
             >
-              <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
               </svg>
             </div>
@@ -1067,9 +1067,9 @@ function EmissionsSection({
               <span
                 className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider"
                 style={{
-                  background: "rgba(34, 197, 94, 0.1)",
-                  color: "var(--status-nominal)",
-                  border: "1px solid rgba(34, 197, 94, 0.2)",
+                  background: "rgba(148, 163, 184, 0.1)",
+                  color: "var(--text-secondary)",
+                  border: "1px solid rgba(148, 163, 184, 0.2)",
                 }}
               >
                 Type-matched
@@ -1089,12 +1089,12 @@ function EmissionsSection({
         <div
           className="flex items-center gap-2 px-3 py-2 rounded-lg text-[11px]"
           style={{
-            background: "rgba(34, 197, 94, 0.06)",
-            border: "1px solid rgba(34, 197, 94, 0.12)",
+            background: "rgba(148, 163, 184, 0.06)",
+            border: "1px solid rgba(148, 163, 184, 0.12)",
             color: "var(--text-tertiary)",
           }}
         >
-          <svg className="w-3.5 h-3.5 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+          <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 24 24">
             <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z" />
           </svg>
           <span>
@@ -1142,7 +1142,7 @@ function Detail({
   return (
     <div className="flex justify-between items-center">
       <span className="data-label">{label}</span>
-      <span className={`font-medium text-sm tabular-nums ${highlight ? "text-emerald-400" : ""}`} style={{ color: highlight ? undefined : "var(--text-secondary)" }}>
+      <span className={`font-medium text-sm tabular-nums ${highlight ? "text-slate-300" : ""}`} style={{ color: highlight ? undefined : "var(--text-secondary)" }}>
         {value}
       </span>
     </div>
