@@ -9,7 +9,13 @@ import {
 } from "react";
 import dynamic from "next/dynamic";
 import type { FlightState } from "@/types/flight";
-import { haversineNm, bearing } from "@/lib/geo";
+import {
+  haversineNm,
+  bearing,
+  closingSpeedKts,
+  verticalSeparationFt,
+  timeToClosestApproachMin,
+} from "@/lib/geo";
 import airportsData from "@/data/airports.json";
 import ATCPanel from "@/components/ATCPanel";
 import L from "leaflet";
@@ -43,6 +49,19 @@ interface BearingLine {
   label: string;
 }
 
+type WeatherLayerType = "precipitation" | "clouds" | "wind" | "temperature" | null;
+type FlightCategory = "VFR" | "MVFR" | "IFR" | "LIFR" | "UNKNOWN";
+
+interface SeparationPair {
+  flightA: FlightState;
+  flightB: FlightState | null;
+}
+
+interface MetarData {
+  raw: string;
+  category: FlightCategory;
+}
+
 // ---------- Constants ----------
 
 const NM_TO_METERS = 1852;
@@ -63,6 +82,23 @@ const TYPE_LABELS: Record<string, { label: string; color: string; icon: string }
   heliport: { label: "Heliport", color: "#e2e8f0", icon: "\ud83d\ude81" },
   seaplane: { label: "Seaplane", color: "#cbd5e1", icon: "\ud83c\udf0a" },
   balloon: { label: "Balloon", color: "#94a3b8", icon: "\ud83c\udf88" },
+};
+
+const WEATHER_URLS: Record<string, string> = {
+  precipitation: "https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=9de243494c0b295cca9337e1e96b00e2",
+  clouds: "https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=9de243494c0b295cca9337e1e96b00e2",
+  wind: "https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=9de243494c0b295cca9337e1e96b00e2",
+  temperature: "https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=9de243494c0b295cca9337e1e96b00e2",
+};
+
+const SATELLITE_URL = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+
+const CATEGORY_COLORS: Record<FlightCategory, string> = {
+  VFR: "#94a3b8",
+  MVFR: "#cbd5e1",
+  IFR: "#64748b",
+  LIFR: "#475569",
+  UNKNOWN: "#64748b",
 };
 
 const airports = airportsData as Airport[];
@@ -109,17 +145,95 @@ function fuzzyMatch(airport: Airport, query: string): number {
   return 0;
 }
 
+function parseFlightCategory(rawMetar: string): FlightCategory {
+  // Parse visibility and ceiling from raw METAR to determine flight category
+  const visMatcher = rawMetar.match(/\s(\d+)SM/);
+  const visKm = rawMetar.match(/\s(\d{4})\s/);
+  let visNm = 10; // default good visibility
+  if (visMatcher) visNm = parseInt(visMatcher[1], 10);
+  else if (visKm) visNm = parseInt(visKm[1], 10) / 1852;
+
+  // Parse ceiling (lowest BKN or OVC layer)
+  let ceiling = 99999;
+  const cloudLayers = rawMetar.matchAll(/(BKN|OVC)(\d{3})/g);
+  for (const m of cloudLayers) {
+    const agl = parseInt(m[2], 10) * 100;
+    if (agl < ceiling) ceiling = agl;
+  }
+
+  if (visNm < 1 || ceiling < 500) return "LIFR";
+  if (visNm < 3 || ceiling < 1000) return "IFR";
+  if (visNm < 5 || ceiling < 3000) return "MVFR";
+  return "VFR";
+}
+
+// ---------- Pill Toggle Button ----------
+
+function PillButton({
+  label, active, onClick, icon,
+}: {
+  label: string; active: boolean; onClick: () => void; icon?: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-all"
+      style={{
+        fontSize: "10px",
+        fontWeight: 600,
+        letterSpacing: "0.03em",
+        background: active ? "rgba(203,213,225,0.12)" : "rgba(148,163,184,0.06)",
+        border: `1px solid ${active ? "rgba(203,213,225,0.3)" : "rgba(148,163,184,0.15)"}`,
+        color: active ? "#cbd5e1" : "#64748b",
+        cursor: "pointer",
+      }}
+    >
+      {icon}
+      {label}
+    </button>
+  );
+}
+
+// ---------- Section Header ----------
+
+function SectionHeader({ label, collapsed, onToggle }: { label: string; collapsed: boolean; onToggle: () => void }) {
+  return (
+    <button
+      onClick={onToggle}
+      className="flex items-center justify-between w-full py-1.5 transition-colors hover:opacity-80"
+      style={{ color: "#94a3b8" }}
+    >
+      <span className="section-label" style={{ letterSpacing: "0.06em", fontSize: "9px", fontWeight: 700 }}>{label}</span>
+      <svg
+        width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+        style={{ transform: collapsed ? "rotate(-90deg)" : "rotate(0deg)", transition: "transform 0.2s" }}
+      >
+        <path d="m6 9 6 6 6-6" />
+      </svg>
+    </button>
+  );
+}
+
 // ---------- Map Component ----------
 
 function AirportMapInner({
   airport, flights, bearingLines, onFlightClick,
+  weatherLayer, terrainOn, separationPair, onMapFlightClick,
 }: {
   airport: Airport; flights: FlightState[]; bearingLines: BearingLine[];
   onFlightClick: (f: FlightState) => void;
+  weatherLayer: WeatherLayerType;
+  terrainOn: boolean;
+  separationPair: SeparationPair | null;
+  onMapFlightClick: (f: FlightState) => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const layersRef = useRef<L.LayerGroup | null>(null);
+  const weatherLayerRef = useRef<L.TileLayer | null>(null);
+  const terrainLayerRef = useRef<L.TileLayer | null>(null);
+  const separationLayerRef = useRef<L.LayerGroup | null>(null);
+  const runwayLayerRef = useRef<L.LayerGroup | null>(null);
 
   const ringColors = [
     "rgba(203,213,225,0.50)", "rgba(203,213,225,0.45)", "rgba(203,213,225,0.40)",
@@ -137,6 +251,8 @@ function AirportMapInner({
     }).addTo(map);
     mapRef.current = map;
     layersRef.current = L.layerGroup().addTo(map);
+    separationLayerRef.current = L.layerGroup().addTo(map);
+    runwayLayerRef.current = L.layerGroup().addTo(map);
 
     RANGE_RINGS.forEach((ringNm, i) => {
       L.circle([airport.lat, airport.lon], {
@@ -164,9 +280,39 @@ function AirportMapInner({
     });
     L.marker([airport.lat, airport.lon], { icon: airportIcon }).addTo(map);
 
+    // Runway overlay on zoom
+    const updateRunway = () => {
+      if (!runwayLayerRef.current) return;
+      runwayLayerRef.current.clearLayers();
+      if (map.getZoom() >= 12) {
+        // Draw a stylized runway line (~1km long, N-S by default)
+        const runwayHalfLenDeg = 0.005; // ~0.5km in degrees
+        const rwyStart: L.LatLngExpression = [airport.lat - runwayHalfLenDeg, airport.lon];
+        const rwyEnd: L.LatLngExpression = [airport.lat + runwayHalfLenDeg, airport.lon];
+        runwayLayerRef.current.addLayer(
+          L.polyline([rwyStart, rwyEnd], { color: "#94a3b8", weight: 6, opacity: 0.7 })
+        );
+        // Runway center line
+        runwayLayerRef.current.addLayer(
+          L.polyline([rwyStart, rwyEnd], { color: "#cbd5e1", weight: 1, opacity: 0.5, dashArray: "8 6" })
+        );
+        // Threshold markers
+        [rwyStart, rwyEnd].forEach((pt) => {
+          const threshIcon = L.divIcon({
+            className: "",
+            html: `<div style="width:14px;height:3px;background:#cbd5e1;opacity:0.6;border-radius:1px;"></div>`,
+            iconSize: [14, 3], iconAnchor: [7, 1],
+          });
+          runwayLayerRef.current!.addLayer(L.marker(pt, { icon: threshIcon, interactive: false }));
+        });
+      }
+    };
+    map.on("zoomend", updateRunway);
+    updateRunway();
+
     const ro = new ResizeObserver(() => map.invalidateSize());
     ro.observe(containerRef.current);
-    return () => { ro.disconnect(); map.remove(); mapRef.current = null; layersRef.current = null; };
+    return () => { ro.disconnect(); map.off("zoomend", updateRunway); map.remove(); mapRef.current = null; layersRef.current = null; separationLayerRef.current = null; runwayLayerRef.current = null; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [airport.lat, airport.lon]);
 
@@ -174,6 +320,104 @@ function AirportMapInner({
     if (!mapRef.current) return;
     mapRef.current.setView([airport.lat, airport.lon], 7, { animate: true });
   }, [airport.lat, airport.lon]);
+
+  // Weather layer management
+  useEffect(() => {
+    if (!mapRef.current) return;
+    // Remove existing weather layer
+    if (weatherLayerRef.current) {
+      mapRef.current.removeLayer(weatherLayerRef.current);
+      weatherLayerRef.current = null;
+    }
+    // Add new one if selected
+    if (weatherLayer && WEATHER_URLS[weatherLayer]) {
+      weatherLayerRef.current = L.tileLayer(WEATHER_URLS[weatherLayer], {
+        opacity: 0.6,
+        attribution: "&copy; OpenWeatherMap",
+      }).addTo(mapRef.current);
+    }
+  }, [weatherLayer]);
+
+  // Terrain/satellite layer management
+  useEffect(() => {
+    if (!mapRef.current) return;
+    if (terrainLayerRef.current) {
+      mapRef.current.removeLayer(terrainLayerRef.current);
+      terrainLayerRef.current = null;
+    }
+    if (terrainOn) {
+      terrainLayerRef.current = L.tileLayer(SATELLITE_URL, {
+        opacity: 0.5,
+        attribution: "&copy; Esri",
+      }).addTo(mapRef.current);
+    }
+  }, [terrainOn]);
+
+  // Separation tool overlay
+  useEffect(() => {
+    if (!mapRef.current || !separationLayerRef.current) return;
+    separationLayerRef.current.clearLayers();
+    if (!separationPair) return;
+
+    const { flightA, flightB } = separationPair;
+
+    // Draw ring on flight A
+    if (flightA.latitude !== null && flightA.longitude !== null) {
+      separationLayerRef.current.addLayer(
+        L.circleMarker([flightA.latitude, flightA.longitude], {
+          radius: 18, color: "#cbd5e1", weight: 2, opacity: 0.8, fill: false, dashArray: "4 3",
+        })
+      );
+    }
+
+    if (flightB && flightB.latitude !== null && flightB.longitude !== null) {
+      // Ring on B
+      separationLayerRef.current.addLayer(
+        L.circleMarker([flightB.latitude, flightB.longitude], {
+          radius: 18, color: "#cbd5e1", weight: 2, opacity: 0.8, fill: false, dashArray: "4 3",
+        })
+      );
+
+      if (flightA.latitude !== null && flightA.longitude !== null) {
+        const latDist = haversineNm(flightA.latitude, flightA.longitude, flightB.latitude, flightB.longitude);
+        const vertSep = verticalSeparationFt(flightA.baroAltitude, flightB.baroAltitude);
+
+        let closingKts = 0;
+        if (flightA.velocity !== null && flightB.velocity !== null) {
+          closingKts = closingSpeedKts(
+            flightA.latitude, flightA.longitude, flightA.trueTrack ?? 0, flightA.velocity,
+            flightB.latitude, flightB.longitude, flightB.trueTrack ?? 0, flightB.velocity
+          );
+        }
+        const tca = timeToClosestApproachMin(latDist, closingKts);
+
+        // Dashed line between
+        separationLayerRef.current.addLayer(
+          L.polyline(
+            [[flightA.latitude, flightA.longitude], [flightB.latitude, flightB.longitude]],
+            { color: "#94a3b8", weight: 1.5, opacity: 0.7, dashArray: "6 4" }
+          )
+        );
+
+        // Midpoint label
+        const midLat = (flightA.latitude + flightB.latitude) / 2;
+        const midLon = (flightA.longitude + flightB.longitude) / 2;
+        const labelParts = [
+          `${latDist.toFixed(1)} NM`,
+          vertSep !== null ? `${Math.round(vertSep)} ft vert` : null,
+          closingKts > 0 ? `${Math.round(closingKts)} kts closing` : closingKts < 0 ? `${Math.round(Math.abs(closingKts))} kts separating` : null,
+          tca !== null ? `CPA ${tca.toFixed(1)} min` : null,
+        ].filter(Boolean).join(" | ");
+
+        const midIcon = L.divIcon({
+          className: "range-ring-label",
+          html: `<div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#cbd5e1;background:rgba(6,8,13,0.92);padding:3px 8px;border-radius:4px;border:1px solid rgba(203,213,225,0.25);white-space:nowrap;letter-spacing:0.3px">${labelParts}</div>`,
+          iconSize: [0, 0], iconAnchor: [0, 8],
+        });
+        separationLayerRef.current.addLayer(L.marker([midLat, midLon], { icon: midIcon, interactive: false }));
+      }
+    }
+  }, [separationPair]);
 
   const flightHistoryRef = useRef<Map<string, Array<[number, number]>>>(new Map());
 
@@ -251,10 +495,10 @@ function AirportMapInner({
         </div>`,
         { className: "range-ring-label" }
       );
-      marker.on("click", () => onFlightClick(f));
+      marker.on("click", () => onMapFlightClick(f));
       layersRef.current!.addLayer(marker);
     });
-  }, [flights, onFlightClick]);
+  }, [flights, onMapFlightClick]);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -282,7 +526,47 @@ function AirportMapInner({
     });
   }, [bearingLines]);
 
-  return <div ref={containerRef} className="h-full w-full" />;
+  return (
+    <div className="relative h-full w-full">
+      <div ref={containerRef} className="h-full w-full" />
+      {/* Radar Sweep Overlay */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0, left: 0, right: 0, bottom: 0,
+          pointerEvents: "none",
+          zIndex: 450,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          className="radar-sweep"
+          style={{
+            width: "600px",
+            height: "600px",
+            borderRadius: "50%",
+            background: "conic-gradient(from 0deg, transparent 0deg, rgba(203,213,225,0.08) 30deg, transparent 60deg)",
+            animation: "radarSweep 4s linear infinite",
+          }}
+        />
+        <div
+          className="radar-pulse"
+          style={{
+            position: "absolute",
+            width: "12px",
+            height: "12px",
+            borderRadius: "50%",
+            background: "rgba(203,213,225,0.15)",
+            border: "1px solid rgba(203,213,225,0.3)",
+            animation: "radarPulse 4s ease-in-out infinite",
+          }}
+        />
+      </div>
+    </div>
+  );
 }
 
 const AirportMap = dynamic(() => Promise.resolve(AirportMapInner), {
@@ -367,6 +651,17 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
   const [panelCollapsed, setPanelCollapsed] = useState(false);
   const [showATCPanel, setShowATCPanel] = useState(false);
 
+  // --- New feature state ---
+  const [weatherLayer, setWeatherLayer] = useState<WeatherLayerType>(null);
+  const [terrainOn, setTerrainOn] = useState(false);
+  const [metarData, setMetarData] = useState<MetarData | null>(null);
+  const [metarVisible, setMetarVisible] = useState(false);
+  const [separationMode, setSeparationMode] = useState(false);
+  const [separationPair, setSeparationPair] = useState<SeparationPair | null>(null);
+  const [flightListOpen, setFlightListOpen] = useState(true);
+  const [dataLayersOpen, setDataLayersOpen] = useState(true);
+  const [weatherSectionOpen, setWeatherSectionOpen] = useState(false);
+
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node) &&
@@ -377,6 +672,18 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
+
+  // ESC key handler for separation mode
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape" && separationMode) {
+        setSeparationMode(false);
+        setSeparationPair(null);
+      }
+    }
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [separationMode]);
 
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
@@ -395,6 +702,11 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
     setShowDropdown(false);
     setSelectedFlight(null);
     setBearingLines([]);
+    setMetarData(null);
+    setSeparationMode(false);
+    setSeparationPair(null);
+    setWeatherLayer(null);
+    setTerrainOn(false);
     setTimeout(() => setMapReady(true), 50);
   }, []);
 
@@ -430,6 +742,56 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
     return () => { cancelled = true; clearInterval(iv); };
   }, [selectedAirport, refreshRate]);
 
+  // Fetch METAR
+  useEffect(() => {
+    if (!selectedAirport || !metarVisible) { setMetarData(null); return; }
+    let cancelled = false;
+    async function fetchMetar() {
+      try {
+        const r = await fetch(`/api/metar?icao=${selectedAirport!.icao}`);
+        if (cancelled) return;
+        if (!r.ok) { setMetarData(null); return; }
+        const data = await r.json();
+        const raw = data.raw || data.metar || data.data || "";
+        if (raw) {
+          setMetarData({ raw, category: parseFlightCategory(raw) });
+        }
+      } catch { setMetarData(null); }
+    }
+    fetchMetar();
+    const iv = setInterval(fetchMetar, 5 * 60 * 1000); // 5 min refresh
+    return () => { cancelled = true; clearInterval(iv); };
+  }, [selectedAirport, metarVisible]);
+
+  // Handle map flight clicks (for separation tool and normal detail)
+  const handleMapFlightClick = useCallback((f: FlightState) => {
+    if (separationMode) {
+      setSeparationPair((prev) => {
+        if (!prev) {
+          return { flightA: f, flightB: null };
+        }
+        if (!prev.flightB) {
+          return { ...prev, flightB: f };
+        }
+        // Reset: start new pair
+        return { flightA: f, flightB: null };
+      });
+    }
+    setSelectedFlight(f);
+  }, [separationMode]);
+
+  // Flight list sorted by distance
+  const sortedFlights = useMemo(() => {
+    if (!selectedAirport) return [];
+    return [...flights]
+      .filter((f) => f.latitude !== null && f.longitude !== null)
+      .map((f) => ({
+        flight: f,
+        dist: haversineNm(selectedAirport.lat, selectedAirport.lon, f.latitude!, f.longitude!),
+      }))
+      .sort((a, b) => a.dist - b.dist);
+  }, [flights, selectedAirport]);
+
   const drawLatLonLine = useCallback(() => {
     if (!selectedAirport) return;
     const lat = parseFloat(latInput); const lon = parseFloat(lonInput);
@@ -462,11 +824,27 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
 
   const clearAllLines = useCallback(() => { setBearingLines([]); }, []);
 
+  const toggleWeather = useCallback((type: "precipitation" | "clouds" | "wind" | "temperature") => {
+    setWeatherLayer((prev) => prev === type ? null : type);
+  }, []);
+
+  const toggleSeparation = useCallback(() => {
+    setSeparationMode((prev) => {
+      if (prev) {
+        setSeparationPair(null);
+        return false;
+      }
+      return true;
+    });
+  }, []);
+
   useEffect(() => {
     const style = document.createElement("style");
     style.textContent = `
       @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.4); opacity: 0; } }
       .range-ring-label { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
+      @keyframes radarSweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      @keyframes radarPulse { 0%, 100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(2.5); opacity: 0; } }
     `;
     document.head.appendChild(style);
     return () => { document.head.removeChild(style); };
@@ -560,6 +938,20 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
           </div>
         )}
 
+        {/* Separation Tool toggle */}
+        {selectedAirport && (
+          <PillButton
+            label={separationMode ? "SEP ON" : "SEP"}
+            active={separationMode}
+            onClick={toggleSeparation}
+            icon={
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 12H3M21 12l-4-4M21 12l-4 4M3 12l4-4M3 12l4 4" />
+              </svg>
+            }
+          />
+        )}
+
         {/* ATC Panel toggle */}
         {selectedAirport && (
           <button
@@ -582,9 +974,77 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
         )}
       </div>
 
+      {/* METAR display below top bar */}
+      {metarVisible && metarData && selectedAirport && (
+        <div
+          className="flex-shrink-0 flex items-center gap-3 px-4 py-1.5"
+          style={{
+            background: "rgba(6,8,13,0.88)",
+            borderBottom: "1px solid var(--border-subtle)",
+            zIndex: 1099,
+          }}
+        >
+          <span
+            className="px-2 py-0.5 rounded-md"
+            style={{
+              fontSize: "10px",
+              fontWeight: 700,
+              fontFamily: "monospace",
+              color: CATEGORY_COLORS[metarData.category],
+              background: `${CATEGORY_COLORS[metarData.category]}15`,
+              border: `1px solid ${CATEGORY_COLORS[metarData.category]}40`,
+              letterSpacing: "0.05em",
+            }}
+          >
+            {metarData.category}
+          </span>
+          <span
+            style={{
+              fontSize: "10px",
+              fontFamily: "'JetBrains Mono', monospace",
+              color: "#94a3b8",
+              letterSpacing: "0.02em",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {metarData.raw}
+          </span>
+        </div>
+      )}
+
+      {/* Separation mode banner */}
+      {separationMode && (
+        <div
+          className="flex-shrink-0 flex items-center gap-2 px-4 py-1"
+          style={{
+            background: "rgba(203,213,225,0.06)",
+            borderBottom: "1px solid rgba(203,213,225,0.15)",
+            zIndex: 1098,
+          }}
+        >
+          <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#cbd5e1", animation: "pulse 2s ease-in-out infinite" }} />
+          <span style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 600 }}>
+            SEPARATION TOOL
+            {!separationPair ? " - Click first aircraft" :
+             !separationPair.flightB ? ` - ${separationPair.flightA.callsign?.trim() || separationPair.flightA.icao24} selected. Click second aircraft.` :
+             ` - ${separationPair.flightA.callsign?.trim() || separationPair.flightA.icao24} / ${separationPair.flightB.callsign?.trim() || separationPair.flightB.icao24}`
+            }
+          </span>
+          <button
+            onClick={() => { setSeparationMode(false); setSeparationPair(null); }}
+            className="ml-auto text-xs px-2 py-0.5 rounded hover:bg-white/5"
+            style={{ color: "#64748b", fontSize: "10px" }}
+          >
+            ESC to close
+          </button>
+        </div>
+      )}
+
       {/* Body */}
       <div className="flex-1 overflow-hidden relative">
-        {/* Left panel - bearing tool */}
+        {/* Left panel */}
         {selectedAirport && (
           <div className="absolute top-0 left-0 bottom-0 z-[1000] flex flex-col overflow-hidden transition-all duration-300"
             style={{ width: panelCollapsed ? "36px" : "260px", background: "color-mix(in srgb, var(--surface-1) 95%, transparent)",
@@ -597,13 +1057,18 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
               ) : (
                 <div className="flex items-center gap-2 w-full px-3">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6" /></svg>
-                  <span className="section-label" style={{ letterSpacing: "0.06em" }}>BEARING LINE TOOL</span>
+                  <span className="section-label" style={{ letterSpacing: "0.06em" }}>TOOLS</span>
                 </div>
               )}
             </button>
 
             {!panelCollapsed && (
               <div className="flex-1 overflow-y-auto scrollbar-thin p-3 space-y-3">
+
+                {/* ---------- BEARING LINE TOOL ---------- */}
+                <div>
+                  <span className="section-label" style={{ letterSpacing: "0.06em", fontSize: "9px", fontWeight: 700, color: "#94a3b8" }}>BEARING LINE TOOL</span>
+                </div>
                 {/* Mode tabs */}
                 <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid var(--border-default)" }}>
                   <button onClick={() => setBearingMode("latlon")} className="flex-1 py-1.5 text-center transition-colors"
@@ -681,9 +1146,103 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
                   </div>
                 )}
 
+                {/* Divider */}
+                <div style={{ height: "1px", background: "var(--border-subtle)" }} />
+
+                {/* ---------- DATA LAYERS ---------- */}
+                <SectionHeader label="DATA LAYERS" collapsed={!dataLayersOpen} onToggle={() => setDataLayersOpen((v) => !v)} />
+                {dataLayersOpen && (
+                  <div className="space-y-2">
+                    {/* Weather sub-section */}
+                    <SectionHeader label="WEATHER" collapsed={!weatherSectionOpen} onToggle={() => setWeatherSectionOpen((v) => !v)} />
+                    {weatherSectionOpen && (
+                      <div className="flex flex-wrap gap-1.5">
+                        <PillButton label="Rain" active={weatherLayer === "precipitation"} onClick={() => toggleWeather("precipitation")} />
+                        <PillButton label="Clouds" active={weatherLayer === "clouds"} onClick={() => toggleWeather("clouds")} />
+                        <PillButton label="Wind" active={weatherLayer === "wind"} onClick={() => toggleWeather("wind")} />
+                        <PillButton label="Temp" active={weatherLayer === "temperature"} onClick={() => toggleWeather("temperature")} />
+                      </div>
+                    )}
+
+                    {/* Other data layers */}
+                    <div className="flex flex-wrap gap-1.5">
+                      <PillButton
+                        label="METAR"
+                        active={metarVisible}
+                        onClick={() => setMetarVisible((v) => !v)}
+                      />
+                      <PillButton
+                        label="Separation"
+                        active={separationMode}
+                        onClick={toggleSeparation}
+                      />
+                      <PillButton
+                        label="Terrain"
+                        active={terrainOn}
+                        onClick={() => setTerrainOn((v) => !v)}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Divider */}
+                <div style={{ height: "1px", background: "var(--border-subtle)" }} />
+
+                {/* ---------- FLIGHT LIST ---------- */}
+                <SectionHeader
+                  label={`FLIGHTS (${sortedFlights.length})`}
+                  collapsed={!flightListOpen}
+                  onToggle={() => setFlightListOpen((v) => !v)}
+                />
+                {flightListOpen && (
+                  <div
+                    className="space-y-0.5 overflow-y-auto scrollbar-thin"
+                    style={{ maxHeight: "200px" }}
+                  >
+                    {sortedFlights.length === 0 && (
+                      <div style={{ fontSize: "10px", color: "var(--text-muted)", padding: "8px 0", textAlign: "center" }}>
+                        No flights in range
+                      </div>
+                    )}
+                    {sortedFlights.map(({ flight: f, dist }) => {
+                      const cs = f.callsign?.trim() || f.icao24;
+                      const alt = f.baroAltitude !== null ? `${Math.round(f.baroAltitude * 3.28084 / 100)}` : "--";
+                      const spd = f.velocity !== null ? `${Math.round(f.velocity * 1.94384)}` : "--";
+                      const isSelected = selectedFlight?.icao24 === f.icao24;
+                      return (
+                        <button
+                          key={f.icao24}
+                          onClick={() => { setSelectedFlight(f); }}
+                          className="w-full flex items-center gap-2 px-2 py-1 rounded-md transition-colors hover:bg-white/5"
+                          style={{
+                            background: isSelected ? "rgba(203,213,225,0.1)" : "transparent",
+                            border: isSelected ? "1px solid rgba(203,213,225,0.2)" : "1px solid transparent",
+                          }}
+                        >
+                          <span style={{ color: "#cbd5e1", fontSize: "10px", fontWeight: 700, fontFamily: "monospace", minWidth: "58px", textAlign: "left" }}>
+                            {cs}
+                          </span>
+                          <span style={{ color: "#64748b", fontSize: "9px", fontFamily: "monospace" }}>
+                            FL{alt}
+                          </span>
+                          <span style={{ color: "#64748b", fontSize: "9px", fontFamily: "monospace" }}>
+                            {spd}kt
+                          </span>
+                          <span style={{ color: "#475569", fontSize: "9px", fontFamily: "monospace", marginLeft: "auto" }}>
+                            {dist.toFixed(0)}nm
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Divider */}
+                <div style={{ height: "1px", background: "var(--border-subtle)" }} />
+
                 {/* Altitude Legend */}
-                <div className="pt-2">
-                  <span className="section-label">ALTITUDE LEGEND</span>
+                <div className="pt-1">
+                  <span className="section-label" style={{ fontSize: "9px", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.06em" }}>ALTITUDE LEGEND</span>
                   <div className="mt-2 space-y-1">
                     {[
                       { color: "#cbd5e1", label: "< 10,000 ft" },
@@ -706,7 +1265,16 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
         {/* Map */}
         <div className="absolute inset-0">
           {selectedAirport && mapReady ? (
-            <AirportMap airport={selectedAirport} flights={flights} bearingLines={bearingLines} onFlightClick={setSelectedFlight} />
+            <AirportMap
+              airport={selectedAirport}
+              flights={flights}
+              bearingLines={bearingLines}
+              onFlightClick={setSelectedFlight}
+              weatherLayer={weatherLayer}
+              terrainOn={terrainOn}
+              separationPair={separationPair}
+              onMapFlightClick={handleMapFlightClick}
+            />
           ) : (
             <div className="h-full w-full flex items-center justify-center" style={{ background: "var(--surface-0)" }}>
               <div className="text-center space-y-4 max-w-md">
