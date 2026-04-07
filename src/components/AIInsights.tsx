@@ -23,10 +23,10 @@ export default function AIInsights({
   const isExhausted = remainingToday <= 0;
 
   return (
-    <div className="border border-slate-500/30 rounded-lg overflow-hidden bg-slate-950/20">
+    <div className="border border-slate-500/30 rounded-lg overflow-hidden bg-neutral-950/20">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-slate-950/30 transition-colors"
+        className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-neutral-950/30 transition-colors"
       >
         <svg
           className="w-4 h-4 text-slate-400 flex-shrink-0"

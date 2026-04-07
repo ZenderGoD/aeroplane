@@ -110,7 +110,7 @@ export default function EmbedGeneratorMode({ onExitMode }: Props) {
           justifyContent: "space-between",
           padding: "12px 20px",
           borderBottom: "1px solid var(--border-subtle, rgba(148,163,184,0.06))",
-          background: "var(--surface-1, #0c1018)",
+          background: "var(--surface-1, #0a0a0a)",
           flexShrink: 0,
         }}
       >
@@ -154,7 +154,7 @@ export default function EmbedGeneratorMode({ onExitMode }: Props) {
               padding: "5px 12px",
               borderRadius: 8,
               border: "1px solid var(--border-default, rgba(148,163,184,0.1))",
-              background: "var(--surface-2, #111827)",
+              background: "var(--surface-2, #141414)",
               color: "var(--text-secondary, #cbd5e1)",
               fontSize: 12,
               fontWeight: 500,
@@ -166,7 +166,7 @@ export default function EmbedGeneratorMode({ onExitMode }: Props) {
               e.currentTarget.style.borderColor = "var(--border-strong, rgba(148,163,184,0.16))";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = "var(--surface-2, #111827)";
+              e.currentTarget.style.background = "var(--surface-2, #141414)";
               e.currentTarget.style.borderColor = "var(--border-default, rgba(148,163,184,0.1))";
             }}
           >
@@ -195,7 +195,7 @@ export default function EmbedGeneratorMode({ onExitMode }: Props) {
             overflowY: "auto",
             padding: 20,
             borderRight: "1px solid var(--border-subtle, rgba(148,163,184,0.06))",
-            background: "var(--surface-1, #0c1018)",
+            background: "var(--surface-1, #0a0a0a)",
             display: "flex",
             flexDirection: "column",
             gap: 20,
@@ -393,7 +393,7 @@ export default function EmbedGeneratorMode({ onExitMode }: Props) {
             style={{
               flexShrink: 0,
               borderTop: "1px solid var(--border-subtle, rgba(148,163,184,0.06))",
-              background: "var(--surface-1, #0c1018)",
+              background: "var(--surface-1, #0a0a0a)",
               padding: 16,
               display: "flex",
               flexDirection: "column",
@@ -505,7 +505,7 @@ function Input({
         borderRadius: 6,
         border: "1px solid var(--border-default, rgba(148,163,184,0.1))",
         background: disabled
-          ? "var(--surface-2, #111827)"
+          ? "var(--surface-2, #141414)"
           : "var(--surface-0, #06080d)",
         color: disabled
           ? "var(--text-faint, #475569)"
@@ -622,7 +622,7 @@ function CodeBlock({
             border: `1px solid ${copied ? "rgba(203,213,225,0.3)" : "var(--border-default, rgba(148,163,184,0.1))"}`,
             background: copied
               ? "rgba(203,213,225,0.1)"
-              : "var(--surface-2, #111827)",
+              : "var(--surface-2, #141414)",
             color: copied ? "#cbd5e1" : "var(--text-secondary, #cbd5e1)",
             fontSize: 11,
             fontWeight: 500,

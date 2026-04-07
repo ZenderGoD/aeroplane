@@ -153,10 +153,10 @@ function HeadingArrow({ heading }: { heading: number | null }) {
 function GroundPlane() {
   return (
     <group position={[0, -2.5, 0]}>
-      <gridHelper args={[40, 40, "#334155", "#1e293b"]} />
+      <gridHelper args={[40, 40, "#333333", "#1c1c1c"]} />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]}>
         <planeGeometry args={[40, 40]} />
-        <meshStandardMaterial color="#0a1628" transparent opacity={0.8} />
+        <meshStandardMaterial color="#0a0a0a" transparent opacity={0.8} />
       </mesh>
     </group>
   );
@@ -328,8 +328,8 @@ export default function Flight3DViewer({ flight, onClose }: Flight3DViewerProps)
           gl={{ antialias: true, alpha: false }}
           dpr={[1, 2]}
         >
-          <color attach="background" args={["#070d1a"]} />
-          <fog attach="fog" args={["#070d1a", 20, 40]} />
+          <color attach="background" args={["#080808"]} />
+          <fog attach="fog" args={["#080808", 20, 40]} />
           <Scene flight={flight} />
         </Canvas>
 

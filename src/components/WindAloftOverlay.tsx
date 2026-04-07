@@ -366,7 +366,7 @@ export default function WindAloftOverlay({ visible }: Props) {
               cursor: "pointer",
               transition: "all 150ms ease",
               background: selectedAltitude === fl.altitude ? "var(--accent-primary,#94a3b8)" : "transparent",
-              color: selectedAltitude === fl.altitude ? "#0c1018" : "var(--text-tertiary,#94a3b8)",
+              color: selectedAltitude === fl.altitude ? "#0a0a0a" : "var(--text-tertiary,#94a3b8)",
             }}
             onMouseEnter={(e) => {
               if (selectedAltitude !== fl.altitude) {
@@ -440,7 +440,7 @@ export default function WindAloftOverlay({ visible }: Props) {
       {/* Error state */}
       {error && (
         <div className="absolute top-16 left-1/2 -translate-x-1/2 z-[1000] px-4 py-2 rounded-lg"
-          style={{ background: "rgba(30,41,59,0.8)", backdropFilter: "blur(8px)", border: "1px solid rgba(148,163,184,0.3)", color: "#e2e8f0", fontSize: "12px", fontFamily: "ui-monospace,monospace" }}>
+          style={{ background: "rgba(28,28,28,0.8)", backdropFilter: "blur(8px)", border: "1px solid rgba(148,163,184,0.3)", color: "#e2e8f0", fontSize: "12px", fontFamily: "ui-monospace,monospace" }}>
           Wind data error: {error}
         </div>
       )}

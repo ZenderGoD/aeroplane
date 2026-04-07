@@ -274,13 +274,13 @@ export default function TerrainOverlay({ visible }: TerrainOverlayProps) {
       {/* Popup styling */}
       <style jsx global>{`
         .terrain-elevation-popup .leaflet-popup-content-wrapper {
-          background: #0f172a !important;
+          background: #0f0f0f !important;
           border: 1px solid rgba(148, 163, 184, 0.15) !important;
           border-radius: 10px !important;
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
         }
         .terrain-elevation-popup .leaflet-popup-tip {
-          background: #0f172a !important;
+          background: #0f0f0f !important;
           border: 1px solid rgba(148, 163, 184, 0.1) !important;
         }
         .terrain-elevation-popup .leaflet-popup-close-button {
@@ -299,7 +299,7 @@ export default function TerrainOverlay({ visible }: TerrainOverlayProps) {
         style={{ pointerEvents: "auto" }}
       >
         {/* Mode selector */}
-        <div className="bg-[#0c1018]/90 backdrop-blur-xl border border-gray-700/40 rounded-lg px-1.5 py-1.5 flex items-center gap-1 shadow-2xl">
+        <div className="bg-[#0a0a0a]/90 backdrop-blur-xl border border-gray-700/40 rounded-lg px-1.5 py-1.5 flex items-center gap-1 shadow-2xl">
           {(Object.entries(TILE_SOURCES) as [TerrainMode, TileSource][]).map(
             ([key, src]) => (
               <button
@@ -318,7 +318,7 @@ export default function TerrainOverlay({ visible }: TerrainOverlayProps) {
         </div>
 
         {/* Info line */}
-        <div className="bg-[#0c1018]/90 backdrop-blur-xl border border-gray-700/40 rounded-lg px-3 py-1.5 shadow-2xl">
+        <div className="bg-[#0a0a0a]/90 backdrop-blur-xl border border-gray-700/40 rounded-lg px-3 py-1.5 shadow-2xl">
           <div className="flex items-center gap-2 text-[9px] text-gray-500 font-mono">
             <svg
               xmlns="http://www.w3.org/2000/svg"

@@ -109,7 +109,7 @@ export default function MapPreview() {
   return (
     <div className="relative w-full">
       {/* Browser-window chrome bar */}
-      <div className="flex items-center gap-1.5 px-3 py-2 bg-[rgba(15,23,42,0.8)] border-b border-[var(--border-subtle)]">
+      <div className="flex items-center gap-1.5 px-3 py-2 bg-[rgba(10,10,10,0.8)] border-b border-[var(--border-subtle)]">
         <span className="w-2 h-2 rounded-full bg-[#e2e8f0] opacity-60" />
         <span className="w-2 h-2 rounded-full bg-[#94a3b8] opacity-60" />
         <span className="w-2 h-2 rounded-full bg-[#cbd5e1] opacity-60" />

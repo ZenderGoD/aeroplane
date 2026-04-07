@@ -169,7 +169,7 @@ export default function RouteOverlay({
     const originMarker = L.circleMarker([origin.lat, origin.lon], {
       radius: 5,
       color: "#94a3b8",
-      fillColor: "#1e293b",
+      fillColor: "#1c1c1c",
       fillOpacity: 0.9,
       weight: 1.5,
       interactive: false,
@@ -190,7 +190,7 @@ export default function RouteOverlay({
     const destMarker = L.circleMarker([destination.lat, destination.lon], {
       radius: 5,
       color: "#94a3b8",
-      fillColor: "#1e293b",
+      fillColor: "#1c1c1c",
       fillOpacity: 0.9,
       weight: 1.5,
       interactive: false,
@@ -219,7 +219,7 @@ export default function RouteOverlay({
       icon: L.divIcon({
         className: "route-distance-label",
         html: `<div style="
-          background: rgba(15,23,42,0.85);
+          background: rgba(10,10,10,0.85);
           border: 1px solid rgba(148,163,184,0.3);
           border-radius: 4px;
           padding: 2px 6px;

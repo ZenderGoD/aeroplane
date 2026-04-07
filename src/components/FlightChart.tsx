@@ -56,7 +56,7 @@ export default function FlightChart({ history }: Props) {
     const spdRange = spdMax - spdMin || 1;
 
     // Background
-    ctx.fillStyle = "rgba(15, 23, 42, 0.6)";
+    ctx.fillStyle = "rgba(10, 10, 10, 0.6)";
     ctx.beginPath();
     ctx.roundRect(0, 0, w, h, 6);
     ctx.fill();

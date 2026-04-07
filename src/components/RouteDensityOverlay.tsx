@@ -234,7 +234,7 @@ export default function RouteDensityOverlay({
       right: "12px",
       zIndex: "1000",
       padding: "10px 14px",
-      background: "rgba(15, 23, 42, 0.75)",
+      background: "rgba(10, 10, 10, 0.75)",
       backdropFilter: "blur(12px)",
       WebkitBackdropFilter: "blur(12px)",
       borderRadius: "10px",

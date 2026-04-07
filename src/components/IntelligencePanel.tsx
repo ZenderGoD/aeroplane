@@ -43,21 +43,21 @@ const SEVERITY_CONFIG: Record<
   { bg: string; border: string; text: string; dot: string; label: string }
 > = {
   critical: {
-    bg: "bg-slate-950/60",
+    bg: "bg-neutral-950/60",
     border: "border-slate-700/60",
     text: "text-slate-200",
     dot: "bg-slate-400",
     label: "CRITICAL",
   },
   warning: {
-    bg: "bg-slate-950/40",
+    bg: "bg-neutral-950/40",
     border: "border-slate-700/50",
     text: "text-slate-300",
     dot: "bg-slate-400",
     label: "WARNING",
   },
   info: {
-    bg: "bg-slate-950/40",
+    bg: "bg-neutral-950/40",
     border: "border-slate-700/40",
     text: "text-slate-300",
     dot: "bg-slate-400",

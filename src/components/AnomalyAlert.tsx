@@ -12,9 +12,9 @@ interface Props {
 }
 
 const SEVERITY_COLORS = {
-  critical: { bg: "bg-slate-900/80", dot: "bg-slate-200", text: "text-slate-200", border: "border-slate-600" },
-  warning: { bg: "bg-slate-900/80", dot: "bg-slate-400", text: "text-slate-300", border: "border-slate-600" },
-  info: { bg: "bg-slate-900/80", dot: "bg-slate-400", text: "text-slate-300", border: "border-slate-700" },
+  critical: { bg: "bg-neutral-900/80", dot: "bg-slate-200", text: "text-slate-200", border: "border-slate-600" },
+  warning: { bg: "bg-neutral-900/80", dot: "bg-slate-400", text: "text-slate-300", border: "border-slate-600" },
+  info: { bg: "bg-neutral-900/80", dot: "bg-slate-400", text: "text-slate-300", border: "border-slate-700" },
 };
 
 export default function AnomalyAlert({ anomalies, onSelectFlight, flights, inline = false }: Props) {
@@ -37,9 +37,9 @@ export default function AnomalyAlert({ anomalies, onSelectFlight, flights, inlin
         onClick={() => setIsExpanded(!isExpanded)}
         className={`flex items-center gap-2 px-3 py-2 rounded-lg border backdrop-blur-md shadow-lg transition-all ${
           criticalCount > 0
-            ? "bg-slate-900/90 border-slate-500 animate-anomaly-pulse"
+            ? "bg-neutral-900/90 border-slate-500 animate-anomaly-pulse"
             : warningCount > 0
-              ? "bg-slate-900/90 border-slate-600"
+              ? "bg-neutral-900/90 border-slate-600"
               : "bg-gray-900/90 border-gray-700"
         }`}
       >

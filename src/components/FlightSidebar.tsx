@@ -751,7 +751,7 @@ function DelayExplainer({
 
   if (explanation) {
     return (
-      <div className="rounded-xl border border-slate-500/20 bg-slate-950/20 px-4 py-3 animate-slide-up">
+      <div className="rounded-xl border border-slate-500/20 bg-neutral-950/20 px-4 py-3 animate-slide-up">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-lg bg-slate-500/10 flex items-center justify-center">
@@ -781,7 +781,7 @@ function DelayExplainer({
     <button
       onClick={analyze}
       disabled={isLoading}
-      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-500/20 bg-slate-950/10 hover:bg-slate-950/30 text-slate-300 hover:text-slate-200 transition-all text-xs font-semibold disabled:opacity-50 group"
+      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-500/20 bg-neutral-950/10 hover:bg-neutral-950/30 text-slate-300 hover:text-slate-200 transition-all text-xs font-semibold disabled:opacity-50 group"
     >
       {isLoading ? (
         <>

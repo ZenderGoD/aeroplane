@@ -51,9 +51,9 @@ function getStatusColor(status: string): string {
 }
 
 const SEVERITY_CONFIG: Record<string, { bg: string; border: string; text: string; icon: string }> = {
-  critical: { bg: "bg-slate-950/30", border: "border-slate-500/20", text: "text-slate-300", icon: "text-slate-400" },
-  warning: { bg: "bg-slate-950/20", border: "border-slate-500/20", text: "text-slate-300", icon: "text-slate-400" },
-  info: { bg: "bg-slate-950/20", border: "border-slate-500/20", text: "text-slate-300", icon: "text-slate-400" },
+  critical: { bg: "bg-neutral-950/30", border: "border-slate-500/20", text: "text-slate-300", icon: "text-slate-400" },
+  warning: { bg: "bg-neutral-950/20", border: "border-slate-500/20", text: "text-slate-300", icon: "text-slate-400" },
+  info: { bg: "bg-neutral-950/20", border: "border-slate-500/20", text: "text-slate-300", icon: "text-slate-400" },
 };
 
 // ── Component ───────────────────────────────────────────────────────────
@@ -384,7 +384,7 @@ function PressureSection({
         <div className="relative w-18 h-18">
           <div className="absolute inset-0 rounded-full" style={{ boxShadow: `0 0 24px ${color}20` }} />
           <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90" style={{ width: 72, height: 72 }}>
-            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="rgba(30,41,59,0.6)" strokeWidth="3" />
+            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="rgba(28,28,28,0.6)" strokeWidth="3" />
             <circle
               cx="18" cy="18" r="15.9155"
               fill="none" stroke={color} strokeWidth="3"

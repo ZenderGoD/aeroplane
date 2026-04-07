@@ -24,7 +24,7 @@ export default function BentoFeatureCard({
       }`}
       style={{
         background:
-          "linear-gradient(135deg, rgba(30,41,59,0.35) 0%, rgba(15,23,42,0.5) 100%)",
+          "linear-gradient(135deg, rgba(28,28,28,0.35) 0%, rgba(10,10,10,0.5) 100%)",
       }}
     >
       {/* Gradient border glow on hover */}

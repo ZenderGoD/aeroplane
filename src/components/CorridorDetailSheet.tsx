@@ -65,9 +65,9 @@ function getTrendIcon(label: string): string {
 }
 
 const SEVERITY_CONFIG: Record<string, { bg: string; border: string; text: string }> = {
-  critical: { bg: "bg-slate-950/30", border: "border-slate-500/20", text: "text-slate-300" },
-  warning: { bg: "bg-slate-950/20", border: "border-slate-500/20", text: "text-slate-300" },
-  info: { bg: "bg-slate-950/20", border: "border-slate-500/20", text: "text-slate-300" },
+  critical: { bg: "bg-neutral-950/30", border: "border-slate-500/20", text: "text-slate-300" },
+  warning: { bg: "bg-neutral-950/20", border: "border-slate-500/20", text: "text-slate-300" },
+  info: { bg: "bg-neutral-950/20", border: "border-slate-500/20", text: "text-slate-300" },
 };
 
 // ── Component ───────────────────────────────────────────────────────────
@@ -265,7 +265,7 @@ function HealthSection({ health, pred }: { health: CorridorHealth; pred: Corrido
         <div className="relative">
           <div className="absolute inset-0 rounded-full" style={{ boxShadow: `0 0 24px ${color}20` }} />
           <svg viewBox="0 0 36 36" className="-rotate-90" style={{ width: 72, height: 72 }}>
-            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="rgba(30,41,59,0.6)" strokeWidth="3" />
+            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="rgba(28,28,28,0.6)" strokeWidth="3" />
             <circle
               cx="18" cy="18" r="15.9155"
               fill="none" stroke={color} strokeWidth="3"

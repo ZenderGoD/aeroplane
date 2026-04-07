@@ -281,13 +281,13 @@ export default function NotamOverlay({ map, visible }: NotamOverlayProps) {
       {/* ── Inject pulsing keyframe animation ────────────────────── */}
       <style jsx global>{`
         .notam-popup .leaflet-popup-content-wrapper {
-          background: #0f172a !important;
+          background: #0f0f0f !important;
           border: 1px solid rgba(148, 163, 184, 0.15) !important;
           border-radius: 12px !important;
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
         }
         .notam-popup .leaflet-popup-tip {
-          background: #0f172a !important;
+          background: #0f0f0f !important;
           border: 1px solid rgba(148, 163, 184, 0.1) !important;
         }
         .notam-popup .leaflet-popup-close-button {
@@ -331,7 +331,7 @@ export default function NotamOverlay({ map, visible }: NotamOverlayProps) {
         </button>
 
         {panelOpen && (
-          <div className="bg-[#0c1018]/95 backdrop-blur-xl border border-gray-700/40 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[calc(100vh-120px)]">
+          <div className="bg-[#0a0a0a]/95 backdrop-blur-xl border border-gray-700/40 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[calc(100vh-120px)]">
             {/* ── Header ─────────────────────────────────────────── */}
             <div className="px-4 py-3 border-b border-gray-700/30">
               <div className="flex items-center gap-2 mb-2">

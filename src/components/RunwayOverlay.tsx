@@ -61,11 +61,11 @@ function buildPopupContent(airport: RunwayData): string {
 
   return `
     <div style="font-family:system-ui,-apple-system,sans-serif;min-width:320px">
-      <div style="padding:8px 12px;background:#1e293b;border-bottom:2px solid #94a3b8;border-radius:6px 6px 0 0">
+      <div style="padding:8px 12px;background:#1c1c1c;border-bottom:2px solid #94a3b8;border-radius:6px 6px 0 0">
         <div style="font-size:16px;font-weight:700;color:#f1f5f9">${airport.airportIcao}</div>
         <div style="font-size:12px;color:#94a3b8;margin-top:2px">${airport.airportName}</div>
       </div>
-      <div style="padding:4px 0;background:#0f172a;border-radius:0 0 6px 6px">
+      <div style="padding:4px 0;background:#0f0f0f;border-radius:0 0 6px 6px">
         <table style="width:100%;border-collapse:collapse;font-size:11px">
           <thead>
             <tr style="border-bottom:1px solid #475569">
@@ -106,7 +106,7 @@ function createRunwayLabel(
       font-size:${fontSize}px;
       font-weight:700;
       color:#f1f5f9;
-      background:rgba(15,23,42,0.88);
+      background:rgba(10,10,10,0.88);
       padding:2px 5px;
       border-radius:3px;
       border:1px solid rgba(100,116,139,0.5);
@@ -133,7 +133,7 @@ function createIcaoLabel(icao: string, zoom: number): L.DivIcon {
       font-size:${fontSize}px;
       font-weight:700;
       color:#94a3b8;
-      background:rgba(15,23,42,0.82);
+      background:rgba(10,10,10,0.82);
       padding:3px 7px;
       border-radius:4px;
       border:1px solid rgba(148,163,184,0.4);
@@ -314,7 +314,7 @@ export default function RunwayOverlay({ visible }: RunwayOverlayProps) {
     style.id = styleId;
     style.textContent = `
       .runway-popup .leaflet-popup-content-wrapper {
-        background: #0f172a;
+        background: #0f0f0f;
         color: #e2e8f0;
         border-radius: 8px;
         box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(148,163,184,0.2);
@@ -326,7 +326,7 @@ export default function RunwayOverlay({ visible }: RunwayOverlayProps) {
         line-height: 1.4;
       }
       .runway-popup .leaflet-popup-tip {
-        background: #0f172a;
+        background: #0f0f0f;
         box-shadow: 0 4px 16px rgba(0,0,0,0.3);
       }
       .runway-popup .leaflet-popup-close-button {

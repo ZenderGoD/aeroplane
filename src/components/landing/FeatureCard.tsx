@@ -35,7 +35,7 @@ export default function FeatureCard({ icon, title, description, index }: Feature
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="group relative p-6 rounded-xl border border-[var(--border-subtle)] bg-[linear-gradient(135deg,rgba(30,41,59,0.4)_0%,rgba(15,23,42,0.6)_100%)] backdrop-blur-md hover:border-[rgba(56,189,248,0.2)] transition-all duration-300"
+      className="group relative p-6 rounded-xl border border-[var(--border-subtle)] bg-[linear-gradient(135deg,rgba(28,28,28,0.4)_0%,rgba(10,10,10,0.6)_100%)] backdrop-blur-md hover:border-[rgba(56,189,248,0.2)] transition-all duration-300"
       style={{
         transform: transform || "perspective(600px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)",
         transition: transform ? "none" : "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s, box-shadow 0.3s",

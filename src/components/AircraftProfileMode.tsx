@@ -587,7 +587,7 @@ export default function AircraftProfileMode({ onExitMode }: Props) {
             className="flex items-center justify-center px-3 py-1 rounded-lg transition-all text-xs font-semibold"
             style={{
               background: searchQuery.trim() ? "var(--accent-primary)" : "var(--surface-3)",
-              color: searchQuery.trim() ? "#0c1018" : "var(--text-muted)",
+              color: searchQuery.trim() ? "#0a0a0a" : "var(--text-muted)",
               opacity: loading ? 0.6 : 1,
             }}
           >

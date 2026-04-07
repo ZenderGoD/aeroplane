@@ -402,7 +402,7 @@ export default function MetarOverlay({ visible }: MetarOverlayProps) {
             left: "50%",
             transform: "translateX(-50%)",
             zIndex: 1000,
-            background: "var(--surface-2, #111827)",
+            background: "var(--surface-2, #141414)",
             border: "1px solid var(--border-default, rgba(148,163,184,0.10))",
             borderRadius: 8,
             padding: "8px 16px",
@@ -434,7 +434,7 @@ export default function MetarOverlay({ visible }: MetarOverlayProps) {
             left: "50%",
             transform: "translateX(-50%)",
             zIndex: 1000,
-            background: "var(--surface-2, #111827)",
+            background: "var(--surface-2, #141414)",
             border: "1px solid var(--border-default, rgba(148,163,184,0.20))",
             borderRadius: 8,
             padding: "6px 14px",
@@ -455,7 +455,7 @@ export default function MetarOverlay({ visible }: MetarOverlayProps) {
           bottom: 32,
           right: 12,
           zIndex: 1000,
-          background: "var(--surface-1, #0c1018)",
+          background: "var(--surface-1, #0a0a0a)",
           border: "1px solid var(--border-default, rgba(148,163,184,0.10))",
           borderRadius: 8,
           padding: "10px 14px",
@@ -521,14 +521,14 @@ export default function MetarOverlay({ visible }: MetarOverlayProps) {
       {/* Popup styling */}
       <style>{`
         .metar-popup .leaflet-popup-content-wrapper {
-          background: var(--surface-1, #0c1018);
+          background: var(--surface-1, #0a0a0a);
           border: 1px solid var(--border-default, rgba(148,163,184,0.10));
           border-radius: 10px;
           box-shadow: 0 8px 32px rgba(0,0,0,0.5);
           color: var(--text-primary, #f1f5f9);
         }
         .metar-popup .leaflet-popup-tip {
-          background: var(--surface-1, #0c1018);
+          background: var(--surface-1, #0a0a0a);
           border: 1px solid var(--border-default, rgba(148,163,184,0.10));
         }
         .metar-popup .leaflet-popup-close-button {

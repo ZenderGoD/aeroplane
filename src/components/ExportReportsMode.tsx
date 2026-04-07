@@ -461,7 +461,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
     background: rgba(203,213,225,0.06);
   }
   .section {
-    background: #0c1018;
+    background: #0a0a0a;
     border: 1px solid rgba(148,163,184,0.10);
     border-radius: 12px;
     padding: 24px;
@@ -490,7 +490,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
     gap: 16px;
   }
   .stat-card {
-    background: #111827;
+    background: #141414;
     border: 1px solid rgba(148,163,184,0.08);
     border-radius: 10px;
     padding: 16px;
@@ -545,7 +545,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
   .bar-track {
     flex: 1;
     height: 20px;
-    background: #111827;
+    background: #141414;
     border-radius: 4px;
     overflow: hidden;
   }

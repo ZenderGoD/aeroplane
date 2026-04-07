@@ -352,7 +352,7 @@ function EmbedMapInner() {
           50% { opacity: 0.4; }
         }
         .embed-popup .leaflet-popup-content-wrapper {
-          background: ${isDark ? "rgba(15,23,42,0.95)" : "rgba(255,255,255,0.95)"};
+          background: ${isDark ? "rgba(10,10,10,0.95)" : "rgba(255,255,255,0.95)"};
           backdrop-filter: blur(16px);
           border: 1px solid ${isDark ? "rgba(148,163,184,0.1)" : "rgba(0,0,0,0.1)"};
           border-radius: 10px;
@@ -364,7 +364,7 @@ function EmbedMapInner() {
           color: ${isDark ? "#e2e8f0" : "#1e293b"};
         }
         .embed-popup .leaflet-popup-tip {
-          background: ${isDark ? "rgba(15,23,42,0.95)" : "rgba(255,255,255,0.95)"};
+          background: ${isDark ? "rgba(10,10,10,0.95)" : "rgba(255,255,255,0.95)"};
           border: 1px solid ${isDark ? "rgba(148,163,184,0.1)" : "rgba(0,0,0,0.1)"};
         }
         .leaflet-div-icon { background: transparent !important; border: none !important; }

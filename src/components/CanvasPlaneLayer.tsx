@@ -24,9 +24,9 @@ function getCanvasColors() {
   const light = isLightTheme();
   return {
     /** Stroke color for selected aircraft highlight ring */
-    selectionStroke: light ? "#0f172a" : "#ffffff",
+    selectionStroke: light ? "#0f0f0f" : "#ffffff",
     /** Callsign label text color */
-    labelText: light ? "rgba(15, 23, 42, 0.85)" : "rgba(255, 255, 255, 0.7)",
+    labelText: light ? "rgba(10, 10, 10, 0.85)" : "rgba(255, 255, 255, 0.7)",
     /** Callsign label background */
     labelBg: light ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.5)",
     /** Route / badge label background */

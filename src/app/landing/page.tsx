@@ -193,7 +193,7 @@ export default function LandingPage() {
             {["ADS-B", "MLAT", "airplanes.live", "NOAA", "aviationweather.gov"].map((badge) => (
               <span
                 key={badge}
-                className="px-3 py-1 rounded-full text-[10px] font-mono font-medium text-[var(--text-faint)] border border-[var(--border-subtle)] bg-[rgba(15,23,42,0.5)]"
+                className="px-3 py-1 rounded-full text-[10px] font-mono font-medium text-[var(--text-faint)] border border-[var(--border-subtle)] bg-[rgba(10,10,10,0.5)]"
               >
                 {badge}
               </span>
@@ -407,7 +407,7 @@ export default function LandingPage() {
               { value: 3, suffix: "s", label: "Refresh Rate" },
             ].map((stat, i) => (
               <ScrollAnimator key={stat.label} delay={i * 100}>
-                <div className="text-center p-8 rounded-2xl border border-[var(--border-subtle)] bg-[linear-gradient(135deg,rgba(30,41,59,0.3)_0%,rgba(15,23,42,0.5)_100%)] backdrop-blur-sm">
+                <div className="text-center p-8 rounded-2xl border border-[var(--border-subtle)] bg-[linear-gradient(135deg,rgba(28,28,28,0.3)_0%,rgba(10,10,10,0.5)_100%)] backdrop-blur-sm">
                   <AnimatedCounter target={stat.value} suffix={stat.suffix} />
                   <p className="mt-3 text-sm text-[var(--text-tertiary)] font-medium">{stat.label}</p>
                 </div>
@@ -421,7 +421,7 @@ export default function LandingPage() {
               {dataLayers.map((layer) => (
                 <div
                   key={layer.name}
-                  className="flex items-start gap-4 p-5 rounded-xl border border-[var(--border-subtle)] bg-[rgba(15,23,42,0.4)] hover:border-[rgba(148,163,184,0.15)] transition-colors duration-300"
+                  className="flex items-start gap-4 p-5 rounded-xl border border-[var(--border-subtle)] bg-[rgba(10,10,10,0.4)] hover:border-[rgba(148,163,184,0.15)] transition-colors duration-300"
                 >
                   <div className={`w-10 h-10 rounded-xl bg-[rgba(255,255,255,0.03)] border border-[var(--border-subtle)] flex items-center justify-center flex-shrink-0 ${layer.color}`}>
                     {layer.icon}
@@ -447,7 +447,7 @@ export default function LandingPage() {
               ].map((source) => (
                 <div
                   key={source.name}
-                  className="flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-[var(--border-subtle)] bg-[rgba(15,23,42,0.5)] backdrop-blur-sm"
+                  className="flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-[var(--border-subtle)] bg-[rgba(10,10,10,0.5)] backdrop-blur-sm"
                 >
                   <span className="text-[var(--text-muted)]">{source.icon}</span>
                   <span className="text-xs font-medium text-[var(--text-tertiary)]">{source.name}</span>
@@ -621,7 +621,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <ScrollAnimator key={t.name} delay={i * 100}>
-                <div className="relative p-8 rounded-2xl border border-[var(--border-subtle)] bg-[linear-gradient(135deg,rgba(30,41,59,0.3)_0%,rgba(15,23,42,0.5)_100%)] h-full flex flex-col">
+                <div className="relative p-8 rounded-2xl border border-[var(--border-subtle)] bg-[linear-gradient(135deg,rgba(28,28,28,0.3)_0%,rgba(10,10,10,0.5)_100%)] h-full flex flex-col">
                   {/* Large quote mark */}
                   <div className="mb-4">
                     <Quote size={32} className="text-[var(--accent-primary)] opacity-20" />

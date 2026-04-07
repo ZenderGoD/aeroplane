@@ -567,7 +567,7 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
       {/* Inject popup + marker styles */}
       <style>{`
         .pirep-popup-dark .leaflet-popup-content-wrapper {
-          background: rgba(15, 23, 42, 0.95);
+          background: rgba(10, 10, 10, 0.95);
           backdrop-filter: blur(12px);
           border: 1px solid rgba(148, 163, 184, 0.12);
           border-radius: 8px;
@@ -580,7 +580,7 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
           line-height: 1.4;
         }
         .pirep-popup-dark .leaflet-popup-tip {
-          background: rgba(15, 23, 42, 0.95);
+          background: rgba(10, 10, 10, 0.95);
           border: 1px solid rgba(148, 163, 184, 0.12);
         }
         .pirep-popup-dark .leaflet-popup-close-button {
@@ -593,7 +593,7 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
           color: #e2e8f0 !important;
         }
         .pirep-tooltip-dark {
-          background: rgba(15, 23, 42, 0.9) !important;
+          background: rgba(10, 10, 10, 0.9) !important;
           border: 1px solid rgba(148, 163, 184, 0.15) !important;
           border-radius: 4px !important;
           box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
@@ -601,7 +601,7 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
           color: #e2e8f0 !important;
         }
         .pirep-tooltip-dark::before {
-          border-top-color: rgba(15, 23, 42, 0.9) !important;
+          border-top-color: rgba(10, 10, 10, 0.9) !important;
         }
         .pirep-marker {
           background: none !important;
@@ -617,7 +617,7 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
         {/* Altitude filter */}
         <div
           style={{
-            background: "rgba(15, 23, 42, 0.85)",
+            background: "rgba(10, 10, 10, 0.85)",
             backdropFilter: "blur(12px)",
             border: "1px solid rgba(148, 163, 184, 0.1)",
             borderRadius: "8px",
@@ -668,7 +668,7 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
         {/* Type filter */}
         <div
           style={{
-            background: "rgba(15, 23, 42, 0.85)",
+            background: "rgba(10, 10, 10, 0.85)",
             backdropFilter: "blur(12px)",
             border: "1px solid rgba(148, 163, 184, 0.1)",
             borderRadius: "8px",
@@ -721,7 +721,7 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
       <div
         className="absolute bottom-20 right-4 z-[1000]"
         style={{
-          background: "rgba(15, 23, 42, 0.85)",
+          background: "rgba(10, 10, 10, 0.85)",
           backdropFilter: "blur(12px)",
           border: "1px solid rgba(148, 163, 184, 0.1)",
           borderRadius: "8px",

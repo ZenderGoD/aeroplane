@@ -33,7 +33,7 @@ export default function LiveFlightCount() {
 
   if (error || count === null) {
     return (
-      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(203,213,225,0.1)] bg-[rgba(15,23,42,0.6)] backdrop-blur-md">
+      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(203,213,225,0.1)] bg-[rgba(10,10,10,0.6)] backdrop-blur-md">
         <span className="relative flex h-2.5 w-2.5">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-300 opacity-75" />
           <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-slate-300" />
