@@ -13,9 +13,10 @@ function checkSquawk(f: FlightState): AnomalyType | null {
   return null;
 }
 
-// Rapid descent: vertical rate below -2000 fpm (-10.16 m/s)
+// Rapid descent: vertical rate below -4000 fpm (-20.32 m/s)
+// Normal descent is -1500 to -3000 fpm; only flag truly abnormal rates
 function checkRapidDescent(f: FlightState): boolean {
-  return f.verticalRate !== null && f.verticalRate < -10.16 && !f.onGround;
+  return f.verticalRate !== null && f.verticalRate < -20.32 && !f.onGround;
 }
 
 // Unusual speed: too slow for altitude or near supersonic
@@ -41,7 +42,7 @@ function checkHoldingPattern(history: FlightHistoryEntry[]): boolean {
     if (delta < -180) delta += 360;
     totalBearingChange += delta;
   }
-  return Math.abs(totalBearingChange) > 300;
+  return Math.abs(totalBearingChange) > 540; // 1.5 full rotations
 }
 
 // Ground stop: nearly stationary at low altitude but not marked on ground
@@ -167,11 +168,11 @@ export function detectAnomalies(
       }
     }
 
-    // GPS integrity / spoofing detection
-    if (flightHistory && flightHistory.length >= 3) {
+    // GPS integrity / spoofing detection — only flag genuinely compromised GPS
+    if (flightHistory && flightHistory.length >= 5) {
       const gpsResult = checkGPSIntegrity(f, flightHistory);
-      if (gpsResult && gpsResult.score < 60) {
-        const severity = gpsResult.score < 30 ? "critical" : "warning";
+      if (gpsResult && gpsResult.score < 40) {
+        const severity = gpsResult.score < 20 ? "critical" : "warning";
         anomalies.push({
           icao24: f.icao24,
           callsign: f.callsign,

@@ -120,82 +120,105 @@ export function checkGPSIntegrity(
     });
   }
 
-  /* ── Pass 2: Behavioural checks (works for any data source) */
+  /* ── Pass 2: Behavioural checks (works for any data source) ──
+   * We track the WORST instance of each issue type to avoid score
+   * inflation from normal manoeuvres across many history samples. */
+
+  let worstPositionJump: GPSIssue | null = null;
+  let worstSpeedChange: GPSIssue | null = null;
+  let worstHeadingDiff: GPSIssue | null = null;
+  let worstAltSpike: GPSIssue | null = null;
 
   for (let i = 1; i < history.length; i++) {
     const prev = history[i - 1];
     const curr = history[i];
 
     const dtSec = (curr.timestamp - prev.timestamp) / 1000;
-    if (dtSec <= 0) continue;
+    if (dtSec <= 0 || dtSec > 120) continue; // skip stale gaps
 
     // --- Position jump ---------------------------------------------------
     const actualDistNm = haversineNm(prev.lat, prev.lon, curr.lat, curr.lon);
-    // Expected distance based on average speed of the two samples (m/s -> NM)
     const avgSpeedMs =
       prev.velocity !== null && curr.velocity !== null
         ? (prev.velocity + curr.velocity) / 2
         : prev.velocity ?? curr.velocity ?? 0;
-    // Convert m/s to NM/s: 1 NM = 1852 m
     const expectedDistNm = (avgSpeedMs * dtSec) / 1852;
 
-    if (expectedDistNm > 0 && actualDistNm > 3 * expectedDistNm) {
-      issues.push({
+    // Only flag if expected distance is meaningful (> 0.5 NM) and ratio > 5x
+    if (expectedDistNm > 0.5 && actualDistNm > 5 * expectedDistNm) {
+      const issue: GPSIssue = {
         type: "position_jump",
         description: `Position jumped ${actualDistNm.toFixed(1)} NM but expected ~${expectedDistNm.toFixed(1)} NM`,
         value: actualDistNm,
-        threshold: 3 * expectedDistNm,
-      });
+        threshold: 5 * expectedDistNm,
+      };
+      if (!worstPositionJump || actualDistNm > worstPositionJump.value) {
+        worstPositionJump = issue;
+      }
     }
 
-    // --- Speed inconsistency (> 200 kts change between samples) ----------
+    // --- Speed inconsistency (> 300 kts change between samples) ----------
     if (prev.velocity !== null && curr.velocity !== null) {
       const speedChangeKts =
-        Math.abs(curr.velocity - prev.velocity) * 1.94384; // m/s -> kts
-      if (speedChangeKts > 200) {
-        issues.push({
+        Math.abs(curr.velocity - prev.velocity) * 1.94384;
+      if (speedChangeKts > 300) {
+        const issue: GPSIssue = {
           type: "speed_inconsistency",
           description: `Speed changed by ${Math.round(speedChangeKts)} kts between samples`,
           value: speedChangeKts,
-          threshold: 200,
-        });
+          threshold: 300,
+        };
+        if (!worstSpeedChange || speedChangeKts > worstSpeedChange.value) {
+          worstSpeedChange = issue;
+        }
       }
     }
 
     // --- Heading mismatch ------------------------------------------------
-    // Computed bearing between consecutive positions vs reported trueTrack
-    if (curr.heading !== null && curr.velocity !== null && curr.velocity > 50) {
+    // Only flag when speed is high (straight flight) and mismatch is extreme
+    if (curr.heading !== null && curr.velocity !== null && curr.velocity > 80) {
       const computedBearing = bearing(prev.lat, prev.lon, curr.lat, curr.lon);
       const diff = headingDiff(computedBearing, curr.heading);
-      if (diff > 45) {
-        issues.push({
+      if (diff > 90) {
+        const issue: GPSIssue = {
           type: "heading_mismatch",
           description: `Reported heading ${Math.round(curr.heading)}° but actual track ${Math.round(computedBearing)}° (diff ${Math.round(diff)}°)`,
           value: diff,
-          threshold: 45,
-        });
+          threshold: 90,
+        };
+        if (!worstHeadingDiff || diff > worstHeadingDiff.value) {
+          worstHeadingDiff = issue;
+        }
       }
     }
 
-    // --- Altitude spike (> 5 000 ft in < 30 s) ---------------------------
+    // --- Altitude spike (> 8 000 ft in < 20 s) ---------------------------
     if (
       prev.altitude !== null &&
       curr.altitude !== null &&
-      dtSec < 30
+      dtSec < 20
     ) {
-      // Altitude is stored in meters; convert to feet for the threshold
       const altChangeFt =
         Math.abs(curr.altitude - prev.altitude) * 3.28084;
-      if (altChangeFt > 5000) {
-        issues.push({
+      if (altChangeFt > 8000) {
+        const issue: GPSIssue = {
           type: "altitude_spike",
           description: `Altitude changed ${Math.round(altChangeFt)} ft in ${dtSec.toFixed(0)}s`,
           value: altChangeFt,
-          threshold: 5000,
-        });
+          threshold: 8000,
+        };
+        if (!worstAltSpike || altChangeFt > worstAltSpike.value) {
+          worstAltSpike = issue;
+        }
       }
     }
   }
+
+  // Only add the worst instance of each behavioural anomaly
+  if (worstPositionJump) issues.push(worstPositionJump);
+  if (worstSpeedChange) issues.push(worstSpeedChange);
+  if (worstHeadingDiff) issues.push(worstHeadingDiff);
+  if (worstAltSpike) issues.push(worstAltSpike);
 
   // --- Score calculation --------------------------------------------------
   let score = 100;
