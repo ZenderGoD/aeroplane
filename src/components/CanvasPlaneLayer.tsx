@@ -56,15 +56,15 @@ const VIEWPORT_PADDING = 12;
 
 // Category -> color mapping
 const CATEGORY_COLORS: Record<number, string> = {
-  0: "#94a3b8",
-  1: "#94a3b8",
-  2: "#cbd5e1",
-  3: "#cbd5e1",
-  4: "#94a3b8",
-  5: "#94a3b8",
-  6: "#94a3b8",
-  7: "#e2e8f0",
-  8: "#94a3b8",
+  0: "#78859b",   // unknown — mid-dim
+  1: "#78859b",   // no info
+  2: "#94a3b8",   // light
+  3: "#b0bfd4",   // small
+  4: "#cbd5e1",   // large
+  5: "#cbd5e1",   // high vortex large
+  6: "#e2e8f0",   // heavy
+  7: "#f1f5f9",   // high perf / space
+  8: "#94a3b8",   // rotorcraft
 };
 
 export function getCategoryColor(category: number): string {
@@ -496,12 +496,16 @@ function drawMilitaryGlow(
 
 /** Get trail segment color based on altitude in meters */
 function getTrailAltitudeColor(altitudeMeters: number | null): string {
-  if (altitudeMeters === null) return "#94a3b8"; // default
+  if (altitudeMeters === null) return "#475569";
   const feet = altitudeMeters * 3.28084;
-  if (feet < 10000) return "#cbd5e1";   // below 10k
-  if (feet < 25000) return "#cbd5e1";   // 10-25k
-  if (feet < 40000) return "#94a3b8";   // 25-40k
-  return "#94a3b8";                      // above 40k
+  if (feet < 2000) return "#64748b";
+  if (feet < 5000) return "#78859b";
+  if (feet < 10000) return "#8b9bb0";
+  if (feet < 18000) return "#9eaec3";
+  if (feet < 25000) return "#b0bfd4";
+  if (feet < 35000) return "#cbd5e1";
+  if (feet < 41000) return "#e2e8f0";
+  return "#f1f5f9";
 }
 
 /** Get zoom-based aircraft size scaling factor */

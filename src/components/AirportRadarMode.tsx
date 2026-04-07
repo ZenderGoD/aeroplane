@@ -123,12 +123,17 @@ function destinationPoint(
 }
 
 function altitudeColor(alt: number | null): string {
-  if (alt === null) return "#64748b";
+  if (alt === null) return "#475569";       // unknown — dim
   const ft = alt * 3.28084;
-  if (ft < 10000) return "#cbd5e1";
-  if (ft < 25000) return "#94a3b8";
-  if (ft < 40000) return "#cbd5e1";
-  return "#94a3b8";
+  if (ft < 0) return "#475569";             // below sea level
+  if (ft < 2000) return "#64748b";          // ground / low — dark gray
+  if (ft < 5000) return "#78859b";          // departure/approach
+  if (ft < 10000) return "#8b9bb0";         // transition
+  if (ft < 18000) return "#9eaec3";         // mid-altitude
+  if (ft < 25000) return "#b0bfd4";         // upper transition
+  if (ft < 35000) return "#cbd5e1";         // cruise — bright
+  if (ft < 41000) return "#e2e8f0";         // high cruise — brighter
+  return "#f1f5f9";                          // FL410+ — near white
 }
 
 function fuzzyMatch(airport: Airport, query: string): number {
@@ -1245,10 +1250,13 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
                   <span className="section-label" style={{ fontSize: "9px", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.06em" }}>ALTITUDE LEGEND</span>
                   <div className="mt-2 space-y-1">
                     {[
-                      { color: "#cbd5e1", label: "< 10,000 ft" },
-                      { color: "#94a3b8", label: "10,000 - 25,000 ft" },
-                      { color: "#cbd5e1", label: "25,000 - 40,000 ft" },
-                      { color: "#94a3b8", label: "> 40,000 ft" },
+                      { color: "#64748b", label: "Ground / < 2k ft" },
+                      { color: "#8b9bb0", label: "2k – 10k ft" },
+                      { color: "#9eaec3", label: "10k – 18k ft" },
+                      { color: "#b0bfd4", label: "18k – 25k ft" },
+                      { color: "#cbd5e1", label: "25k – 35k ft" },
+                      { color: "#e2e8f0", label: "35k – 41k ft" },
+                      { color: "#f1f5f9", label: "> 41k ft" },
                     ].map((item) => (
                       <div key={item.label} className="flex items-center gap-2">
                         <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: item.color }} />
