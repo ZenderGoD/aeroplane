@@ -123,17 +123,17 @@ function destinationPoint(
 }
 
 function altitudeColor(alt: number | null): string {
-  if (alt === null) return "#475569";       // unknown — dim
+  if (alt === null) return "#64748b";       // unknown — gray
   const ft = alt * 3.28084;
-  if (ft < 0) return "#475569";             // below sea level
-  if (ft < 2000) return "#64748b";          // ground / low — dark gray
-  if (ft < 5000) return "#78859b";          // departure/approach
-  if (ft < 10000) return "#8b9bb0";         // transition
-  if (ft < 18000) return "#9eaec3";         // mid-altitude
-  if (ft < 25000) return "#b0bfd4";         // upper transition
-  if (ft < 35000) return "#cbd5e1";         // cruise — bright
-  if (ft < 41000) return "#e2e8f0";         // high cruise — brighter
-  return "#f1f5f9";                          // FL410+ — near white
+  if (ft < 0) return "#64748b";             // below sea level
+  if (ft < 2000) return "#22c55e";          // ground / low — green
+  if (ft < 5000) return "#3b82f6";          // departure/approach — blue
+  if (ft < 10000) return "#38bdf8";         // transition — cyan
+  if (ft < 18000) return "#a78bfa";         // mid-altitude — purple
+  if (ft < 25000) return "#f59e0b";         // upper transition — amber
+  if (ft < 35000) return "#f97316";         // cruise — orange
+  if (ft < 41000) return "#ef4444";         // high cruise — red
+  return "#ec4899";                          // FL410+ — pink
 }
 
 function fuzzyMatch(airport: Airport, query: string): number {
@@ -1250,13 +1250,14 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
                   <span className="section-label" style={{ fontSize: "9px", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.06em" }}>ALTITUDE LEGEND</span>
                   <div className="mt-2 space-y-1">
                     {[
-                      { color: "#64748b", label: "Ground / < 2k ft" },
-                      { color: "#8b9bb0", label: "2k – 10k ft" },
-                      { color: "#9eaec3", label: "10k – 18k ft" },
-                      { color: "#b0bfd4", label: "18k – 25k ft" },
-                      { color: "#cbd5e1", label: "25k – 35k ft" },
-                      { color: "#e2e8f0", label: "35k – 41k ft" },
-                      { color: "#f1f5f9", label: "> 41k ft" },
+                      { color: "#22c55e", label: "Ground / < 2k ft" },
+                      { color: "#3b82f6", label: "2k – 5k ft" },
+                      { color: "#38bdf8", label: "5k – 10k ft" },
+                      { color: "#a78bfa", label: "10k – 18k ft" },
+                      { color: "#f59e0b", label: "18k – 25k ft" },
+                      { color: "#f97316", label: "25k – 35k ft" },
+                      { color: "#ef4444", label: "35k – 41k ft" },
+                      { color: "#ec4899", label: "> 41k ft" },
                     ].map((item) => (
                       <div key={item.label} className="flex items-center gap-2">
                         <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: item.color }} />
