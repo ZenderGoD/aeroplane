@@ -26,24 +26,30 @@ async function fetchContext() {
   const corridorData = corridorRes.status === "fulfilled" ? corridorRes.value : null;
   const turnaroundData = turnaroundRes.status === "fulfilled" ? turnaroundRes.value : null;
 
+  const airportScores = Array.isArray(pressure?.scores) ? pressure.scores
+    : Array.isArray(pressure) ? pressure : [];
+  const corridorList = Array.isArray(corridorData?.corridors) ? corridorData.corridors
+    : Array.isArray(corridorData) ? corridorData : [];
+  const turnaroundActive = Array.isArray(turnaroundData?.active) ? turnaroundData.active : [];
+
   return {
-    airports: (pressure?.scores || pressure || []).slice?.(0, 12).map?.((p: Record<string, unknown>) => ({
+    airports: airportScores.slice(0, 12).map((p: Record<string, unknown>) => ({
       icao: p.airportIcao || p.airport_icao,
       name: p.airportName || p.airport_name || "",
       pressure: p.pressureScore || p.pressure_score || 0,
       baselineDeviation: null,
       components: p.components || {},
-    })) || [],
-    corridors: (corridorData?.corridors || corridorData || []).slice?.(0, 10).map?.((c: Record<string, unknown>) => ({
+    })),
+    corridors: corridorList.slice(0, 10).map((c: Record<string, unknown>) => ({
       name: c.corridorName || c.corridor_name || c.corridorId || "",
       health: c.healthScore || c.health_score || 0,
       status: c.status || "normal",
       flights: c.flightCount || c.flight_count || 0,
       trend: "stable",
-    })) || [],
+    })),
     events: [],
     turnarounds: {
-      activeCount: turnaroundData?.active?.length || 0,
+      activeCount: turnaroundActive.length,
       avgMinutes: null,
     },
   };
