@@ -3,7 +3,6 @@
 import {
   useState,
   useEffect,
-  useCallback,
   useRef,
   useMemo,
 } from "react";
@@ -22,6 +21,7 @@ import {
   feetToFlightLevel,
   ALTITUDE_BANDS,
 } from "@/lib/turbulenceDetection";
+import { useSharedFlightData } from "@/contexts/FlightDataContext";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { getMapStyle, getSavedMapStyleId } from "@/lib/mapStyles";
@@ -33,7 +33,6 @@ interface TurbulenceModeProps {
 }
 
 type AltitudeFilter = "all" | "FL100-200" | "FL200-300" | "FL300-400" | "FL400+";
-type RefreshInterval = 15 | 30 | 60 | 120;
 
 interface RecentReport {
   id: string;
@@ -43,11 +42,6 @@ interface RecentReport {
   altitude: string;
   aircraft: string;
 }
-
-// ── Constants ──────────────────────────────────────────────────────
-
-const REFRESH_OPTIONS: RefreshInterval[] = [15, 30, 60, 120];
-const API_URL = "/api/flights?lamin=-60&lomin=-180&lamax=80&lomax=180";
 
 // ── Helpers ────────────────────────────────────────────────────────
 
@@ -374,80 +368,62 @@ const TurbulenceMap = dynamic(() => Promise.resolve(TurbulenceMapInner), {
 // ── Main Component ─────────────────────────────────────────────────
 
 export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
+  const { rawFlights: sharedFlights, isLoading: sharedLoading, totalCount, lastUpdated } = useSharedFlightData();
+
   const [flights, setFlights] = useState<FlightState[]>([]);
   const [turbulencePoints, setTurbulencePoints] = useState<TurbulencePoint[]>([]);
   const [recentReports, setRecentReports] = useState<RecentReport[]>([]);
   const [altitudeFilter, setAltitudeFilter] = useState<AltitudeFilter>("all");
-  const [refreshInterval, setRefreshInterval] = useState<RefreshInterval>(30);
   const [showAllAircraft, setShowAllAircraft] = useState(true);
-  const [lastFetchTime, setLastFetchTime] = useState<number>(0);
-  const [loading, setLoading] = useState(true);
-  const [flightCount, setFlightCount] = useState(0);
 
   const tracksRef = useRef<Map<string, AircraftTrack>>(new Map());
   const pointsRef = useRef<TurbulencePoint[]>([]);
 
-  // Fetch flight data and run turbulence detection
-  const fetchAndDetect = useCallback(async () => {
-    try {
-      const res = await fetch(API_URL);
-      if (!res.ok) return;
-      const data = await res.json();
-      const list: FlightState[] = data.flights ?? data.states ?? [];
-      setFlights(list);
-      setFlightCount(list.length);
-      setLastFetchTime(Date.now());
-      setLoading(false);
-
-      // Update tracks with new flight data
-      tracksRef.current = updateTracks(tracksRef.current, list);
-
-      // Generate turbulence points
-      const newPoints = generateTurbulencePoints(tracksRef.current, pointsRef.current);
-      pointsRef.current = newPoints;
-      setTurbulencePoints([...newPoints]);
-
-      // Build recent reports from new turbulence detections
-      const now = Date.now();
-      const newReports: RecentReport[] = [];
-      for (const track of tracksRef.current.values()) {
-        if (!track.isTurbulent || !track.severity) continue;
-        const lastPos = track.positions[track.positions.length - 1];
-        if (!lastPos) continue;
-        newReports.push({
-          id: `report-${track.icao24}-${now}`,
-          timestamp: now,
-          severity: track.severity,
-          location: latLonToString(lastPos.lat, lastPos.lon),
-          altitude: `FL${feetToFlightLevel(lastPos.alt)}`,
-          aircraft: track.callsign,
-        });
-      }
-
-      setRecentReports((prev) => {
-        // Deduplicate by aircraft callsign, keep most recent
-        const merged = [...newReports, ...prev];
-        const seen = new Set<string>();
-        const deduped: RecentReport[] = [];
-        for (const r of merged) {
-          if (!seen.has(r.aircraft)) {
-            seen.add(r.aircraft);
-            deduped.push(r);
-          }
-        }
-        return deduped.slice(0, 50);
-      });
-    } catch {
-      // silent
-    }
-  }, []);
-
-  // Poll on interval
+  // Run turbulence detection whenever shared flight data updates
   useEffect(() => {
-    fetchAndDetect();
-    const iv = setInterval(fetchAndDetect, refreshInterval * 1000);
-    return () => clearInterval(iv);
-  }, [fetchAndDetect, refreshInterval]);
+    if (sharedFlights.length === 0) return;
+
+    setFlights(sharedFlights);
+
+    // Update tracks with new flight data
+    tracksRef.current = updateTracks(tracksRef.current, sharedFlights);
+
+    // Generate turbulence points
+    const newPoints = generateTurbulencePoints(tracksRef.current, pointsRef.current);
+    pointsRef.current = newPoints;
+    setTurbulencePoints([...newPoints]);
+
+    // Build recent reports from new turbulence detections
+    const now = Date.now();
+    const newReports: RecentReport[] = [];
+    for (const track of tracksRef.current.values()) {
+      if (!track.isTurbulent || !track.severity) continue;
+      const lastPos = track.positions[track.positions.length - 1];
+      if (!lastPos) continue;
+      newReports.push({
+        id: `report-${track.icao24}-${now}`,
+        timestamp: now,
+        severity: track.severity,
+        location: latLonToString(lastPos.lat, lastPos.lon),
+        altitude: `FL${feetToFlightLevel(lastPos.alt)}`,
+        aircraft: track.callsign,
+      });
+    }
+
+    setRecentReports((prev) => {
+      // Deduplicate by aircraft callsign, keep most recent
+      const merged = [...newReports, ...prev];
+      const seen = new Set<string>();
+      const deduped: RecentReport[] = [];
+      for (const r of merged) {
+        if (!seen.has(r.aircraft)) {
+          seen.add(r.aircraft);
+          deduped.push(r);
+        }
+      }
+      return deduped.slice(0, 50);
+    });
+  }, [sharedFlights]);
 
   // Severity counts
   const severityCounts = useMemo(() => countBySeverity(turbulencePoints), [turbulencePoints]);
@@ -464,7 +440,9 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
   }, [recentReports, altitudeFilter]);
 
   const totalReports = turbulencePoints.length;
-  const dataAge = lastFetchTime > 0 ? formatTimeAgo(lastFetchTime) : "loading...";
+  const flightCount = totalCount;
+  const loading = sharedLoading;
+  const dataAge = lastUpdated ? formatTimeAgo(lastUpdated.getTime()) : "loading...";
 
   return (
     <div className="relative h-full w-full" style={{ background: "var(--surface-0)" }}>
@@ -639,30 +617,6 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
           </button>
         </div>
 
-        {/* Refresh rate */}
-        <div
-          className="glass-heavy rounded-xl px-4 py-2.5"
-          style={{ border: "1px solid var(--border-default)" }}
-        >
-          <div className="section-label mb-1.5">Refresh Interval</div>
-          <div className="flex gap-1 flex-wrap">
-            {REFRESH_OPTIONS.map((opt) => (
-              <button
-                key={opt}
-                onClick={() => setRefreshInterval(opt)}
-                className="text-[10px] font-semibold px-2 py-1 rounded-md transition-all"
-                style={{
-                  background: refreshInterval === opt ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.04)",
-                  color: refreshInterval === opt ? "#cbd5e1" : "var(--text-muted)",
-                  border: `1px solid ${refreshInterval === opt ? "rgba(56,189,248,0.3)" : "transparent"}`,
-                }}
-              >
-                {opt}s
-              </button>
-            ))}
-          </div>
-        </div>
-
         {/* Recent reports feed */}
         <div
           className="glass-heavy rounded-xl flex-1 min-h-0 flex flex-col overflow-hidden"
@@ -788,18 +742,6 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
             }}
           >
             {altitudeFilter === "all" ? "ALL ALT" : altitudeFilter}
-          </span>
-        </div>
-
-        <div className="h-3 w-px" style={{ background: "var(--border-default)" }} />
-
-        {/* Refresh rate */}
-        <div className="flex items-center gap-1.5">
-          <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>
-            REFRESH
-          </span>
-          <span className="text-[10px] font-semibold data-value" style={{ color: "var(--text-secondary)" }}>
-            {refreshInterval}s
           </span>
         </div>
 

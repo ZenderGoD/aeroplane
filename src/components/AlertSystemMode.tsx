@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import type { FlightState } from "@/types/flight";
 import { haversineNm } from "@/lib/geo";
+import { useSharedFlightData } from "@/contexts/FlightDataContext";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -69,7 +70,6 @@ interface Props {
 
 const STORAGE_KEY_ALERTS = "aerointel_custom_alerts";
 const STORAGE_KEY_LOG = "aerointel_alert_log";
-const POLL_INTERVAL = 10_000;
 const DEDUP_WINDOW_MS = 5 * 60 * 1000;
 const MAX_LOG_ENTRIES = 200;
 
@@ -388,12 +388,11 @@ function Toggle({
 type Tab = "alerts" | "log" | "create";
 
 export default function AlertSystemMode({ onExitMode }: Props) {
+  const { flights: sharedFlights, isLoading: sharedLoading } = useSharedFlightData();
   const [tab, setTab] = useState<Tab>("alerts");
   const [alerts, setAlerts] = useState<AlertRule[]>(() => loadFromStorage(STORAGE_KEY_ALERTS, []));
   const [logEntries, setLogEntries] = useState<AlertLogEntry[]>(() => loadFromStorage(STORAGE_KEY_LOG, []));
-  const [isPolling, setIsPolling] = useState(true);
   const dedupMapRef = useRef<Map<string, number>>(new Map());
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [newAlertFlash, setNewAlertFlash] = useState(false);
 
   // Form state
@@ -420,84 +419,66 @@ export default function AlertSystemMode({ onExitMode }: Props) {
     saveToStorage(STORAGE_KEY_LOG, logEntries);
   }, [logEntries]);
 
-  // Poll and evaluate
-  const evaluateAlerts = useCallback(async () => {
-    if (alerts.filter((a) => a.enabled).length === 0) return;
-    try {
-      const res = await fetch("/api/flights?lat=20&lon=78&radius=25000");
-      if (!res.ok) return;
-      const data = await res.json();
-      const flights: FlightState[] = data.states || data.flights || [];
-      if (flights.length === 0) return;
-
-      const now = Date.now();
-      const newLogs: AlertLogEntry[] = [];
-
-      for (const alert of alerts) {
-        const result = evaluateAlert(alert, flights, dedupMapRef.current);
-        if (result.triggered && result.matches.length > 0) {
-          const severity = getSeverityForAlert(alert);
-
-          // Update dedup map
-          for (const m of result.matches) {
-            const key = alert.type === "ground_stop" ? `${alert.id}:ground_stop` : `${alert.id}:${m.icao24}`;
-            dedupMapRef.current.set(key, now);
-          }
-
-          // Create log entries
-          for (const m of result.matches) {
-            newLogs.push({
-              id: generateId(),
-              alertId: alert.id,
-              alertName: alert.name,
-              timestamp: now,
-              severity,
-              aircraftIcao: m.icao24,
-              aircraftCallsign: m.callsign?.trim() || null,
-              aircraftRegistration: m.registration,
-              details: result.details,
-            });
-          }
-
-          // Update alert trigger metadata
-          setAlerts((prev) =>
-            prev.map((a) =>
-              a.id === alert.id
-                ? { ...a, lastTriggered: now, triggerCount: a.triggerCount + result.matches.length }
-                : a
-            )
-          );
-
-          // Notifications
-          playAlertBeep(severity);
-          sendNotification(
-            `AeroIntel: ${alert.name}`,
-            result.details
-          );
-
-          // Flash indicator
-          setNewAlertFlash(true);
-          setTimeout(() => setNewAlertFlash(false), 2000);
-        }
-      }
-
-      if (newLogs.length > 0) {
-        setLogEntries((prev) => [...newLogs, ...prev].slice(0, MAX_LOG_ENTRIES));
-      }
-    } catch {
-      // fetch failed — skip this cycle
-    }
-  }, [alerts]);
-
+  // Evaluate alerts whenever shared flight data updates
   useEffect(() => {
-    if (isPolling) {
-      evaluateAlerts();
-      pollRef.current = setInterval(evaluateAlerts, POLL_INTERVAL);
+    if (sharedFlights.length === 0) return;
+    if (alerts.filter((a) => a.enabled).length === 0) return;
+
+    const now = Date.now();
+    const newLogs: AlertLogEntry[] = [];
+
+    for (const alert of alerts) {
+      const result = evaluateAlert(alert, sharedFlights, dedupMapRef.current);
+      if (result.triggered && result.matches.length > 0) {
+        const severity = getSeverityForAlert(alert);
+
+        // Update dedup map
+        for (const m of result.matches) {
+          const key = alert.type === "ground_stop" ? `${alert.id}:ground_stop` : `${alert.id}:${m.icao24}`;
+          dedupMapRef.current.set(key, now);
+        }
+
+        // Create log entries
+        for (const m of result.matches) {
+          newLogs.push({
+            id: generateId(),
+            alertId: alert.id,
+            alertName: alert.name,
+            timestamp: now,
+            severity,
+            aircraftIcao: m.icao24,
+            aircraftCallsign: m.callsign?.trim() || null,
+            aircraftRegistration: m.registration,
+            details: result.details,
+          });
+        }
+
+        // Update alert trigger metadata
+        setAlerts((prev) =>
+          prev.map((a) =>
+            a.id === alert.id
+              ? { ...a, lastTriggered: now, triggerCount: a.triggerCount + result.matches.length }
+              : a
+          )
+        );
+
+        // Notifications
+        playAlertBeep(severity);
+        sendNotification(
+          `AeroIntel: ${alert.name}`,
+          result.details
+        );
+
+        // Flash indicator
+        setNewAlertFlash(true);
+        setTimeout(() => setNewAlertFlash(false), 2000);
+      }
     }
-    return () => {
-      if (pollRef.current) clearInterval(pollRef.current);
-    };
-  }, [isPolling, evaluateAlerts]);
+
+    if (newLogs.length > 0) {
+      setLogEntries((prev) => [...newLogs, ...prev].slice(0, MAX_LOG_ENTRIES));
+    }
+  }, [sharedFlights, alerts]);
 
   // ---------------------------------------------------------------------------
   // Alert CRUD
@@ -694,22 +675,21 @@ export default function AlertSystemMode({ onExitMode }: Props) {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {/* Polling indicator */}
-          <button
-            onClick={() => setIsPolling(!isPolling)}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all"
+          {/* Live data indicator */}
+          <span
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium"
             style={{
-              background: isPolling ? "rgba(203,213,225,0.1)" : "rgba(226,232,240,0.1)",
-              color: isPolling ? "var(--status-nominal)" : "var(--status-critical)",
-              border: `1px solid ${isPolling ? "rgba(203,213,225,0.2)" : "rgba(226,232,240,0.2)"}`,
+              background: "rgba(203,213,225,0.1)",
+              color: sharedLoading ? "var(--text-muted)" : "var(--status-nominal)",
+              border: "1px solid rgba(203,213,225,0.2)",
             }}
           >
             <span
-              className={`w-1.5 h-1.5 rounded-full ${isPolling ? "animate-pulse" : ""}`}
-              style={{ background: isPolling ? "var(--status-nominal)" : "var(--status-critical)" }}
+              className={`w-1.5 h-1.5 rounded-full ${sharedLoading ? "" : "animate-pulse"}`}
+              style={{ background: sharedLoading ? "var(--text-muted)" : "var(--status-nominal)" }}
             />
-            {isPolling ? "LIVE" : "PAUSED"}
-          </button>
+            {sharedLoading ? "LOADING" : "LIVE"}
+          </span>
           {onExitMode && (
             <button
               onClick={onExitMode}

@@ -8,6 +8,7 @@ import {
   useRef,
 } from "react";
 import type { FlightState } from "@/types/flight";
+import { useSharedFlightData } from "@/contexts/FlightDataContext";
 import { haversineNm, bearing, mToFt, msToKts } from "@/lib/geo";
 import airportsData from "@/data/airports.json";
 
@@ -325,8 +326,7 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
   const searchRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const [flights, setFlights] = useState<FlightState[]>([]);
-  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const { getFlightsNear, isLoading: sharedLoading, lastUpdated } = useSharedFlightData();
   const [refreshRate, setRefreshRate] = useState(10);
   const [activeTab, setActiveTab] = useState<BoardTab>("arrivals");
   const [sortKey, setSortKey] = useState<SortKey>("distance");
@@ -403,31 +403,11 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
     [searchQuery, searchResults, selectAirport]
   );
 
-  // Fetch flights
-  useEffect(() => {
-    if (!selectedAirport) return;
-    let cancelled = false;
-    async function fetchFlights() {
-      try {
-        const r = await fetch(
-          `/api/flights?lat=${selectedAirport!.lat}&lon=${selectedAirport!.lon}&radius=100`
-        );
-        if (cancelled) return;
-        const data = await r.json();
-        const list: FlightState[] = data.flights ?? data.states ?? [];
-        setFlights(list);
-        setLastUpdate(new Date());
-      } catch {
-        /* silent */
-      }
-    }
-    fetchFlights();
-    const iv = setInterval(fetchFlights, refreshRate * 1000);
-    return () => {
-      cancelled = true;
-      clearInterval(iv);
-    };
-  }, [selectedAirport, refreshRate]);
+  // Get flights from shared context (no independent polling)
+  const flights = useMemo(
+    () => (selectedAirport ? getFlightsNear(selectedAirport.lat, selectedAirport.lon, 100) : []),
+    [getFlightsNear, selectedAirport]
+  );
 
   // Classify and filter flights
   const classified = useMemo(() => {
@@ -1000,11 +980,11 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
             <span style={{ color: "var(--text-muted)" }}>
               Refresh: <span style={{ color: "var(--text-secondary)" }}>{refreshRate}s</span>
             </span>
-            {lastUpdate && (
+            {lastUpdated && (
               <span style={{ color: "var(--text-muted)" }}>
                 Updated:{" "}
                 <span style={{ color: "var(--text-secondary)" }}>
-                  {lastUpdate.toLocaleTimeString("en-GB", { hour12: false })}
+                  {lastUpdated.toLocaleTimeString("en-GB", { hour12: false })}
                 </span>
               </span>
             )}

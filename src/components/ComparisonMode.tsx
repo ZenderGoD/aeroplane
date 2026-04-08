@@ -23,7 +23,7 @@ import { getMapStyle, getSavedMapStyleId } from "@/lib/mapStyles";
 /* ── Constants ────────────────────────────────────────────────────── */
 
 const MAX_AIRCRAFT = 4;
-const POLL_INTERVAL = 5_000;
+const POLL_INTERVAL = 30_000; // 30s — conservative to respect API limits
 const HISTORY_WINDOW = 300; // keep 5 min of history points
 
 const AIRCRAFT_COLORS = ["#cbd5e1", "#cbd5e1", "#94a3b8", "#e2e8f0"] as const;

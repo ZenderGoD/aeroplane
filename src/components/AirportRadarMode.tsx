@@ -16,6 +16,7 @@ import {
   verticalSeparationFt,
   timeToClosestApproachMin,
 } from "@/lib/geo";
+import { useSharedFlightData } from "@/contexts/FlightDataContext";
 import airportsData from "@/data/airports.json";
 import ATCPanel from "@/components/ATCPanel";
 import L from "leaflet";
@@ -644,8 +645,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
   const searchRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const [flights, setFlights] = useState<FlightState[]>([]);
-  const [flightCount, setFlightCount] = useState(0);
+  const { getFlightsNear, isLoading: sharedLoading } = useSharedFlightData();
   const [selectedFlight, setSelectedFlight] = useState<FlightState | null>(null);
 
   const [bearingLines, setBearingLines] = useState<BearingLine[]>([]);
@@ -732,24 +732,13 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
     [searchQuery, searchResults, selectAirport]
   );
 
-  // Fetch flights
-  useEffect(() => {
-    if (!selectedAirport) return;
-    let cancelled = false;
-    async function fetchFlights() {
-      try {
-        const r = await fetch(`/api/flights?lat=${selectedAirport!.lat}&lon=${selectedAirport!.lon}&radius=100`);
-        if (cancelled) return;
-        const data = await r.json();
-        const list: FlightState[] = data.flights ?? data.states ?? [];
-        setFlights(list);
-        setFlightCount(list.length);
-      } catch { /* silent */ }
-    }
-    fetchFlights();
-    const iv = setInterval(fetchFlights, refreshRate * 1000);
-    return () => { cancelled = true; clearInterval(iv); };
-  }, [selectedAirport, refreshRate]);
+  // Derive flights from shared context (no independent polling)
+  const flights = useMemo(() => {
+    if (!selectedAirport) return [];
+    return getFlightsNear(selectedAirport.lat, selectedAirport.lon, 100);
+  }, [selectedAirport, getFlightsNear]);
+
+  const flightCount = flights.length;
 
   // Fetch METAR
   useEffect(() => {

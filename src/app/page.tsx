@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useRef, useEffect, Suspense } from "react";
 import { useFlightData } from "@/hooks/useFlightData";
+import { useSharedFlightData } from "@/contexts/FlightDataContext";
 import { useFlightHistory } from "@/hooks/useFlightHistory";
 import { useAnomalyDetection } from "@/hooks/useAnomalyDetection";
 import { computeAllInstabilities, computeInstability } from "@/lib/instabilityScore";
@@ -21,6 +22,7 @@ import { KeyboardShortcutHelp } from "@/components/KeyboardShortcutHelp";
 import dynamic from "next/dynamic";
 import { REGIONS } from "@/lib/regions";
 import type { ViewMode } from "@/types/viewMode";
+import { FlightDataProvider } from "@/contexts/FlightDataContext";
 import AirspaceCopilot from "@/components/AirspaceCopilot";
 import AirportDetailSheet from "@/components/AirportDetailSheet";
 import CorridorDetailSheet from "@/components/CorridorDetailSheet";
@@ -77,6 +79,12 @@ function HomeContent() {
   const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
   const region = REGIONS[regionKey];
   const searchBarRef = useRef<SearchBarHandle>(null);
+
+  // Keep shared flight data provider in sync with region changes
+  const sharedData = useSharedFlightData();
+  useEffect(() => {
+    sharedData.setBbox(region.bbox);
+  }, [region.bbox]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // NL Search
   const { rawQuery, setRawQuery, filters, isAISearching } = useNLSearch();
@@ -514,7 +522,9 @@ function HomeContent() {
 export default function Home() {
   return (
     <Suspense fallback={<LoadingSpinner message="Loading..." />}>
-      <HomeContent />
+      <FlightDataProvider initialBbox={REGIONS["india"].bbox}>
+        <HomeContent />
+      </FlightDataProvider>
     </Suspense>
   );
 }

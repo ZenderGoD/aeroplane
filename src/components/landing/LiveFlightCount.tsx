@@ -24,7 +24,7 @@ export default function LiveFlightCount() {
     }
 
     fetchCount();
-    const interval = setInterval(fetchCount, 15000);
+    const interval = setInterval(fetchCount, 60000); // 60s — landing page doesn't need fast updates
     return () => {
       mounted = false;
       clearInterval(interval);

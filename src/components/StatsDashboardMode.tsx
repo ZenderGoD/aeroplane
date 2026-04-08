@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import type { FlightState } from "@/types/flight";
+import { useSharedFlightData } from "@/contexts/FlightDataContext";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -425,55 +426,21 @@ function RankRow({
 // ── Main Component ──────────────────────────────────────────────────────────
 
 export default function StatsDashboardMode({ onExitMode }: Props) {
-  const [flights, setFlights] = useState<FlightState[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { flights, isLoading, lastUpdated, error: sharedError } = useSharedFlightData();
   const [refreshInterval, setRefreshInterval] = useState(10);
-  const [lastRefreshTime, setLastRefreshTime] = useState<Date | null>(null);
   const [prevTotal, setPrevTotal] = useState<number | null>(null);
   const [animated, setAnimated] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const refreshCountRef = useRef(0);
 
-  const fetchFlights = useCallback(async () => {
-    try {
-      // Large bounding box covering a wide regional area
-      const res = await fetch(
-        "/api/flights?lamin=-60&lomin=-180&lamax=80&lomax=180"
-      );
-      if (!res.ok) throw new Error(`API error: ${res.status}`);
-      const data = await res.json();
-      const list: FlightState[] = data.flights ?? data.states ?? [];
-      setPrevTotal((prev) => (prev === null ? list.length : flights.length));
-      setFlights(list);
-      setLastRefreshTime(new Date());
-      setError(null);
-      refreshCountRef.current++;
-      // Trigger animation on every data load
+  // Trigger animation whenever flights data changes
+  useEffect(() => {
+    if (flights.length > 0) {
+      setPrevTotal((prev) => (prev === null ? flights.length : prev));
       setAnimated(false);
       requestAnimationFrame(() => {
         requestAnimationFrame(() => setAnimated(true));
       });
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to fetch flights");
-    } finally {
-      setLoading(false);
     }
-  }, [flights.length]);
-
-  // Initial fetch + interval
-  useEffect(() => {
-    fetchFlights();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(fetchFlights, refreshInterval * 1000);
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [refreshInterval, fetchFlights]);
+  }, [flights]);
 
   // Compute stats
   const stats = useMemo(() => {
@@ -481,13 +448,20 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
     return computeStats(flights);
   }, [flights]);
 
-  // Trend direction
+  // Trend direction: compare current total to the previous snapshot
   const trend: "up" | "down" | "flat" = useMemo(() => {
     if (prevTotal === null || stats === null) return "flat";
     if (stats.totalActive > prevTotal) return "up";
     if (stats.totalActive < prevTotal) return "down";
     return "flat";
   }, [prevTotal, stats]);
+
+  // After computing trend, update prevTotal to current for next comparison
+  useEffect(() => {
+    if (stats) {
+      setPrevTotal(stats.totalActive);
+    }
+  }, [stats]);
 
   // Altitude bin labels
   const altBinLabels = ["0-5k", "5-10k", "10-15k", "15-20k", "20-25k", "25-30k", "30-35k", "35-40k", "40k+"];
@@ -515,9 +489,9 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
             </svg>
             <h1 className="panel-title text-sm">Statistics Dashboard</h1>
           </div>
-          {lastRefreshTime && (
+          {lastUpdated && (
             <span className="text-[10px] tabular-nums" style={{ color: "var(--text-faint)" }}>
-              Updated {lastRefreshTime.toLocaleTimeString()}
+              Updated {lastUpdated.toLocaleTimeString()}
             </span>
           )}
           {/* Live indicator */}
@@ -569,7 +543,7 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
       </header>
 
       {/* Loading / Error */}
-      {loading && !stats && (
+      {isLoading && !stats && (
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
             <div
@@ -583,17 +557,10 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
         </div>
       )}
 
-      {error && !stats && (
+      {sharedError && !stats && (
         <div className="flex-1 flex items-center justify-center">
           <div className="glass-card rounded-xl p-6 max-w-sm text-center">
-            <span className="text-sm" style={{ color: "var(--status-critical)" }}>{error}</span>
-            <button
-              onClick={fetchFlights}
-              className="mt-3 px-4 py-2 rounded-lg text-xs font-medium"
-              style={{ background: "var(--accent-primary-dim)", color: "var(--accent-primary)" }}
-            >
-              Retry
-            </button>
+            <span className="text-sm" style={{ color: "var(--status-critical)" }}>{sharedError.message}</span>
           </div>
         </div>
       )}
