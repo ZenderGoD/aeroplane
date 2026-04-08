@@ -3,9 +3,8 @@
 import { useEffect, useRef } from "react";
 
 /* ── Plane SVG path (top-down silhouette) ─────────────────── */
-const PLANE_PATH = new Path2D(
-  "M12 2L8 10H3L5 13H8L10 22H14L12 13H15L17 13H21L19 10H16L12 2Z"
-);
+// Path2D is browser-only — created lazily inside useEffect
+let PLANE_PATH: Path2D | null = null;
 
 interface Aircraft {
   x: number;
@@ -27,6 +26,11 @@ export default function HeroBackground() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+
+    if (!PLANE_PATH) {
+      PLANE_PATH = new Path2D("M12 2L8 10H3L5 13H8L10 22H14L12 13H15L17 13H21L19 10H16L12 2Z");
+    }
+    const planePath = PLANE_PATH;
 
     let animId: number;
     let w = 0;
@@ -226,7 +230,7 @@ export default function HeroBackground() {
         ctx.fillStyle = `rgba(203, 213, 225, ${ac.alpha})`;
         ctx.shadowColor = `rgba(203, 213, 225, ${ac.alpha * 0.5})`;
         ctx.shadowBlur = 8;
-        ctx.fill(PLANE_PATH);
+        ctx.fill(planePath);
         ctx.shadowBlur = 0;
         ctx.restore();
 
