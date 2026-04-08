@@ -63,6 +63,9 @@ async function getAccessToken(): Promise<string | null> {
   }
 }
 
+// ── API key detection ───────────────────────────────────────────────
+const HAS_API_KEY = !!process.env.AIRPLANES_LIVE_API_KEY;
+
 // ── Cache layer ─────────────────────────────────────────────────────
 interface CacheEntry {
   flights: FlightState[];
@@ -72,14 +75,16 @@ interface CacheEntry {
 }
 
 const regionCache = new Map<string, CacheEntry>();
-const CACHE_TTL = 60_000; // 60s — conserve airplanes.live quota
+const CACHE_TTL = HAS_API_KEY ? 15_000 : 60_000; // 15s with key, 60s without
 const STALE_TTL = 600_000; // 10min — serve stale data rather than burn quota
 
 // ── Daily request counter (resets at midnight UTC) ──────────────────
 let dailyRequestCount = 0;
 let dailyCounterResetDate = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
-const DAILY_WARN_THRESHOLD = 400; // warn when approaching free-tier 500/day limit
-const DAILY_HARD_LIMIT = 480; // stop making upstream requests near limit
+// With API key: 8,640/day. Without: 500/day.
+// We use smaller tiles for better GA coverage, so need more headroom.
+const DAILY_WARN_THRESHOLD = HAS_API_KEY ? 7_000 : 400;
+const DAILY_HARD_LIMIT = HAS_API_KEY ? 8_000 : 480;
 
 function trackDailyRequest(): boolean {
   const today = new Date().toISOString().slice(0, 10);
@@ -105,7 +110,7 @@ function trackDailyRequest(): boolean {
 
 // ── Airplanes.live rate limiter ──────────────────────────────────────
 let lastAirplanesLiveRequest = 0;
-const AIRPLANES_LIVE_MIN_INTERVAL = 10_000; // 10s between upstream requests
+const AIRPLANES_LIVE_MIN_INTERVAL = HAS_API_KEY ? 3_000 : 10_000; // 3s with key, 10s without
 let airplanesLiveRateLimitedUntil = 0;
 
 async function throttledFetch(url: string): Promise<Response> {
@@ -115,7 +120,14 @@ async function throttledFetch(url: string): Promise<Response> {
     await new Promise((resolve) => setTimeout(resolve, wait));
   }
   lastAirplanesLiveRequest = Date.now();
-  return fetch(url, { cache: "no-store" });
+
+  const headers: HeadersInit = {};
+  const apiKey = process.env.AIRPLANES_LIVE_API_KEY;
+  if (apiKey) {
+    headers["api-auth"] = apiKey;
+  }
+
+  return fetch(url, { cache: "no-store", headers });
 }
 
 // ── OpenSky rate limit tracking ─────────────────────────────────────
@@ -161,10 +173,16 @@ function bboxFromParams(searchParams: URLSearchParams): BoundingBox | null {
 
 /**
  * Compute tile centers needed to cover a bounding box.
- * airplanes.live supports large radii (1000nm+), so we prefer a single
- * request when possible to avoid rate limits (~1 req per 10s).
+ *
+ * IMPORTANT: Using smaller tiles (~250nm max) returns MORE aircraft.
+ * The airplanes.live API caps results per request, so a single 500nm+
+ * request misses small/GA aircraft. Breaking into smaller tiles ensures
+ * we get complete data including training aircraft, Cessnas, etc.
+ *
  * Returns array of [lat, lon, radius_nm].
  */
+const MAX_TILE_RADIUS = 250; // sweet spot: complete results without too many requests
+
 function computeTiles(bbox: BoundingBox): [number, number, number][] {
   const centerLat = (bbox.lamin + bbox.lamax) / 2;
   const centerLon = (bbox.lomin + bbox.lomax) / 2;
@@ -180,8 +198,34 @@ function computeTiles(bbox: BoundingBox): [number, number, number][] {
     Math.sqrt((heightNm / 2) ** 2 + (widthNm / 2) ** 2)
   );
 
-  // Single request covers it — airplanes.live handles up to ~1500nm
-  return [[centerLat, centerLon, neededRadius]];
+  // Small enough for a single request — return as-is
+  if (neededRadius <= MAX_TILE_RADIUS) {
+    return [[centerLat, centerLon, neededRadius]];
+  }
+
+  // Large area: split into a grid of smaller tiles for complete coverage
+  // Each tile covers ~250nm radius, overlap ensures no gaps
+  const tileSpacingNm = MAX_TILE_RADIUS * 1.5; // 1.5x radius = overlap
+  const tileSpacingLat = tileSpacingNm / 60;
+  const tileSpacingLon = tileSpacingNm / (60 * Math.cos(midLatRad));
+
+  const tiles: [number, number, number][] = [];
+  const maxTiles = 6; // cap to avoid rate limiting (each tile = 1 API call)
+
+  for (let lat = bbox.lamin + tileSpacingLat / 2; lat < bbox.lamax; lat += tileSpacingLat) {
+    for (let lon = bbox.lomin + tileSpacingLon / 2; lon < bbox.lomax; lon += tileSpacingLon) {
+      tiles.push([lat, lon, MAX_TILE_RADIUS]);
+      if (tiles.length >= maxTiles) break;
+    }
+    if (tiles.length >= maxTiles) break;
+  }
+
+  // If grid produced no tiles (shouldn't happen), fallback to center
+  if (tiles.length === 0) {
+    return [[centerLat, centerLon, MAX_TILE_RADIUS]];
+  }
+
+  return tiles;
 }
 
 /**
