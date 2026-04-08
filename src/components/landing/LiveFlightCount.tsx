@@ -23,11 +23,11 @@ export default function LiveFlightCount() {
       }
     }
 
+    // Fetch once on mount — no polling on the landing page
     fetchCount();
-    const interval = setInterval(fetchCount, 60000); // 60s — landing page doesn't need fast updates
+
     return () => {
       mounted = false;
-      clearInterval(interval);
     };
   }, []);
 
@@ -38,7 +38,7 @@ export default function LiveFlightCount() {
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-300 opacity-75" />
           <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-slate-300" />
         </span>
-        <span className="text-sm font-mono text-[var(--text-secondary)]">
+        <span className="text-sm font-mono text-white/50">
           {error ? "Tracking live flights" : "Connecting..."}
         </span>
       </div>

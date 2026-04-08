@@ -134,9 +134,7 @@ export default function HeroBackground() {
       const rcy = h * 0.45;
       const rRadius = Math.max(w, h) * 0.6;
 
-      const sweepGrad = ctx.createConicalGradient
-        ? null // not widely supported, use fallback
-        : null;
+      // Radar sweep rendered as filled arc sector below
 
       // Draw sweep as a filled arc sector
       const sweepWidth = 0.3; // radians

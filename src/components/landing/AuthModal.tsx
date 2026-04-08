@@ -2,11 +2,11 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 import { X, Mail, Lock, User, Github, Loader2 } from "lucide-react";
+import { signIn, signUp, signOut, useSession } from "@/lib/auth-client";
 
-function AuthModalInner() {
-  const { data: session, status } = useSession();
+export default function AuthModal() {
+  const { data: session, isPending } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [name, setName] = useState("");
@@ -29,43 +29,71 @@ function AuthModalInner() {
     setLoading(false);
   }, []);
 
-  const handleCredentialsSubmit = async (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) {
       setError("Email is required");
       return;
     }
+    if (!password || password.length < 8) {
+      setError("Password must be at least 8 characters");
+      return;
+    }
     setLoading(true);
     setError("");
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-
-    setLoading(false);
-
-    if (result?.error) {
-      setError("Invalid email or password");
-    } else {
+    try {
+      if (mode === "signup") {
+        const { error: err } = await signUp.email({
+          email,
+          password,
+          name: name || email.split("@")[0],
+        });
+        if (err) {
+          setError(err.message || "Failed to create account");
+          setLoading(false);
+          return;
+        }
+      } else {
+        const { error: err } = await signIn.email({
+          email,
+          password,
+        });
+        if (err) {
+          setError(err.message || "Invalid email or password");
+          setLoading(false);
+          return;
+        }
+      }
       close();
+    } catch {
+      setError("Something went wrong. Try again.");
+      setLoading(false);
     }
   };
 
-  const handleOAuth = (provider: "google" | "github") => {
-    signIn(provider, { callbackUrl: "/tracker" });
+  const handleOAuth = async (provider: "google" | "github") => {
+    await signIn.social({
+      provider,
+      callbackURL: "/tracker",
+    });
   };
 
-  const handleSignOut = () => {
-    signOut({ callbackUrl: "/" });
+  const handleSignOut = async () => {
+    await signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          window.location.href = "/";
+        },
+      },
+    });
   };
 
   // Loading state
-  if (status === "loading") {
+  if (isPending) {
     return (
       <div className="flex items-center gap-2">
-        <Loader2 size={16} className="animate-spin text-[var(--text-muted)]" />
+        <Loader2 size={16} className="animate-spin text-white/40" />
       </div>
     );
   }
@@ -76,12 +104,12 @@ function AuthModalInner() {
       <div className="flex items-center gap-3">
         <a
           href="/tracker"
-          className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors"
+          className="text-sm text-white/60 hover:text-white transition-colors"
         >
           Dashboard
         </a>
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-[var(--surface-3)] border border-[var(--border-default)] flex items-center justify-center overflow-hidden">
+          <div className="w-8 h-8 rounded-full bg-white/[0.06] border border-white/[0.1] flex items-center justify-center overflow-hidden">
             {session.user.image ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -90,20 +118,20 @@ function AuthModalInner() {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <span className="text-xs font-bold text-[var(--accent-primary)]">
+              <span className="text-xs font-bold text-white/70">
                 {(session.user.name || session.user.email || "U")
                   .charAt(0)
                   .toUpperCase()}
               </span>
             )}
           </div>
-          <span className="text-sm text-[var(--text-secondary)] hidden sm:inline">
+          <span className="text-sm text-white/60 hidden sm:inline">
             {session.user.name || session.user.email}
           </span>
         </div>
         <button
           onClick={handleSignOut}
-          className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
+          className="text-xs text-white/30 hover:text-white/60 transition-colors"
         >
           Sign Out
         </button>
@@ -111,7 +139,7 @@ function AuthModalInner() {
     );
   }
 
-  // Modal content — rendered via portal to escape nav's backdrop-filter stacking context
+  // Modal content — rendered via portal to escape nav's backdrop-filter
   const modalContent = isOpen ? (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       <div
@@ -131,7 +159,7 @@ function AuthModalInner() {
           </button>
         </div>
 
-        <form onSubmit={handleCredentialsSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleEmailSubmit} className="p-6 space-y-4">
           {/* OAuth buttons */}
           <div className="grid grid-cols-2 gap-3">
             <button
@@ -191,7 +219,7 @@ function AuthModalInner() {
             <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
             <input
               type="password"
-              placeholder="Password"
+              placeholder="Password (min 8 chars)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-white/[0.1] bg-white/[0.04] text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/25 focus:ring-1 focus:ring-white/20 transition-colors"
@@ -247,13 +275,5 @@ function AuthModalInner() {
       {/* Portal modal to body — escapes nav's backdrop-filter containing block */}
       {mounted && modalContent && createPortal(modalContent, document.body)}
     </>
-  );
-}
-
-export default function AuthModal() {
-  return (
-    <SessionProvider refetchOnWindowFocus={false} refetchInterval={0}>
-      <AuthModalInner />
-    </SessionProvider>
   );
 }
