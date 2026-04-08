@@ -103,14 +103,65 @@ export default function LandingPage() {
                 </div>
                 <span className="text-xs text-white/20 font-mono ml-2">anuragair.com/tracker</span>
               </div>
-              <div className="relative w-full bg-[#0a0a0a]" style={{ aspectRatio: "16/9" }}>
-                <iframe
-                  src="/embed"
-                  title="AeroIntel flight tracker preview"
-                  className="w-full h-full border-0 pointer-events-none"
-                  loading="lazy"
-                />
-                {/* Bottom gradient fade so it blends into the page */}
+              {/* Static tracker mockup — no iframe, no runtime errors */}
+              <div className="relative w-full bg-[#080a10] overflow-hidden" style={{ aspectRatio: "16/9" }}>
+                {/* Map grid */}
+                <div className="absolute inset-0" style={{
+                  backgroundImage: "linear-gradient(rgba(148,163,184,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.04) 1px, transparent 1px)",
+                  backgroundSize: "60px 60px"
+                }} />
+
+                {/* Simulated map labels */}
+                <span className="absolute top-[15%] left-[10%] text-[10px] font-mono text-white/10 tracking-wider">RAJASTHAN</span>
+                <span className="absolute top-[25%] left-[45%] text-[10px] font-mono text-white/10 tracking-wider">DELHI NCR</span>
+                <span className="absolute top-[40%] right-[15%] text-[10px] font-mono text-white/10 tracking-wider">UTTAR PRADESH</span>
+                <span className="absolute bottom-[30%] left-[25%] text-[10px] font-mono text-white/10 tracking-wider">MADHYA PRADESH</span>
+                <span className="absolute top-[10%] right-[25%] text-[10px] font-mono text-white/10 tracking-wider">HARYANA</span>
+
+                {/* Aircraft dots */}
+                {[
+                  { x: "30%", y: "22%", rot: 45 }, { x: "48%", y: "28%", rot: 120 },
+                  { x: "52%", y: "32%", rot: 200 }, { x: "45%", y: "35%", rot: 80 },
+                  { x: "55%", y: "25%", rot: 310 }, { x: "42%", y: "40%", rot: 155 },
+                  { x: "38%", y: "30%", rot: 270 }, { x: "60%", y: "38%", rot: 20 },
+                  { x: "35%", y: "45%", rot: 190 }, { x: "50%", y: "18%", rot: 90 },
+                  { x: "25%", y: "55%", rot: 340 }, { x: "65%", y: "20%", rot: 145 },
+                  { x: "20%", y: "35%", rot: 60 }, { x: "70%", y: "45%", rot: 230 },
+                  { x: "58%", y: "50%", rot: 15 }, { x: "40%", y: "20%", rot: 280 },
+                  { x: "33%", y: "60%", rot: 110 }, { x: "72%", y: "30%", rot: 350 },
+                ].map((p, i) => (
+                  <div key={i} className="absolute" style={{ left: p.x, top: p.y }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" style={{ transform: `rotate(${p.rot}deg)`, filter: `drop-shadow(0 0 4px rgba(203,213,225,0.4))` }}>
+                      <path d="M12 2L8 10H3L5 13H8L10 22H14L12 13H15L17 13H21L19 10H16L12 2Z" fill="rgba(203,213,225,0.7)" stroke="rgba(0,0,0,0.3)" strokeWidth="0.5"/>
+                    </svg>
+                  </div>
+                ))}
+
+                {/* Sidebar mockup */}
+                <div className="absolute left-0 top-0 bottom-0 w-[180px] bg-[rgba(5,5,5,0.85)] border-r border-white/[0.06] p-3">
+                  <div className="flex items-center gap-1.5 mb-3">
+                    <Plane size={10} className="text-white/40 -rotate-45" />
+                    <span className="text-[10px] font-semibold text-white/50">AeroIntel</span>
+                    <span className="ml-auto text-[8px] text-green-400/60">● LIVE</span>
+                  </div>
+                  <div className="w-full h-5 rounded bg-white/[0.04] border border-white/[0.06] mb-3" />
+                  <div className="space-y-1.5">
+                    {["Normal", "Heatmap", "Trails", "Airport", "FIDS", "Fleet"].map((m) => (
+                      <div key={m} className={`px-2 py-1 rounded text-[8px] ${m === "Normal" ? "bg-white/[0.08] text-white/60" : "text-white/25"}`}>{m}</div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Stats badge mockup */}
+                <div className="absolute top-3 right-3 bg-[rgba(5,5,5,0.8)] border border-white/[0.08] rounded-lg px-3 py-2">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400/60" />
+                    <span className="text-[9px] text-white/30 font-mono">TRACKING</span>
+                  </div>
+                  <span className="text-xl font-bold text-white/60 font-mono">247</span>
+                </div>
+
+                {/* Bottom gradient fade */}
                 <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
               </div>
             </div>
