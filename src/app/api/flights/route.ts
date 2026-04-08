@@ -13,17 +13,27 @@ const ADSB_SOURCES = [
   {
     name: "airplaneslive" as const,
     baseUrl: "https://api.airplanes.live/v2",
-    // v2 format: { ac: [...] }
+    // URL: /point/{lat}/{lon}/{radius}  Response key: "ac"
+    urlBuilder: (lat: number, lon: number, radius: number) =>
+      `https://api.airplanes.live/v2/point/${lat.toFixed(4)}/${lon.toFixed(4)}/${radius}`,
+    responseKey: "ac" as const,
   },
   {
     name: "adsbfi" as const,
     baseUrl: "https://opendata.adsb.fi/api/v2",
-    // Same v2 format: { ac: [...] }
+    // URL: /lat/{lat}/lon/{lon}/dist/{radius}  Response key: "aircraft"
+    // adsb.fi requires integer coordinates (decimals return 400)
+    urlBuilder: (lat: number, lon: number, radius: number) =>
+      `https://opendata.adsb.fi/api/v2/lat/${Math.round(lat)}/lon/${Math.round(lon)}/dist/${radius}`,
+    responseKey: "aircraft" as const,
   },
   {
     name: "adsblol" as const,
     baseUrl: "https://api.adsb.lol/v2",
-    // Same v2 format: { ac: [...] }
+    // URL: /point/{lat}/{lon}/{radius}  Response key: "ac"
+    urlBuilder: (lat: number, lon: number, radius: number) =>
+      `https://api.adsb.lol/v2/point/${lat.toFixed(4)}/${lon.toFixed(4)}/${radius}`,
+    responseKey: "ac" as const,
   },
 ];
 
@@ -31,12 +41,11 @@ const OPENSKY_URL = "https://opensky-network.org/api/states/all";
 const TOKEN_URL =
   "https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token";
 
-// ── Strategic center points for global coverage ────────────────────
+// ── Strategic center points for global count (landing page only) ────
+// Only 1 tile — just enough for an approximate flight count.
+// The tracker page sends a bbox and gets proper multi-tile coverage.
 const GLOBAL_TILES: [number, number, number][] = [
-  [39, -98, 250],   // US central
-  [50, 10, 250],    // Europe central
-  [35, 105, 250],   // East Asia
-  [25, 55, 250],    // Middle East
+  [50, 10, 250],    // Europe central (busiest airspace = best count proxy)
 ];
 
 // ── API key detection ───────────────────────────────────────────────
@@ -158,93 +167,90 @@ function bboxFromParams(searchParams: URLSearchParams): BoundingBox | null {
 
 const MAX_TILE_RADIUS = 250;
 
-function computeTiles(bbox: BoundingBox): [number, number, number][] {
+/**
+ * Compute a SINGLE tile (center + 250nm) for the bbox.
+ * Free ADS-B APIs only allow ~1 request per 10 seconds,
+ * so we cannot split into multiple tiles.  We query 3 sources
+ * in parallel instead — that's how we get broad coverage.
+ */
+function computeTile(bbox: BoundingBox): [number, number, number] {
   const centerLat = (bbox.lamin + bbox.lamax) / 2;
   const centerLon = (bbox.lomin + bbox.lomax) / 2;
   const midLatRad = (centerLat * Math.PI) / 180;
 
   const heightNm = Math.abs(bbox.lamax - bbox.lamin) * 60;
   const widthNm = Math.abs(bbox.lomax - bbox.lomin) * 60 * Math.cos(midLatRad);
-  const neededRadius = Math.ceil(Math.sqrt((heightNm / 2) ** 2 + (widthNm / 2) ** 2));
+  const neededRadius = Math.min(
+    Math.ceil(Math.sqrt((heightNm / 2) ** 2 + (widthNm / 2) ** 2)),
+    MAX_TILE_RADIUS,
+  );
 
-  if (neededRadius <= MAX_TILE_RADIUS) {
-    return [[centerLat, centerLon, neededRadius]];
-  }
-
-  const tileSpacingNm = MAX_TILE_RADIUS * 1.5;
-  const tileSpacingLat = tileSpacingNm / 60;
-  const tileSpacingLon = tileSpacingNm / (60 * Math.cos(midLatRad));
-
-  const tiles: [number, number, number][] = [];
-  const maxTiles = 4; // keep lower since we query 3 sources
-
-  for (let lat = bbox.lamin + tileSpacingLat / 2; lat < bbox.lamax; lat += tileSpacingLat) {
-    for (let lon = bbox.lomin + tileSpacingLon / 2; lon < bbox.lomax; lon += tileSpacingLon) {
-      tiles.push([lat, lon, MAX_TILE_RADIUS]);
-      if (tiles.length >= maxTiles) break;
-    }
-    if (tiles.length >= maxTiles) break;
-  }
-
-  return tiles.length > 0 ? tiles : [[centerLat, centerLon, MAX_TILE_RADIUS]];
+  return [centerLat, centerLon, neededRadius];
 }
 
-// ── Fetch from a single ADS-B v2 source ─────────────────────────────
+// ── Fetch from a single ADS-B v2 source (1 request) ────────────────
 async function fetchFromAdsbSource(
   source: typeof ADSB_SOURCES[number],
-  tiles: [number, number, number][],
+  tile: [number, number, number],
 ): Promise<{ flights: Map<string, FlightState>; name: string }> {
   const state = getSourceState(source.name);
   const now = Date.now();
   const result = new Map<string, FlightState>();
 
-  // Skip if in backoff
-  if (now < state.backoffUntil) return { flights: result, name: source.name };
+  // Skip if in backoff (free APIs need ~10s between requests)
+  if (now < state.backoffUntil) {
+    return { flights: result, name: source.name };
+  }
 
-  for (const [lat, lon, radius] of tiles) {
-    // Per-source throttle: 1 req/sec
-    const wait = 1000 - (Date.now() - state.lastRequest);
-    if (wait > 0) await new Promise((r) => setTimeout(r, wait));
-    state.lastRequest = Date.now();
+  // Per-source throttle: 10s between requests (tested empirically)
+  const wait = 10_000 - (now - state.lastRequest);
+  if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+  state.lastRequest = Date.now();
 
-    if (!trackDailyRequest()) break;
+  if (!trackDailyRequest()) return { flights: result, name: source.name };
 
-    try {
-      const url = `${source.baseUrl}/point/${lat.toFixed(4)}/${lon.toFixed(4)}/${radius}`;
+  const [lat, lon, radius] = tile;
 
-      const headers: HeadersInit = {};
-      if (source.name === "airplaneslive" && process.env.AIRPLANES_LIVE_API_KEY) {
-        headers["api-auth"] = process.env.AIRPLANES_LIVE_API_KEY;
-      }
+  try {
+    const url = source.urlBuilder(lat, lon, radius);
 
-      const res = await fetch(url, {
-        cache: "no-store",
-        headers,
-        signal: AbortSignal.timeout(8000), // 8s timeout per request
-      });
-
-      if (res.status === 429) {
-        state.backoffUntil = Date.now() + 60_000;
-        console.warn(`[Flights] ${source.name} rate limited, backing off 60s`);
-        break;
-      }
-      if (!res.ok) continue;
-
-      const data = await res.json();
-      const acList = data?.ac;
-      if (!Array.isArray(acList)) continue;
-
-      for (const ac of acList) {
-        const parsed = parseAirplanesLive(ac as Record<string, unknown>);
-        if (parsed?.icao24) {
-          parsed.dataSource = source.name as FlightState["dataSource"];
-          result.set(parsed.icao24, parsed);
-        }
-      }
-    } catch {
-      // Timeout or network error — skip this tile for this source
-      continue;
+    const headers: HeadersInit = {};
+    if (source.name === "airplaneslive" && process.env.AIRPLANES_LIVE_API_KEY) {
+      headers["api-auth"] = process.env.AIRPLANES_LIVE_API_KEY;
     }
+
+    const res = await fetch(url, {
+      cache: "no-store",
+      headers,
+      signal: AbortSignal.timeout(10_000),
+    });
+
+    if (res.status === 429) {
+      state.backoffUntil = Date.now() + 15_000;
+      console.warn(`[Flights] ${source.name} rate limited, backing off 15s`);
+      return { flights: result, name: source.name };
+    }
+    if (!res.ok) {
+      console.warn(`[Flights] ${source.name} returned ${res.status} for ${url}`);
+      return { flights: result, name: source.name };
+    }
+
+    const data = await res.json();
+    const acList = data?.[source.responseKey];
+    if (!Array.isArray(acList)) {
+      console.warn(`[Flights] ${source.name} missing "${source.responseKey}" key, got: ${Object.keys(data || {}).join(",")}`);
+      return { flights: result, name: source.name };
+    }
+
+    for (const ac of acList) {
+      const parsed = parseAirplanesLive(ac as Record<string, unknown>);
+      if (parsed?.icao24) {
+        parsed.dataSource = source.name as FlightState["dataSource"];
+        result.set(parsed.icao24, parsed);
+      }
+    }
+  } catch {
+    // Timeout or network error
   }
 
   return { flights: result, name: source.name };
@@ -258,11 +264,21 @@ async function fetchFromAdsbSource(
 async function fetchAllAdsbSources(
   bbox: BoundingBox | null
 ): Promise<{ merged: FlightState[]; sources: string[] } | null> {
-  const tiles = bbox ? computeTiles(bbox) : GLOBAL_TILES;
+  const tile: [number, number, number] = bbox
+    ? computeTile(bbox)
+    : GLOBAL_TILES[0];
 
-  // Query all 3 networks in parallel
+  // For global (no-bbox) requests (e.g. landing page flight count),
+  // only query the primary source — saves rate limit budget.
+  // For regional (bbox) requests, query ALL sources in parallel —
+  // each makes exactly 1 request with the same center tile.
+  // Different feeder networks see different aircraft, so we get
+  // the UNION of all three networks.
+  const sourcesToQuery = bbox ? ADSB_SOURCES : [ADSB_SOURCES[0]];
+
+  // All sources in parallel — each makes exactly 1 API request
   const results = await Promise.allSettled(
-    ADSB_SOURCES.map((src) => fetchFromAdsbSource(src, tiles))
+    sourcesToQuery.map((src) => fetchFromAdsbSource(src, tile))
   );
 
   // Merge all aircraft by ICAO24 — prefer the entry with most data
