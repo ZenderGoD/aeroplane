@@ -50,7 +50,7 @@ export interface FlightState {
   positionSource?: string;
 
   // Data source tracking
-  dataSource?: "opensky" | "airplaneslive";
+  dataSource?: "opensky" | "airplaneslive" | "adsbfi" | "adsblol";
 }
 
 export interface FlightHistoryEntry {
