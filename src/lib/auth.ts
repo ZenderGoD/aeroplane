@@ -51,7 +51,7 @@ providers.push(
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers,
   pages: {
-    signIn: "/landing",
+    signIn: "/",
   },
   callbacks: {
     async session({ session, token }) {

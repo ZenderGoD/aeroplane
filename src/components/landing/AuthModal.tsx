@@ -48,11 +48,11 @@ function AuthModalInner() {
   };
 
   const handleOAuth = (provider: "google" | "github") => {
-    signIn(provider, { callbackUrl: "/" });
+    signIn(provider, { callbackUrl: "/tracker" });
   };
 
   const handleSignOut = () => {
-    signOut({ callbackUrl: "/landing" });
+    signOut({ callbackUrl: "/" });
   };
 
   // Loading state

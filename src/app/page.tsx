@@ -1,530 +1,328 @@
-"use client";
+import { Plane, ArrowRight, Radio, MapPin, Cloud, Wind, BarChart3, Shield } from "lucide-react";
+import LiveFlightCount from "@/components/landing/LiveFlightCount";
+import HeroBackground from "@/components/landing/HeroBackground";
+import ScrollAnimator from "@/components/landing/ScrollAnimator";
+import AuthModal from "@/components/landing/AuthModal";
 
-import { useState, useMemo, useRef, useEffect, Suspense } from "react";
-import { useFlightData } from "@/hooks/useFlightData";
-import { useSharedFlightData } from "@/contexts/FlightDataContext";
-import { useFlightHistory } from "@/hooks/useFlightHistory";
-import { useAnomalyDetection } from "@/hooks/useAnomalyDetection";
-import { computeAllInstabilities, computeInstability } from "@/lib/instabilityScore";
-import { useNLSearch } from "@/hooks/useNLSearch";
-import { useNearestAirport } from "@/hooks/useNearestAirport";
-import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
-import { useNotifications } from "@/hooks/useNotifications";
-import { useShareableFlight } from "@/hooks/useShareableFlight";
-import FlightMap from "@/components/FlightMap";
-import type { SearchBarHandle } from "@/components/SearchBar";
-import FlightSidebar from "@/components/FlightSidebar";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import LeftSidebar from "@/components/LeftSidebar";
-import MobileNav from "@/components/MobileNav";
-import ReplayControls, { filterFlightsByReplayTime } from "@/components/ReplayControls";
-import { KeyboardShortcutHelp } from "@/components/KeyboardShortcutHelp";
-import dynamic from "next/dynamic";
-import { REGIONS } from "@/lib/regions";
-import type { ViewMode } from "@/types/viewMode";
-import { FlightDataProvider } from "@/contexts/FlightDataContext";
-import AirspaceCopilot from "@/components/AirspaceCopilot";
-import AirportDetailSheet from "@/components/AirportDetailSheet";
-import CorridorDetailSheet from "@/components/CorridorDetailSheet";
-import CommandPalette from "@/components/CommandPalette";
-import MapHUD from "@/components/MapHUD";
-import LiveActivityFeed from "@/components/LiveActivityFeed";
-import ShareButton from "@/components/ShareButton";
-import SoundToggle from "@/components/SoundToggle";
+/* ────────────────────────────────────────────────────────────
+   LANDING PAGE — Clean editorial, aviation-themed
+   ──────────────────────────────────────────────────────────── */
 
-const Flight3DViewer = dynamic(() => import("@/components/Flight3DViewer"), {
-  ssr: false,
-});
-
-// ---------- Full-screen mode components (lazy loaded) ----------
-
-const AirportRadarMode = dynamic(() => import("@/components/AirportRadarMode"), { ssr: false });
-const AirportBoardMode = dynamic(() => import("@/components/AirportBoardMode"), { ssr: false });
-const FleetTrackerMode = dynamic(() => import("@/components/FleetTrackerMode"), { ssr: false });
-const AircraftProfileMode = dynamic(() => import("@/components/AircraftProfileMode"), { ssr: false });
-const StatsDashboardMode = dynamic(() => import("@/components/StatsDashboardMode"), { ssr: false });
-const ComparisonMode = dynamic(() => import("@/components/ComparisonMode"), { ssr: false });
-const AlertSystemMode = dynamic(() => import("@/components/AlertSystemMode"), { ssr: false });
-const TurbulenceMode = dynamic(() => import("@/components/TurbulenceMode"), { ssr: false });
-const EmbedGeneratorMode = dynamic(() => import("@/components/EmbedGeneratorMode"), { ssr: false });
-const ApiPortalMode = dynamic(() => import("@/components/ApiPortalMode"), { ssr: false });
-const ExportReportsMode = dynamic(() => import("@/components/ExportReportsMode"), { ssr: false });
-
-const FULLSCREEN_MODES: Set<ViewMode> = new Set([
-  "airport", "fids", "fleet", "aircraft", "stats", "comparison",
-  "alerts", "turbulence", "embed", "api", "exports",
-]);
-
-function HomeContent() {
-  const [regionKey, setRegionKey] = useState("india");
-  const [viewMode, setViewMode] = useState<ViewMode>("normal");
-  const [measureActive, setMeasureActive] = useState(false);
-  const [replayActive, setReplayActive] = useState(false);
-  const [corridorsVisible, setCorridorsVisible] = useState(false);
-  const [flightDistanceActive, setFlightDistanceActive] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [replayTime, setReplayTime] = useState<number | null>(null);
-  const [show3DViewer, setShow3DViewer] = useState(false);
-  const [hiddenCategories, setHiddenCategories] = useState<Set<number>>(new Set());
-  const [weatherVisible, setWeatherVisible] = useState(false);
-  const [metarVisible, setMetarVisible] = useState(false);
-  const [runwaysVisible, setRunwaysVisible] = useState(false);
-  const [routeDensityVisible, setRouteDensityVisible] = useState(false);
-  const [windAloftVisible, setWindAloftVisible] = useState(false);
-  const [terrainVisible, setTerrainVisible] = useState(false);
-  const [pirepVisible, setPirepVisible] = useState(false);
-  const [routeLinesVisible, setRouteLinesVisible] = useState(false);
-  const [selectedAirport, setSelectedAirport] = useState<string | null>(null);
-  const [selectedCorridor, setSelectedCorridor] = useState<string | null>(null);
-  const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
-  const region = REGIONS[regionKey];
-  const searchBarRef = useRef<SearchBarHandle>(null);
-
-  // Keep shared flight data provider in sync with region changes
-  const sharedData = useSharedFlightData();
-  useEffect(() => {
-    sharedData.setBbox(region.bbox);
-  }, [region.bbox]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // NL Search
-  const { rawQuery, setRawQuery, filters, isAISearching } = useNLSearch();
-
-  // Flight data
-  const {
-    flights,
-    allFlights,
-    totalCount,
-    filteredCount,
-    isLoading,
-    isRefreshing,
-    error,
-    isRateLimited,
-    isQuotaExhausted,
-    dataSource,
-    apiError,
-    selectedFlight,
-    setSelectedFlight,
-    lastUpdated,
-  } = useFlightData(
-    region.bbox,
-    filters
-  );
-
-  // Auto-switch to trails view when arrivals filter is active
-  const prevViewModeRef = useRef<ViewMode | null>(null);
-  useEffect(() => {
-    if (filters?.destination_airport) {
-      if (viewMode !== "trails") {
-        prevViewModeRef.current = viewMode;
-        setViewMode("trails");
-      }
-    } else if (prevViewModeRef.current !== null) {
-      setViewMode(prevViewModeRef.current);
-      prevViewModeRef.current = null;
-    }
-  }, [filters?.destination_airport]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Shareable flight links
-  const { initialFlightIcao, updateFlightUrl } = useShareableFlight();
-
-  // Select flight from URL on initial load
-  useEffect(() => {
-    if (initialFlightIcao && allFlights.length > 0) {
-      const flight = allFlights.find((f) => f.icao24 === initialFlightIcao);
-      if (flight) setSelectedFlight(flight);
-    }
-  }, [initialFlightIcao, allFlights, setSelectedFlight]);
-
-  // Update URL when flight selection changes
-  useEffect(() => {
-    updateFlightUrl(selectedFlight?.icao24 ?? null);
-  }, [selectedFlight, updateFlightUrl]);
-
-  // Flight history (for trails + anomaly detection + replay)
-  const { history: flightHistory } = useFlightHistory(allFlights);
-
-  // Anomaly detection
-  const { anomalies, anomalyByIcao, anomalyIcaos } = useAnomalyDetection(
-    allFlights,
-    flightHistory
-  );
-
-  // Instability scores
-  const instabilityScores = useMemo(
-    () => computeAllInstabilities(allFlights, flightHistory),
-    [allFlights, flightHistory]
-  );
-
-  // Instability for selected flight
-  const selectedInstability = useMemo(() => {
-    if (!selectedFlight) return null;
-    return computeInstability(selectedFlight, flightHistory.get(selectedFlight.icao24));
-  }, [selectedFlight, flightHistory]);
-
-  // Browser notifications for critical anomalies
-  useNotifications(anomalies);
-
-  // Anomalies for selected flight
-  const selectedAnomalies = useMemo(
-    () => anomalyByIcao.get(selectedFlight?.icao24 ?? "") ?? [],
-    [anomalyByIcao, selectedFlight]
-  );
-
-  // Airport estimate for selected flight (used for route lines + weather)
-  const airportEstimate = useNearestAirport(selectedFlight);
-
-  // Keyboard shortcuts
-  const { showHelp, setShowHelp } = useKeyboardShortcuts({
-    flights,
-    selectedFlight,
-    setSelectedFlight,
-    setSearchFocused: () => searchBarRef.current?.focus(),
-    expandSidebar: () => setSidebarCollapsed(false),
-    toggleSidebar: () => setSidebarCollapsed((v) => !v),
-    onToggleMeasure: () => setMeasureActive((v) => !v),
-    onToggleWeather: () => setWeatherVisible((v) => !v),
-    onToggleRouteLines: () => setRouteLinesVisible((v) => !v),
-    onToggleRouteDensity: () => setRouteDensityVisible((v) => !v),
-    onToggleTerrain: () => setTerrainVisible((v) => !v),
-    onViewModeChange: setViewMode,
-  });
-
-  // Cmd+K command palette
-  useEffect(() => {
-    const handleKeyDown = (e: globalThis.KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        setCmdPaletteOpen((v) => !v);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
-  // Replay: filter flights when replaying
-  const displayFlights = useMemo(() => {
-    if (replayTime && replayActive) {
-      return filterFlightsByReplayTime(allFlights, flightHistory, replayTime);
-    }
-    return flights;
-  }, [replayTime, replayActive, allFlights, flightHistory, flights]);
-
+export default function LandingPage() {
   return (
-    <main className="relative h-screen w-screen overflow-hidden">
-      {isLoading && <LoadingSpinner message="Loading flight data..." />}
+    <div className="min-h-screen bg-[#050505] text-white overflow-x-hidden selection:bg-white/10">
 
-      {isRateLimited && !isLoading && (
-        <div className={`absolute top-4 left-1/2 -translate-x-1/2 z-[1000] border px-4 py-2.5 rounded-xl text-sm max-w-lg text-center animate-slide-up ${
-          isQuotaExhausted
-            ? "glass-heavy border-slate-400/20 text-slate-200 shadow-[0_0_24px_rgba(148,163,184,0.1)]"
-            : "glass-heavy border-slate-400/20 text-slate-200 shadow-[0_0_24px_rgba(148,163,184,0.1)]"
-        }`}>
-          <div className="flex items-center gap-2 justify-center">
-            <svg className={`w-4 h-4 flex-shrink-0 ${isQuotaExhausted ? "text-slate-300" : "text-slate-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-            </svg>
-            <span className="font-semibold">
-              {isQuotaExhausted ? "Daily API quota exhausted" : "OpenSky API rate limited"}
+      {/* ═══ NAV ═══════════════════════════════════════════════ */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-[rgba(5,5,5,0.8)] backdrop-blur-xl border-b border-white/[0.06]">
+        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+          <a href="/" className="flex items-center gap-2 group">
+            <Plane size={18} className="text-white/70 -rotate-45 group-hover:text-white transition-colors" />
+            <span className="font-semibold tracking-tight">
+              Aero<span className="text-white/50">Intel</span>
             </span>
+          </a>
+          <div className="flex items-center gap-5">
+            <a href="#capabilities" className="hidden sm:block text-sm text-white/40 hover:text-white transition-colors">Capabilities</a>
+            <a href="#data" className="hidden sm:block text-sm text-white/40 hover:text-white transition-colors">Data</a>
+            <a href="#built-for" className="hidden sm:block text-sm text-white/40 hover:text-white transition-colors">For Schools</a>
+            <AuthModal />
+            <a
+              href="/tracker"
+              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium bg-white text-black hover:bg-white/90 transition-colors"
+            >
+              Open Tracker
+              <ArrowRight size={14} />
+            </a>
           </div>
-          <p className={`text-xs mt-1 ${isQuotaExhausted ? "text-slate-300/70" : "text-slate-400/70"}`}>
-            {apiError ?? (dataSource === "stale" ? "Showing cached data. " : "")}
-            {!isQuotaExhausted && " Auto-retrying..."}
+        </div>
+      </nav>
+
+      {/* ═══ HERO ══════════════════════════════════════════════ */}
+      <section className="relative min-h-[100vh] flex flex-col items-center justify-center px-6 pt-14">
+        <HeroBackground />
+
+        {/* Runway center line — decorative */}
+        <div className="absolute top-14 left-1/2 -translate-x-1/2 w-px h-[30vh] bg-gradient-to-b from-transparent via-white/10 to-transparent pointer-events-none" />
+
+        <div className="relative z-10 max-w-4xl mx-auto text-center">
+          {/* Live badge */}
+          <div className="mb-10">
+            <LiveFlightCount />
+          </div>
+
+          <h1 className="text-[clamp(2.5rem,7vw,6rem)] font-bold leading-[1.05] tracking-tight mb-6">
+            <span className="block">See every aircraft</span>
+            <span className="block text-white/30">in real time.</span>
+          </h1>
+
+          <p className="text-lg sm:text-xl text-white/40 max-w-xl mx-auto mb-10 leading-relaxed font-light">
+            Aviation intelligence for training schools. Live ADS-B tracking,
+            weather, METAR, and airport radar — all in one platform.
           </p>
+
+          <div className="flex items-center justify-center gap-4 flex-wrap">
+            <a
+              href="/tracker"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-white text-black font-semibold text-sm hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] transition-all duration-300 hover:scale-[1.02]"
+            >
+              Launch Platform
+              <ArrowRight size={16} />
+            </a>
+            <a
+              href="#capabilities"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full border border-white/10 text-white/60 font-medium text-sm hover:text-white hover:border-white/25 transition-all duration-300"
+            >
+              See what it does
+            </a>
+          </div>
         </div>
-      )}
 
-      {error && !isLoading && !isRateLimited && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] glass-heavy border border-slate-400/20 text-slate-200 px-4 py-2.5 rounded-xl shadow-[0_0_24px_rgba(148,163,184,0.1)] text-sm animate-slide-up">
-          Unable to fetch flight data. Retrying...
+        {/* Bottom fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#050505] to-transparent pointer-events-none z-[1]" />
+
+        {/* Runway threshold marks — decorative bottom */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-[2]">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="w-1 h-8 bg-white/[0.06] rounded-full" />
+          ))}
         </div>
-      )}
+      </section>
 
-      {!FULLSCREEN_MODES.has(viewMode) && <LeftSidebar
-        collapsed={sidebarCollapsed}
-        onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
-        searchBarRef={searchBarRef}
-        rawQuery={rawQuery}
-        onRawQueryChange={setRawQuery}
-        isAISearching={isAISearching}
-        isNaturalLanguage={filters?.is_natural_language ?? false}
-        regionKey={regionKey}
-        onRegionChange={setRegionKey}
-        totalCount={totalCount}
-        filteredCount={filteredCount}
-        isFiltered={!!filters}
-        isRefreshing={isRefreshing}
-        isRateLimited={isRateLimited}
-        lastUpdated={lastUpdated}
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-        flights={allFlights}
-        measureActive={measureActive}
-        onMeasureToggle={() => setMeasureActive((v) => !v)}
-        replayActive={replayActive}
-        onReplayToggle={() => {
-          setReplayActive((v) => !v);
-          if (replayActive) setReplayTime(null);
-        }}
-        corridorsVisible={corridorsVisible}
-        onCorridorsToggle={() => setCorridorsVisible((v) => !v)}
-        flightDistanceActive={flightDistanceActive}
-        onFlightDistanceToggle={() => setFlightDistanceActive((v) => !v)}
-        anomalies={anomalies}
-        onSelectFlight={setSelectedFlight}
-        allFlights={allFlights}
-        hiddenCategories={hiddenCategories}
-        onToggleCategory={(cat: number) => {
-          setHiddenCategories(prev => {
-            const next = new Set(prev);
-            if (next.has(cat)) next.delete(cat);
-            else next.add(cat);
-            return next;
-          });
-        }}
-        weatherVisible={weatherVisible}
-        onWeatherToggle={() => setWeatherVisible((v) => !v)}
-        metarVisible={metarVisible}
-        onMetarToggle={() => setMetarVisible((v) => !v)}
-        runwaysVisible={runwaysVisible}
-        onRunwaysToggle={() => setRunwaysVisible((v) => !v)}
-        routeDensityVisible={routeDensityVisible}
-        onRouteDensityToggle={() => setRouteDensityVisible((v) => !v)}
-        windAloftVisible={windAloftVisible}
-        onWindAloftToggle={() => setWindAloftVisible((v) => !v)}
-        terrainVisible={terrainVisible}
-        onTerrainToggle={() => setTerrainVisible((v) => !v)}
-        pirepVisible={pirepVisible}
-        onPirepToggle={() => setPirepVisible((v) => !v)}
-        routeLinesVisible={routeLinesVisible}
-        onRouteLinesToggle={() => setRouteLinesVisible((v) => !v)}
-        onSelectAirport={setSelectedAirport}
-        onSelectAirline={(icaoCode) => {
-          setRawQuery(icaoCode);
-          setViewMode("fleet");
-        }}
-      />}
+      {/* ═══ SCREENSHOT ════════════════════════════════════════ */}
+      <section className="relative px-6 -mt-20 z-10 pb-32">
+        <ScrollAnimator>
+          <div className="max-w-5xl mx-auto">
+            <div className="rounded-xl overflow-hidden border border-white/[0.08] shadow-[0_32px_128px_-16px_rgba(0,0,0,0.8)]">
+              <div className="bg-[#0a0a0a] px-4 py-2.5 flex items-center gap-2 border-b border-white/[0.06]">
+                <div className="flex gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
+                </div>
+                <span className="text-xs text-white/20 font-mono ml-2">anuragair.com/tracker</span>
+              </div>
+              <div className="relative w-full bg-[#0a0a0a]" style={{ aspectRatio: "16/9" }}>
+                <iframe
+                  src="/embed"
+                  title="AeroIntel flight tracker preview"
+                  className="w-full h-full border-0 pointer-events-none"
+                  loading="lazy"
+                />
+                {/* Bottom gradient fade so it blends into the page */}
+                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
+              </div>
+            </div>
+          </div>
+        </ScrollAnimator>
+      </section>
 
-      {!FULLSCREEN_MODES.has(viewMode) && (
-        <MobileNav
-          searchBarRef={searchBarRef}
-          rawQuery={rawQuery}
-          onRawQueryChange={setRawQuery}
-          isAISearching={isAISearching}
-          isNaturalLanguage={filters?.is_natural_language ?? false}
-          regionKey={regionKey}
-          onRegionChange={setRegionKey}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          measureActive={measureActive}
-          onMeasureToggle={() => setMeasureActive((v) => !v)}
-          replayActive={replayActive}
-          onReplayToggle={() => {
-            setReplayActive((v) => !v);
-            if (replayActive) setReplayTime(null);
-          }}
-          corridorsVisible={corridorsVisible}
-          onCorridorsToggle={() => setCorridorsVisible((v) => !v)}
-          flightDistanceActive={flightDistanceActive}
-          onFlightDistanceToggle={() => setFlightDistanceActive((v) => !v)}
-          weatherVisible={weatherVisible}
-          onWeatherToggle={() => setWeatherVisible((v) => !v)}
-          metarVisible={metarVisible}
-          onMetarToggle={() => setMetarVisible((v) => !v)}
-          runwaysVisible={runwaysVisible}
-          onRunwaysToggle={() => setRunwaysVisible((v) => !v)}
-          routeDensityVisible={routeDensityVisible}
-          onRouteDensityToggle={() => setRouteDensityVisible((v) => !v)}
-          windAloftVisible={windAloftVisible}
-          onWindAloftToggle={() => setWindAloftVisible((v) => !v)}
-          terrainVisible={terrainVisible}
-          onTerrainToggle={() => setTerrainVisible((v) => !v)}
-          pirepVisible={pirepVisible}
-          onPirepToggle={() => setPirepVisible((v) => !v)}
-          routeLinesVisible={routeLinesVisible}
-          onRouteLinesToggle={() => setRouteLinesVisible((v) => !v)}
-        />
-      )}
+      {/* ═══ CAPABILITIES ══════════════════════════════════════ */}
+      <section id="capabilities" className="px-6 py-32">
+        <div className="max-w-5xl mx-auto">
+          <ScrollAnimator>
+            <p className="text-sm font-mono text-white/25 uppercase tracking-[0.2em] mb-4">Capabilities</p>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6 max-w-3xl">
+              Built for the people who <span className="text-white/30">teach people to fly.</span>
+            </h2>
+            <p className="text-lg text-white/35 max-w-2xl leading-relaxed mb-20">
+              Every feature designed for training schools — from monitoring student
+              solo flights to briefing weather before a cross-country.
+            </p>
+          </ScrollAnimator>
 
-      {(() => {
-        const exitMode = () => setViewMode("normal");
-        switch (viewMode) {
-          case "airport": return <AirportRadarMode onExitMode={exitMode} />;
-          case "fids": return <AirportBoardMode onExitMode={exitMode} />;
-          case "fleet": return <FleetTrackerMode onExitMode={exitMode} />;
-          case "aircraft": return <AircraftProfileMode onExitMode={exitMode} />;
-          case "stats": return <StatsDashboardMode onExitMode={exitMode} />;
-          case "comparison": return <ComparisonMode onExitMode={exitMode} />;
-          case "alerts": return <AlertSystemMode onExitMode={exitMode} />;
-          case "turbulence": return <TurbulenceMode onExitMode={exitMode} />;
-          case "embed": return <EmbedGeneratorMode onExitMode={exitMode} />;
-          case "api": return <ApiPortalMode onExitMode={exitMode} />;
-          case "exports": return <ExportReportsMode onExitMode={exitMode} />;
-          default: return (
-            <FlightMap
-              flights={displayFlights}
-              selectedFlight={selectedFlight}
-              onSelectFlight={setSelectedFlight}
-              region={region}
-              anomalyIcaos={anomalyIcaos}
-              instabilityScores={instabilityScores}
-              viewMode={viewMode}
-              flightHistory={flightHistory}
-              airportEstimate={airportEstimate}
-              measureActive={measureActive}
-              onMeasureDeactivate={() => setMeasureActive(false)}
-              corridorsVisible={corridorsVisible}
-              flightDistanceActive={flightDistanceActive}
-              onFlightDistanceDeactivate={() => setFlightDistanceActive(false)}
-              hiddenCategories={hiddenCategories}
-              weatherVisible={weatherVisible}
-              metarVisible={metarVisible}
-              runwaysVisible={runwaysVisible}
-              routeDensityVisible={routeDensityVisible}
-              windAloftVisible={windAloftVisible}
-              terrainVisible={terrainVisible}
-              pirepVisible={pirepVisible}
-              routeLinesVisible={routeLinesVisible}
-              onSelectCorridor={setSelectedCorridor}
-            />
-          );
-        }
-      })()}
-
-      {/* Replay Controls */}
-      {!FULLSCREEN_MODES.has(viewMode) && (
-        <ReplayControls
-          flightHistory={flightHistory}
-          flights={allFlights}
-          isActive={replayActive}
-          onToggle={() => {
-            setReplayActive(false);
-            setReplayTime(null);
-          }}
-          onReplayTimeChange={setReplayTime}
-        />
-      )}
-
-      {!FULLSCREEN_MODES.has(viewMode) && (
-        <FlightSidebar
-          flight={selectedFlight}
-          onClose={() => setSelectedFlight(null)}
-          anomalies={selectedAnomalies}
-          instability={selectedInstability}
-          onOpen3D={() => setShow3DViewer(true)}
-          flightHistory={selectedFlight ? flightHistory.get(selectedFlight.icao24) : undefined}
-        />
-      )}
-
-      {/* 3D Flight Viewer overlay */}
-      {show3DViewer && selectedFlight && !FULLSCREEN_MODES.has(viewMode) && (
-        <Flight3DViewer
-          flight={selectedFlight}
-          onClose={() => setShow3DViewer(false)}
-        />
-      )}
-
-      {/* Airport & Corridor Detail Sheets */}
-      {!FULLSCREEN_MODES.has(viewMode) && (
-        <AirportDetailSheet
-          airportIcao={selectedAirport}
-          onClose={() => setSelectedAirport(null)}
-          allFlights={allFlights}
-          onSelectCorridor={(id) => {
-            setSelectedAirport(null);
-            setSelectedCorridor(id);
-          }}
-        />
-      )}
-      {!FULLSCREEN_MODES.has(viewMode) && (
-        <CorridorDetailSheet
-          corridorId={selectedCorridor}
-          onClose={() => setSelectedCorridor(null)}
-          allFlights={allFlights}
-          onSelectAirport={(icao) => {
-            setSelectedCorridor(null);
-            setSelectedAirport(icao);
-          }}
-          onSelectFlight={setSelectedFlight}
-        />
-      )}
-
-      {/* Map HUD & Live Feed (normal map modes only) */}
-      {!FULLSCREEN_MODES.has(viewMode) && (
-        <MapHUD
-          totalCount={totalCount}
-          filteredCount={filteredCount}
-          isRefreshing={isRefreshing}
-          lastUpdated={lastUpdated}
-          dataSource={dataSource}
-          flights={displayFlights}
-        />
-      )}
-      {!FULLSCREEN_MODES.has(viewMode) && (
-        <LiveActivityFeed
-          flights={displayFlights}
-          flightHistory={flightHistory}
-        />
-      )}
-
-      {/* Share & Sound controls */}
-      {!FULLSCREEN_MODES.has(viewMode) && (
-        <div className="absolute top-4 right-4 z-[900] flex items-center gap-2">
-          <ShareButton selectedFlightIcao={selectedFlight?.icao24} />
-          <SoundToggle />
+          {/* Feature rows — no cards, just type and lines */}
+          <div className="space-y-0">
+            {[
+              {
+                icon: <Radio size={20} />,
+                title: "Live ADS-B Tracking",
+                description: "Track every aircraft in your airspace with real-time ADS-B data from 30,000+ ground receivers worldwide. See altitude, speed, heading, and vertical rate — updated every 30 seconds.",
+              },
+              {
+                icon: <MapPin size={20} />,
+                title: "Airport Radar Mode",
+                description: "Your airport, front and center. Range rings, bearing lines, approach corridors, and a flight list — everything an instructor needs to monitor the pattern from the ground.",
+              },
+              {
+                icon: <Cloud size={20} />,
+                title: "Weather & METAR",
+                description: "NOAA METAR observations, precipitation overlays, wind layers, and ceiling data pulled live from aviationweather.gov. The same data your students brief with, right on the map.",
+              },
+              {
+                icon: <BarChart3 size={20} />,
+                title: "FIDS & Flight Board",
+                description: "Real-time arrivals and departures board for any airport. Filter by airline, sort by time, and see which aircraft are on approach, departed, or taxiing.",
+              },
+              {
+                icon: <Wind size={20} />,
+                title: "Winds & Turbulence",
+                description: "Upper-level wind analysis from FL100 to FL450, plus turbulence detection inferred from ADS-B vertical rate anomalies. Know the ride before your students take off.",
+              },
+              {
+                icon: <Shield size={20} />,
+                title: "Fleet Tracking",
+                description: "Track your school's aircraft by callsign prefix or registration. See every training flight at a glance — who's in the pattern, who's on a cross-country, who just landed.",
+              },
+            ].map((feature, i) => (
+              <ScrollAnimator key={i} delay={i * 40}>
+                <div className="group grid grid-cols-1 md:grid-cols-[200px_1fr] gap-4 md:gap-12 py-10 border-t border-white/[0.06] first:border-t-0">
+                  <div className="flex items-start gap-3 text-white/30 group-hover:text-white/60 transition-colors">
+                    {feature.icon}
+                    <span className="text-sm font-semibold uppercase tracking-wider">{feature.title}</span>
+                  </div>
+                  <p className="text-base sm:text-lg text-white/40 leading-relaxed max-w-2xl group-hover:text-white/55 transition-colors">
+                    {feature.description}
+                  </p>
+                </div>
+              </ScrollAnimator>
+            ))}
+          </div>
         </div>
-      )}
+      </section>
 
-      {/* Airspace Copilot Chat */}
-      <AirspaceCopilot />
+      {/* ═══ DATA SOURCES ══════════════════════════════════════ */}
+      <section id="data" className="px-6 py-32 border-t border-white/[0.04]">
+        <div className="max-w-5xl mx-auto">
+          <ScrollAnimator>
+            <p className="text-sm font-mono text-white/25 uppercase tracking-[0.2em] mb-4">Data</p>
+            <h2 className="text-4xl sm:text-5xl font-bold leading-[1.1] mb-6 max-w-3xl">
+              Real data from <span className="text-white/30">real infrastructure.</span>
+            </h2>
+            <p className="text-lg text-white/35 max-w-2xl leading-relaxed mb-16">
+              No synthetic feeds. Every data point comes from established aviation
+              data networks — the same sources airlines and ATC rely on.
+            </p>
+          </ScrollAnimator>
 
-      {/* Keyboard Shortcut Help Dialog */}
-      <KeyboardShortcutHelp open={showHelp} onOpenChange={setShowHelp} />
-
-      {/* Command Palette */}
-      <CommandPalette
-        open={cmdPaletteOpen}
-        onOpenChange={setCmdPaletteOpen}
-        allFlights={allFlights}
-        onSelectFlight={setSelectedFlight}
-        onSelectAirport={setSelectedAirport}
-        onSelectCorridor={setSelectedCorridor}
-        onToggleCorridors={() => setCorridorsVisible((v) => !v)}
-        onToggleWeather={() => setWeatherVisible((v) => !v)}
-        onToggleMeasure={() => setMeasureActive((v) => !v)}
-        onToggleReplay={() => {
-          setReplayActive((v) => !v);
-          if (replayActive) setReplayTime(null);
-        }}
-        onViewModeChange={setViewMode}
-        onShowKeyboardHelp={() => setShowHelp(true)}
-      />
-
-      {/* Measure mode indicator (2D only) */}
-      {measureActive && viewMode !== "globe" && !FULLSCREEN_MODES.has(viewMode) && (
-        <div className={`absolute top-4 z-[1000] glass-heavy border border-slate-400/20 text-slate-300 px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all duration-300 shadow-[0_0_16px_rgba(148,163,184,0.1)] animate-slide-up ${sidebarCollapsed ? "left-4" : "left-[296px]"}`}>
-          <div className="w-2 h-2 rounded-full bg-slate-300 animate-pulse shadow-[0_0_8px_rgba(203,213,225,0.5)]" />
-          Click two points to measure distance &middot; Press Esc to cancel
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-12">
+            {[
+              { name: "airplanes.live", detail: "ADS-B aggregation from 30,000+ volunteer receivers" },
+              { name: "NOAA / aviationweather.gov", detail: "METAR, TAF, and surface weather observations" },
+              { name: "ADS-B Exchange Network", detail: "Unfiltered ADS-B with military and government aircraft" },
+              { name: "OpenStreetMap + Stadia", detail: "9 map styles including satellite and topographic" },
+              { name: "FAA / ICAO databases", detail: "Airport, runway, and aircraft type reference data" },
+              { name: "Pilot reports (PIREPs)", detail: "Turbulence, icing, and visibility from actual pilots" },
+            ].map((source, i) => (
+              <ScrollAnimator key={i} delay={i * 60}>
+                <div className="group">
+                  <p className="text-sm font-semibold text-white/60 group-hover:text-white/80 transition-colors mb-1">
+                    {source.name}
+                  </p>
+                  <p className="text-sm text-white/25 leading-relaxed">
+                    {source.detail}
+                  </p>
+                </div>
+              </ScrollAnimator>
+            ))}
+          </div>
         </div>
-      )}
+      </section>
 
-      {/* Flight distance mode indicator */}
-      {flightDistanceActive && viewMode !== "globe" && !FULLSCREEN_MODES.has(viewMode) && (
-        <div className={`absolute top-4 z-[1000] glass-heavy border border-slate-400/20 text-slate-300 px-4 py-2 rounded-xl text-xs flex items-center gap-2 transition-all duration-300 shadow-[0_0_16px_rgba(148,163,184,0.1)] animate-slide-up ${sidebarCollapsed ? "left-4" : "left-[296px]"}`}>
-          <div className="w-2 h-2 rounded-full bg-slate-400 animate-pulse shadow-[0_0_8px_rgba(148,163,184,0.5)]" />
-          Click two aircraft to measure separation &middot; Press Esc to cancel
+      {/* ═══ BUILT FOR SCHOOLS ═════════════════════════════════ */}
+      <section id="built-for" className="px-6 py-32 border-t border-white/[0.04]">
+        <div className="max-w-5xl mx-auto">
+          <ScrollAnimator>
+            <p className="text-sm font-mono text-white/25 uppercase tracking-[0.2em] mb-4">For Training Schools</p>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] mb-16 max-w-4xl">
+              Your students are in the air.<br />
+              <span className="text-white/30">Know exactly where.</span>
+            </h2>
+          </ScrollAnimator>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-16">
+            <ScrollAnimator delay={0}>
+              <h3 className="text-lg font-semibold text-white/70 mb-3">Monitor solo flights</h3>
+              <p className="text-base text-white/30 leading-relaxed">
+                Track your student&apos;s first solo from the flight school office. See their
+                altitude, pattern position, and ground speed in real time. Know the
+                moment they touch down.
+              </p>
+            </ScrollAnimator>
+
+            <ScrollAnimator delay={80}>
+              <h3 className="text-lg font-semibold text-white/70 mb-3">Brief weather visually</h3>
+              <p className="text-base text-white/30 leading-relaxed">
+                Pull up METAR, winds aloft, and precipitation overlays on one screen
+                during pre-flight briefings. Students see the actual conditions mapped,
+                not just raw text.
+              </p>
+            </ScrollAnimator>
+
+            <ScrollAnimator delay={160}>
+              <h3 className="text-lg font-semibold text-white/70 mb-3">Track your fleet</h3>
+              <p className="text-base text-white/30 leading-relaxed">
+                Filter by your school&apos;s callsign prefix to see every training aircraft
+                at a glance. Who&apos;s in the pattern, who&apos;s outbound on a cross-country,
+                who just landed.
+              </p>
+            </ScrollAnimator>
+
+            <ScrollAnimator delay={240}>
+              <h3 className="text-lg font-semibold text-white/70 mb-3">Put it on the big screen</h3>
+              <p className="text-base text-white/30 leading-relaxed">
+                Mount a display in dispatch or the student lounge showing your airport&apos;s
+                radar view. Live traffic, weather, and the FIDS board running all day —
+                built to stay on.
+              </p>
+            </ScrollAnimator>
+          </div>
         </div>
-      )}
-    </main>
-  );
-}
+      </section>
 
-export default function Home() {
-  return (
-    <Suspense fallback={<LoadingSpinner message="Loading..." />}>
-      <FlightDataProvider initialBbox={REGIONS["india"].bbox}>
-        <HomeContent />
-      </FlightDataProvider>
-    </Suspense>
+      {/* ═══ STATS BAR ═════════════════════════════════════════ */}
+      <section className="px-6 py-20 border-t border-white/[0.04]">
+        <div className="max-w-5xl mx-auto flex flex-wrap justify-between gap-8">
+          {[
+            { value: "30,000+", label: "ADS-B receivers" },
+            { value: "9", label: "Map styles" },
+            { value: "13", label: "View modes" },
+            { value: "15", label: "Data overlays" },
+          ].map((stat) => (
+            <div key={stat.label} className="text-center flex-1 min-w-[120px]">
+              <p className="text-3xl sm:text-4xl font-bold text-white/70 mb-1">{stat.value}</p>
+              <p className="text-sm text-white/25">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══ FINAL CTA ═════════════════════════════════════════ */}
+      <section className="px-6 py-32 border-t border-white/[0.04]">
+        <div className="max-w-3xl mx-auto text-center">
+          <ScrollAnimator>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6">
+              Ready for takeoff.
+            </h2>
+            <p className="text-lg text-white/35 mb-10 max-w-xl mx-auto leading-relaxed">
+              Free to use. No account required. Open the tracker and see
+              your airspace in seconds.
+            </p>
+            <a
+              href="/tracker"
+              className="inline-flex items-center gap-2 px-10 py-4 rounded-full bg-white text-black font-semibold hover:shadow-[0_0_48px_rgba(255,255,255,0.15)] transition-all duration-300 hover:scale-[1.02]"
+            >
+              Open Flight Tracker
+              <ArrowRight size={18} />
+            </a>
+          </ScrollAnimator>
+        </div>
+      </section>
+
+      {/* ═══ FOOTER ════════════════════════════════════════════ */}
+      <footer className="px-6 py-12 border-t border-white/[0.04]">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-white/25">
+            <Plane size={14} className="-rotate-45" />
+            <span className="text-sm">AeroIntel</span>
+          </div>
+          <div className="flex items-center gap-6">
+            <a href="/tracker" className="text-sm text-white/20 hover:text-white/50 transition-colors">Tracker</a>
+            <a href="/airport" className="text-sm text-white/20 hover:text-white/50 transition-colors">Airport</a>
+            <a href="/embed" className="text-sm text-white/20 hover:text-white/50 transition-colors">Embed</a>
+          </div>
+          <p className="text-xs text-white/15">Data from airplanes.live &amp; NOAA</p>
+        </div>
+      </footer>
+    </div>
   );
 }
