@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { DEFAULT_CENTER, DEFAULT_ZOOM } from "@/lib/mapUtils";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useMapStyle } from "@/hooks/useMapStyle";
 import CanvasPlaneLayer from "./CanvasPlaneLayer";
 import MeasureTool from "./MeasureTool";
 import CorridorOverlay from "./CorridorOverlay";
@@ -114,10 +115,7 @@ export default function MapContent({
   routeLinesVisible = false,
   onSelectCorridor,
 }: Props) {
-  const { theme } = useTheme();
-  const tileUrl = theme === "light"
-    ? "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-    : "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+  const { style } = useMapStyle();
 
   return (
     <MapContainer
@@ -128,9 +126,11 @@ export default function MapContent({
       preferCanvas={true}
     >
       <TileLayer
-        key={theme}
-        attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-        url={tileUrl}
+        key={style.id}
+        attribution={style.attribution}
+        url={style.url}
+        maxZoom={style.maxZoom}
+        {...(style.subdomains ? { subdomains: style.subdomains } : {})}
       />
       <FlyToRegion region={region} />
       <FlyToFlight flight={selectedFlight} />

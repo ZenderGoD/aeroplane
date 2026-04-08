@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { MAP_STYLES, getSavedMapStyleId, saveMapStyleId } from "@/lib/mapStyles";
 import SearchBar from "@/components/SearchBar";
 import type { SearchBarHandle } from "@/components/SearchBar";
 import RegionSelector from "@/components/RegionSelector";
@@ -169,6 +170,58 @@ const TOOL_BUTTONS = [
   { key: "separation", label: "Separation", color: "#e2e8f0", icon: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" },
   { key: "weather", label: "Weather", color: "#e2e8f0", icon: "M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" },
 ] as const;
+
+function MapStyleSection() {
+  const [currentId, setCurrentId] = useState(getSavedMapStyleId);
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div>
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="section-label mb-2.5 w-full flex items-center justify-between cursor-pointer hover:opacity-80"
+      >
+        <span>Map Style</span>
+        <svg
+          className={`w-3.5 h-3.5 transition-transform ${expanded ? "rotate-180" : ""}`}
+          fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {expanded && (
+        <div className="grid grid-cols-2 gap-1.5">
+          {MAP_STYLES.map((ms) => {
+            const active = currentId === ms.id;
+            return (
+              <button
+                key={ms.id}
+                onClick={() => {
+                  setCurrentId(ms.id);
+                  saveMapStyleId(ms.id);
+                  window.location.reload();
+                }}
+                className="flex flex-col items-start gap-0.5 py-2 px-2.5 rounded-lg text-[10px] transition-all text-left"
+                style={{
+                  background: active
+                    ? "linear-gradient(180deg, var(--surface-4), var(--surface-3))"
+                    : "var(--surface-2)",
+                  border: active
+                    ? "1px solid rgba(255,255,255,0.2)"
+                    : "1px solid transparent",
+                  color: active ? "#fff" : "var(--text-muted)",
+                }}
+              >
+                <span className="text-[11px] font-bold leading-tight">{ms.name}</span>
+                <span className="opacity-50 leading-tight">{ms.preview}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function LeftSidebar({
   collapsed,
@@ -483,6 +536,11 @@ export default function LeftSidebar({
                 })}
               </div>
             </div>
+
+            <div className="divider-accent" />
+
+            {/* ── Map Style ───────────────────────── */}
+            <MapStyleSection />
 
             <div className="divider-accent" />
 

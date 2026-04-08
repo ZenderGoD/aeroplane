@@ -20,6 +20,7 @@ import airportsData from "@/data/airports.json";
 import ATCPanel from "@/components/ATCPanel";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { getMapStyle, getSavedMapStyleId } from "@/lib/mapStyles";
 
 // Re-export the airport radar as an embeddable component
 // This avoids Next.js page export restrictions
@@ -251,8 +252,11 @@ function AirportMapInner({
     const map = L.map(containerRef.current, {
       center: [airport.lat, airport.lon], zoom: 7, zoomControl: true, attributionControl: true,
     });
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-      attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
+    const ms = getMapStyle(getSavedMapStyleId());
+    L.tileLayer(ms.url, {
+      attribution: ms.attribution,
+      maxZoom: ms.maxZoom,
+      ...(ms.subdomains ? { subdomains: ms.subdomains } : {}),
     }).addTo(map);
     mapRef.current = map;
     layersRef.current = L.layerGroup().addTo(map);
@@ -651,8 +655,8 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
   const [cardinalDir, setCardinalDir] = useState("N");
   const [cardinalDist, setCardinalDist] = useState("");
 
-  const REFRESH_OPTIONS = [3, 5, 10, 15, 30, 60];
-  const [refreshRate, setRefreshRate] = useState(10);
+  const REFRESH_OPTIONS = [15, 30, 60, 120];
+  const [refreshRate, setRefreshRate] = useState(30);
   const [panelCollapsed, setPanelCollapsed] = useState(false);
   const [showATCPanel, setShowATCPanel] = useState(false);
 

@@ -72,12 +72,40 @@ interface CacheEntry {
 }
 
 const regionCache = new Map<string, CacheEntry>();
-const CACHE_TTL = 30_000; // 30s — keeps airplanes.live requests under rate limit
-const STALE_TTL = 300_000;
+const CACHE_TTL = 60_000; // 60s — conserve airplanes.live quota
+const STALE_TTL = 600_000; // 10min — serve stale data rather than burn quota
+
+// ── Daily request counter (resets at midnight UTC) ──────────────────
+let dailyRequestCount = 0;
+let dailyCounterResetDate = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+const DAILY_WARN_THRESHOLD = 400; // warn when approaching free-tier 500/day limit
+const DAILY_HARD_LIMIT = 480; // stop making upstream requests near limit
+
+function trackDailyRequest(): boolean {
+  const today = new Date().toISOString().slice(0, 10);
+  if (today !== dailyCounterResetDate) {
+    dailyRequestCount = 0;
+    dailyCounterResetDate = today;
+    console.log("[Flights] Daily request counter reset for", today);
+  }
+  dailyRequestCount++;
+  if (dailyRequestCount >= DAILY_HARD_LIMIT) {
+    console.warn(
+      `[Flights] Daily request limit approaching! ${dailyRequestCount}/${DAILY_HARD_LIMIT} — blocking further upstream requests`
+    );
+    return false; // do not allow this request
+  }
+  if (dailyRequestCount >= DAILY_WARN_THRESHOLD) {
+    console.warn(
+      `[Flights] Daily requests: ${dailyRequestCount} — approaching limit`
+    );
+  }
+  return true; // request allowed
+}
 
 // ── Airplanes.live rate limiter ──────────────────────────────────────
 let lastAirplanesLiveRequest = 0;
-const AIRPLANES_LIVE_MIN_INTERVAL = 1_500;
+const AIRPLANES_LIVE_MIN_INTERVAL = 10_000; // 10s between upstream requests
 let airplanesLiveRateLimitedUntil = 0;
 
 async function throttledFetch(url: string): Promise<Response> {
@@ -165,6 +193,9 @@ async function fetchAirplanesLive(
 ): Promise<FlightState[] | null> {
   // Skip if we're in a rate-limit backoff
   if (Date.now() < airplanesLiveRateLimitedUntil) return null;
+
+  // Check daily quota before making upstream requests
+  if (!trackDailyRequest()) return null;
 
   const tiles = bbox ? computeTiles(bbox) : GLOBAL_TILES;
 
@@ -323,10 +354,13 @@ export async function GET(request: NextRequest) {
       source: cached.source,
       total: cached.flights.length,
     };
+    const remainingTtl = Math.max(0, CACHE_TTL - (now - cached.timestamp));
     return NextResponse.json(resp, {
       headers: {
         "X-Data-Source": "cache",
         "X-Cache-Age": String(now - cached.timestamp),
+        "X-Cache-TTL": String(remainingTtl),
+        "X-Daily-Requests": String(dailyRequestCount),
       },
     });
   }

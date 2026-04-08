@@ -5,6 +5,7 @@ import SearchBar from "@/components/SearchBar";
 import type { SearchBarHandle } from "@/components/SearchBar";
 import RegionSelector from "@/components/RegionSelector";
 import type { ViewMode } from "@/types/viewMode";
+import { MAP_STYLES, getSavedMapStyleId, saveMapStyleId } from "@/lib/mapStyles";
 
 /* ── Tab definitions ───────────────────────────────────── */
 
@@ -268,6 +269,36 @@ export default function MobileNav({
       case "layers":
         return (
           <div className="space-y-4">
+            {/* ── Map Style Picker ─────────────────────────── */}
+            <div className="section-label">Map Style</div>
+            <div className="grid grid-cols-3 gap-2">
+              {MAP_STYLES.map((ms) => {
+                const active = getSavedMapStyleId() === ms.id;
+                return (
+                  <button
+                    key={ms.id}
+                    onClick={() => {
+                      saveMapStyleId(ms.id);
+                      window.location.reload();
+                    }}
+                    className="flex flex-col items-center gap-1 py-3 px-2 rounded-xl text-[10px] font-semibold transition-all"
+                    style={{
+                      background: active
+                        ? "linear-gradient(180deg, var(--surface-4), var(--surface-3))"
+                        : "var(--surface-2)",
+                      border: active
+                        ? "1px solid rgba(255,255,255,0.2)"
+                        : "1px solid transparent",
+                      color: active ? "#fff" : "var(--text-muted)",
+                    }}
+                  >
+                    <span className="text-[11px] font-bold leading-tight">{ms.name}</span>
+                    <span className="opacity-60 leading-tight">{ms.preview}</span>
+                  </button>
+                );
+              })}
+            </div>
+
             <div className="section-label">Data Layers</div>
             <div className="grid grid-cols-3 gap-3">
               {DATA_LAYERS.map((layer) => {

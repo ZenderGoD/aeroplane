@@ -8,6 +8,7 @@ import type { FlightState } from "@/types/flight";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const L: typeof import("leaflet") = typeof window !== "undefined" ? require("leaflet") : null;
 if (typeof window !== "undefined") require("leaflet/dist/leaflet.css");
+import { getMapStyle, getSavedMapStyleId } from "@/lib/mapStyles";
 
 /* ------------------------------------------------------------------ */
 /*  Altitude → colour (same palette the main tracker uses)            */
@@ -141,7 +142,7 @@ function EmbedMapInner() {
   useEffect(() => {
     if (!airportResolved) return;
     fetchFlights();
-    intervalRef.current = setInterval(fetchFlights, 10_000);
+    intervalRef.current = setInterval(fetchFlights, 30_000);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
@@ -154,10 +155,7 @@ function EmbedMapInner() {
 
     leafletRef.current = L;
 
-    const tileUrl =
-      theme === "light"
-        ? "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-        : "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+    const ms = getMapStyle(getSavedMapStyleId());
 
     const map = L.map(containerRef.current, {
       center: center,
@@ -166,9 +164,10 @@ function EmbedMapInner() {
       attributionControl: false,
     });
 
-    L.tileLayer(tileUrl, {
-      maxZoom: 18,
-      subdomains: "abcd",
+    L.tileLayer(ms.url, {
+      maxZoom: ms.maxZoom,
+      ...(ms.subdomains ? { subdomains: ms.subdomains } : {}),
+      attribution: ms.attribution,
     }).addTo(map);
 
     // Attribution (small)

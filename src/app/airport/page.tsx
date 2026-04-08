@@ -15,6 +15,7 @@ import airportsData from "@/data/airports.json";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const L: typeof import("leaflet") = typeof window !== "undefined" ? require("leaflet") : null;
 if (typeof window !== "undefined") require("leaflet/dist/leaflet.css");
+import { getMapStyle, getSavedMapStyleId } from "@/lib/mapStyles";
 
 // ---------- Types ----------
 
@@ -164,8 +165,11 @@ function AirportMapInner({
       zoomControl: true,
       attributionControl: true,
     });
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-      attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
+    const ms = getMapStyle(getSavedMapStyleId());
+    L.tileLayer(ms.url, {
+      attribution: ms.attribution,
+      maxZoom: ms.maxZoom,
+      ...(ms.subdomains ? { subdomains: ms.subdomains } : {}),
     }).addTo(map);
     mapRef.current = map;
     layersRef.current = L.layerGroup().addTo(map);
@@ -537,8 +541,8 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
   const [cardinalDist, setCardinalDist] = useState("");
 
   // Refresh rate (seconds)
-  const REFRESH_OPTIONS = [3, 5, 10, 15, 30, 60];
-  const [refreshRate, setRefreshRate] = useState(10);
+  const REFRESH_OPTIONS = [15, 30, 60, 120];
+  const [refreshRate, setRefreshRate] = useState(30);
 
   // Panel state
   const [panelCollapsed, setPanelCollapsed] = useState(false);

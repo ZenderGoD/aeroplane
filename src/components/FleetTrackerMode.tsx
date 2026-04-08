@@ -11,13 +11,14 @@ import dynamic from "next/dynamic";
 import type { FlightState } from "@/types/flight";
 import airlines, { type Airline } from "@/data/airlines";
 import L from "leaflet";
+import { getMapStyle, getSavedMapStyleId } from "@/lib/mapStyles";
 import "leaflet/dist/leaflet.css";
 
 // ────────────────────────────────────────────────────
 // Constants
 // ────────────────────────────────────────────────────
 
-const REFRESH_OPTIONS = [3, 5, 10, 15, 30, 60];
+const REFRESH_OPTIONS = [15, 30, 60, 120];
 
 const METERS_TO_FEET = 3.28084;
 const MS_TO_KNOTS = 1.94384;
@@ -94,10 +95,12 @@ function FleetMapInner({
       zoomControl: true,
       attributionControl: true,
     });
-    L.tileLayer(
-      "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-      { attribution: '&copy; <a href="https://carto.com/">CARTO</a>' },
-    ).addTo(map);
+    const ms = getMapStyle(getSavedMapStyleId());
+    L.tileLayer(ms.url, {
+      attribution: ms.attribution,
+      ...(ms.subdomains ? { subdomains: ms.subdomains } : {}),
+      maxZoom: ms.maxZoom,
+    }).addTo(map);
     mapRef.current = map;
     layersRef.current = L.layerGroup().addTo(map);
 
@@ -426,7 +429,7 @@ export default function FleetTrackerMode({
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   // UI state
-  const [refreshRate, setRefreshRate] = useState(10);
+  const [refreshRate, setRefreshRate] = useState(30);
   const [selectedFlight, setSelectedFlight] = useState<FlightState | null>(null);
   const [panelCollapsed, setPanelCollapsed] = useState(false);
 

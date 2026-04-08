@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import type { FlightState } from "@/types/flight";
 import "leaflet/dist/leaflet.css";
+import { getMapStyle, getSavedMapStyleId } from "@/lib/mapStyles";
 
 // ─── Aircraft Type Database (~100 common types) ─────────────────────────────
 
@@ -434,10 +435,12 @@ export default function AircraftProfileMode({ onExitMode }: Props) {
           attributionControl: false,
         });
 
-        L.tileLayer(
-          "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-          { maxZoom: 18 }
-        ).addTo(mapInstanceRef.current);
+        const ms = getMapStyle(getSavedMapStyleId());
+        L.tileLayer(ms.url, {
+          maxZoom: ms.maxZoom,
+          attribution: ms.attribution,
+          ...(ms.subdomains ? { subdomains: ms.subdomains } : {}),
+        }).addTo(mapInstanceRef.current);
 
         // Add zoom control top-right
         L.control.zoom({ position: "topright" }).addTo(mapInstanceRef.current);

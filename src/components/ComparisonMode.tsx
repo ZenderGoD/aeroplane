@@ -18,6 +18,7 @@ import {
 } from "@/lib/geo";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { getMapStyle, getSavedMapStyleId } from "@/lib/mapStyles";
 
 /* ── Constants ────────────────────────────────────────────────────── */
 
@@ -238,9 +239,11 @@ export default function ComparisonMode({ onExitMode }: Props) {
       attributionControl: true,
     });
 
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
-      maxZoom: 18,
+    const ms = getMapStyle(getSavedMapStyleId());
+    L.tileLayer(ms.url, {
+      attribution: ms.attribution,
+      maxZoom: ms.maxZoom,
+      ...(ms.subdomains ? { subdomains: ms.subdomains } : {}),
     }).addTo(map);
 
     leafletMapRef.current = map;

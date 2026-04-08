@@ -1,12 +1,23 @@
 "use client";
 
 import useSWR from "swr";
-import { useState, useMemo, useCallback, useRef } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import type { FlightState, BoundingBox } from "@/types/flight";
 import type { SearchFilters } from "@/types/search";
 import { parseStateVector } from "@/lib/opensky";
 import { getAirlineName } from "@/lib/airlines";
 import { haversineNm, bearing } from "@/lib/geo";
+
+// ── Tab visibility hook — pause polling when tab is hidden ──────────
+function usePageVisible(): boolean {
+  const [visible, setVisible] = useState(true);
+  useEffect(() => {
+    const handler = () => setVisible(document.visibilityState === "visible");
+    document.addEventListener("visibilitychange", handler);
+    return () => document.removeEventListener("visibilitychange", handler);
+  }, []);
+  return visible;
+}
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -149,14 +160,18 @@ export function useFlightData(
   // Track rate limit state across renders for adaptive refresh
   const rateLimitRef = useRef({ limited: false, quotaExhausted: false });
 
-  // Adaptive: normal=12s, rate limited=60s, quota exhausted=5min
+  // Adaptive: normal=30s, rate limited=120s, quota exhausted=5min
+  // Conservative to stay within airplanes.live daily limits (500 free / 8640 contributor)
   const rl = rateLimitRef.current;
   const adaptiveInterval = rl.limited
-    ? (rl.quotaExhausted ? 300_000 : 60_000)
-    : 12_000;
+    ? (rl.quotaExhausted ? 300_000 : 120_000)
+    : 30_000;
+
+  // Pause polling when tab is hidden to conserve API quota
+  const isVisible = usePageVisible();
 
   const { data: latestData, error, isLoading, isValidating } = useSWR(url, fetcher, {
-    refreshInterval: adaptiveInterval,
+    refreshInterval: isVisible ? adaptiveInterval : 0,
     revalidateOnFocus: false,
     dedupingInterval: Math.max(adaptiveInterval - 2000, 10_000),
     keepPreviousData: true,

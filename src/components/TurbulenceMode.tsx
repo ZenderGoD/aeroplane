@@ -24,6 +24,7 @@ import {
 } from "@/lib/turbulenceDetection";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { getMapStyle, getSavedMapStyleId } from "@/lib/mapStyles";
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -32,7 +33,7 @@ interface TurbulenceModeProps {
 }
 
 type AltitudeFilter = "all" | "FL100-200" | "FL200-300" | "FL300-400" | "FL400+";
-type RefreshInterval = 3 | 5 | 10 | 15 | 30 | 60;
+type RefreshInterval = 15 | 30 | 60 | 120;
 
 interface RecentReport {
   id: string;
@@ -45,7 +46,7 @@ interface RecentReport {
 
 // ── Constants ──────────────────────────────────────────────────────
 
-const REFRESH_OPTIONS: RefreshInterval[] = [3, 5, 10, 15, 30, 60];
+const REFRESH_OPTIONS: RefreshInterval[] = [15, 30, 60, 120];
 const API_URL = "/api/flights?lamin=-60&lomin=-180&lamax=80&lomax=180";
 
 // ── Helpers ────────────────────────────────────────────────────────
@@ -99,14 +100,12 @@ function TurbulenceMapInner({
       maxZoom: 14,
     });
 
-    L.tileLayer(
-      "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-      {
-        attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
-        subdomains: "abcd",
-        maxZoom: 19,
-      }
-    ).addTo(map);
+    const ms = getMapStyle(getSavedMapStyleId());
+    L.tileLayer(ms.url, {
+      attribution: ms.attribution,
+      subdomains: ms.subdomains ?? "abc",
+      maxZoom: ms.maxZoom,
+    }).addTo(map);
 
     mapRef.current = map;
     turbLayerRef.current = L.layerGroup().addTo(map);
@@ -379,7 +378,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
   const [turbulencePoints, setTurbulencePoints] = useState<TurbulencePoint[]>([]);
   const [recentReports, setRecentReports] = useState<RecentReport[]>([]);
   const [altitudeFilter, setAltitudeFilter] = useState<AltitudeFilter>("all");
-  const [refreshInterval, setRefreshInterval] = useState<RefreshInterval>(10);
+  const [refreshInterval, setRefreshInterval] = useState<RefreshInterval>(30);
   const [showAllAircraft, setShowAllAircraft] = useState(true);
   const [lastFetchTime, setLastFetchTime] = useState<number>(0);
   const [loading, setLoading] = useState(true);
