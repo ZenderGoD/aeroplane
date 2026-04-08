@@ -12,6 +12,7 @@ body {
   padding: 0;
   height: 100%;
   width: 100%;
+  overflow-x: hidden;
 }
 
 /* Lock scrolling on full-viewport app pages (tracker, airport, embed) */

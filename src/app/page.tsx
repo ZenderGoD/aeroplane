@@ -21,14 +21,16 @@ export default function LandingPage() {
               Aero<span className="text-white/50">Intel</span>
             </span>
           </a>
-          <div className="flex items-center gap-5">
-            <a href="#capabilities" className="hidden sm:block text-sm text-white/40 hover:text-white transition-colors">Capabilities</a>
-            <a href="#data" className="hidden sm:block text-sm text-white/40 hover:text-white transition-colors">Data</a>
-            <a href="#built-for" className="hidden sm:block text-sm text-white/40 hover:text-white transition-colors">For Schools</a>
-            <AuthModal />
+          <div className="flex items-center gap-3 sm:gap-5">
+            <a href="#capabilities" className="hidden lg:block text-sm text-white/40 hover:text-white transition-colors">Capabilities</a>
+            <a href="#data" className="hidden lg:block text-sm text-white/40 hover:text-white transition-colors">Data</a>
+            <a href="#built-for" className="hidden lg:block text-sm text-white/40 hover:text-white transition-colors">For Schools</a>
+            <div className="hidden sm:block">
+              <AuthModal />
+            </div>
             <a
               href="/tracker"
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium bg-white text-black hover:bg-white/90 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full text-sm font-medium bg-white text-black hover:bg-white/90 transition-colors whitespace-nowrap"
             >
               Open Tracker
               <ArrowRight size={14} />
@@ -50,7 +52,7 @@ export default function LandingPage() {
             <LiveFlightCount />
           </div>
 
-          <h1 className="text-[clamp(2.5rem,7vw,6rem)] font-bold leading-[1.05] tracking-tight mb-6">
+          <h1 className="text-[clamp(2rem,6vw,4.5rem)] font-bold leading-[1.05] tracking-tight mb-6">
             <span className="block">See every aircraft</span>
             <span className="block text-white/30">in real time.</span>
           </h1>
@@ -121,7 +123,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto">
           <ScrollAnimator>
             <p className="text-sm font-mono text-white/25 uppercase tracking-[0.2em] mb-4">Capabilities</p>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6 max-w-3xl">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] mb-6 max-w-3xl">
               Built for the people who <span className="text-white/30">teach people to fly.</span>
             </h2>
             <p className="text-lg text-white/35 max-w-2xl leading-relaxed mb-20">
@@ -185,7 +187,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto">
           <ScrollAnimator>
             <p className="text-sm font-mono text-white/25 uppercase tracking-[0.2em] mb-4">Data</p>
-            <h2 className="text-4xl sm:text-5xl font-bold leading-[1.1] mb-6 max-w-3xl">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] mb-6 max-w-3xl">
               Real data from <span className="text-white/30">real infrastructure.</span>
             </h2>
             <p className="text-lg text-white/35 max-w-2xl leading-relaxed mb-16">
@@ -223,7 +225,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto">
           <ScrollAnimator>
             <p className="text-sm font-mono text-white/25 uppercase tracking-[0.2em] mb-4">For Training Schools</p>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] mb-16 max-w-4xl">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] mb-16 max-w-4xl">
               Your students are in the air.<br />
               <span className="text-white/30">Know exactly where.</span>
             </h2>
@@ -290,7 +292,7 @@ export default function LandingPage() {
       <section className="px-6 py-32 border-t border-white/[0.04]">
         <div className="max-w-3xl mx-auto text-center">
           <ScrollAnimator>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] mb-6">
               Ready for takeoff.
             </h2>
             <p className="text-lg text-white/35 mb-10 max-w-xl mx-auto leading-relaxed">
