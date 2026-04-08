@@ -38,7 +38,7 @@ export default function AIInsights({
         <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex-1">
           AI Insights
         </span>
-        <span className="text-[10px] text-slate-500 tabular-nums mr-1">
+        <span className="text-xs text-slate-500 tabular-nums mr-1">
           {remainingToday}/{dailyLimit}
         </span>
         <svg
@@ -87,7 +87,7 @@ export default function AIInsights({
                   <p className="text-xs text-gray-500">
                     Daily limit reached ({dailyLimit}/{dailyLimit} used)
                   </p>
-                  <p className="text-[10px] text-gray-600 mt-0.5">
+                  <p className="text-xs text-gray-600 mt-0.5">
                     Resets at midnight
                   </p>
                 </div>

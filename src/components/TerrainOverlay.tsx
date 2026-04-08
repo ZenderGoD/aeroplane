@@ -305,7 +305,7 @@ export default function TerrainOverlay({ visible }: TerrainOverlayProps) {
               <button
                 key={key}
                 onClick={() => setMode(key)}
-                className={`px-2.5 py-1 rounded text-[10px] font-semibold transition-all duration-200 ${
+                className={`px-2.5 py-1 rounded text-xs font-semibold transition-all duration-200 ${
                   mode === key
                     ? "bg-slate-600/80 text-white shadow-lg shadow-slate-900/30"
                     : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
@@ -319,7 +319,7 @@ export default function TerrainOverlay({ visible }: TerrainOverlayProps) {
 
         {/* Info line */}
         <div className="bg-[#0a0a0a]/90 backdrop-blur-xl border border-gray-700/40 rounded-lg px-3 py-1.5 shadow-2xl">
-          <div className="flex items-center gap-2 text-[9px] text-gray-500 font-mono">
+          <div className="flex items-center gap-2 text-[11px] text-gray-500 font-mono">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="10"

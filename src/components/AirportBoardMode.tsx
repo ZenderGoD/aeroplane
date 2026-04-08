@@ -223,7 +223,7 @@ function StatusBadge({ status }: { status: FlightStatus }) {
   const cfg = STATUS_CONFIG[status];
   return (
     <span
-      className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold tracking-wider whitespace-nowrap"
+      className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold tracking-wider whitespace-nowrap"
       style={{
         background: cfg.bg,
         color: cfg.text,
@@ -736,7 +736,7 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
                   )}
                   {tab}
                   <span
-                    className="data-value px-1.5 py-0.5 rounded text-[10px] font-bold"
+                    className="data-value px-1.5 py-0.5 rounded text-xs font-bold"
                     style={{
                       background: isActive ? "rgba(203,213,225,0.15)" : "rgba(148,163,184,0.15)",
                       color: isActive ? "#cbd5e1" : "var(--text-muted)",
@@ -759,7 +759,7 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
                 <button
                   key={r}
                   onClick={() => setRefreshRate(r)}
-                  className="px-1.5 py-0.5 rounded text-[10px] transition-all data-value"
+                  className="px-1.5 py-0.5 rounded text-xs transition-all data-value"
                   style={{
                     background: refreshRate === r ? "rgba(203,213,225,0.12)" : "transparent",
                     color: refreshRate === r ? "#cbd5e1" : "var(--text-muted)",

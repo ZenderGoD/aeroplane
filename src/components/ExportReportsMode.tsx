@@ -120,8 +120,8 @@ function ProgressBar({ progress, label }: { progress: number; label: string }) {
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <span className="text-[11px] font-medium" style={{ color: "var(--text-secondary)" }}>{label}</span>
-        <span className="text-[11px] font-mono tabular-nums" style={{ color: "var(--text-muted)" }}>{Math.round(progress)}%</span>
+        <span className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>{label}</span>
+        <span className="text-xs font-mono tabular-nums" style={{ color: "var(--text-muted)" }}>{Math.round(progress)}%</span>
       </div>
       <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--surface-3)" }}>
         <div
@@ -805,7 +805,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
             <h1 className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>
               Export &amp; Reports
             </h1>
-            <p className="text-[11px]" style={{ color: "var(--text-muted)" }}>
+            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
               Data export, filtered downloads, and report generation
             </p>
           </div>
@@ -813,7 +813,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
 
         <div className="flex items-center gap-3">
           {lastFetchTime && (
-            <span className="text-[10px] font-mono" style={{ color: "var(--text-muted)" }}>
+            <span className="text-xs font-mono" style={{ color: "var(--text-muted)" }}>
               Last fetch: {lastFetchTime}
             </span>
           )}
@@ -894,7 +894,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                     CSV Export
                   </h3>
-                  <p className="text-[11px]" style={{ color: "var(--text-muted)" }}>
+                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>
                     Spreadsheet-ready tabular format
                   </p>
                 </div>
@@ -904,14 +904,14 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   className="rounded-lg px-3 py-2 flex items-center justify-between"
                   style={{ background: "var(--surface-2)" }}
                 >
-                  <span className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
+                  <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                     Flights in snapshot
                   </span>
                   <span className="text-xs font-bold font-mono tabular-nums" style={{ color: "var(--accent-primary)" }}>
                     {flights.length.toLocaleString()}
                   </span>
                 </div>
-                <p className="text-[10px] leading-relaxed" style={{ color: "var(--text-muted)" }}>
+                <p className="text-xs leading-relaxed" style={{ color: "var(--text-muted)" }}>
                   14 columns: callsign, icao24, registration, typeCode, lat, lon, altitude_ft, speed_kts, heading, verticalRate, squawk, onGround, dataSource, timestamp
                 </p>
                 <button
@@ -939,7 +939,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                     JSON Export
                   </h3>
-                  <p className="text-[11px]" style={{ color: "var(--text-muted)" }}>
+                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>
                     Full FlightState array for developers
                   </p>
                 </div>
@@ -949,7 +949,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   className="rounded-lg px-3 py-2 flex items-center justify-between"
                   style={{ background: "var(--surface-2)" }}
                 >
-                  <span className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
+                  <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                     Total objects
                   </span>
                   <span className="text-xs font-bold font-mono tabular-nums" style={{ color: "#94a3b8" }}>
@@ -957,7 +957,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   </span>
                 </div>
                 <div
-                  className="rounded-lg px-3 py-2 font-mono text-[10px] leading-relaxed max-h-[60px] overflow-hidden"
+                  className="rounded-lg px-3 py-2 font-mono text-xs leading-relaxed max-h-[60px] overflow-hidden"
                   style={{ background: "var(--surface-2)", color: "var(--text-muted)" }}
                 >
                   {`[{ "icao24": "${flights[0]?.icao24 ?? "..."}", "callsign": "${flights[0]?.callsign?.trim() ?? "..."}", ... }]`}
@@ -987,7 +987,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                     Filtered Export
                   </h3>
-                  <p className="text-[11px]" style={{ color: "var(--text-muted)" }}>
+                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>
                     Apply filters then export matching set
                   </p>
                 </div>
@@ -996,7 +996,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                 {/* Filter inputs */}
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-[10px] font-medium block mb-1" style={{ color: "var(--text-muted)" }}>
+                    <label className="text-xs font-medium block mb-1" style={{ color: "var(--text-muted)" }}>
                       Alt Min (ft)
                     </label>
                     <input
@@ -1009,7 +1009,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] font-medium block mb-1" style={{ color: "var(--text-muted)" }}>
+                    <label className="text-xs font-medium block mb-1" style={{ color: "var(--text-muted)" }}>
                       Alt Max (ft)
                     </label>
                     <input
@@ -1022,7 +1022,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] font-medium block mb-1" style={{ color: "var(--text-muted)" }}>
+                    <label className="text-xs font-medium block mb-1" style={{ color: "var(--text-muted)" }}>
                       Speed Min (kts)
                     </label>
                     <input
@@ -1035,7 +1035,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] font-medium block mb-1" style={{ color: "var(--text-muted)" }}>
+                    <label className="text-xs font-medium block mb-1" style={{ color: "var(--text-muted)" }}>
                       Speed Max (kts)
                     </label>
                     <input
@@ -1050,7 +1050,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-medium block mb-1" style={{ color: "var(--text-muted)" }}>
+                  <label className="text-xs font-medium block mb-1" style={{ color: "var(--text-muted)" }}>
                     Callsign Prefix
                   </label>
                   <input
@@ -1079,7 +1079,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                           ...(opt.key === "onGroundOnly" && !f.onGroundOnly ? { airborneOnly: false } : {}),
                         }))
                       }
-                      className="px-2.5 py-1 rounded-md text-[10px] font-semibold transition-colors duration-150 cursor-pointer"
+                      className="px-2.5 py-1 rounded-md text-xs font-semibold transition-colors duration-150 cursor-pointer"
                       style={{
                         background: filters[opt.key] ? "rgba(148,163,184,0.15)" : "var(--surface-2)",
                         color: filters[opt.key] ? "#94a3b8" : "var(--text-muted)",
@@ -1096,7 +1096,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   className="rounded-lg px-3 py-2 flex items-center justify-between"
                   style={{ background: "var(--surface-2)" }}
                 >
-                  <span className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
+                  <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                     Matching flights
                   </span>
                   <span
@@ -1142,7 +1142,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                         callsignPrefix: "",
                       })
                     }
-                    className="text-[10px] font-medium cursor-pointer underline"
+                    className="text-xs font-medium cursor-pointer underline"
                     style={{ color: "var(--text-muted)" }}
                   >
                     Clear all filters
@@ -1164,13 +1164,13 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                     HTML Report
                   </h3>
-                  <p className="text-[11px]" style={{ color: "var(--text-muted)" }}>
+                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>
                     Self-contained styled report file
                   </p>
                 </div>
               </div>
               <div className="space-y-3">
-                <p className="text-[10px] leading-relaxed" style={{ color: "var(--text-muted)" }}>
+                <p className="text-xs leading-relaxed" style={{ color: "var(--text-muted)" }}>
                   Generates a standalone HTML document with dark theme styling, summary statistics, aircraft type breakdown, altitude distribution, top airlines, and data quality metrics. Print-ready.
                 </p>
                 <div className="space-y-1">
@@ -1178,7 +1178,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                     (item) => (
                       <div key={item} className="flex items-center gap-2">
                         <div className="w-1 h-1 rounded-full" style={{ background: "#cbd5e1" }} />
-                        <span className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>
+                        <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                           {item}
                         </span>
                       </div>
@@ -1210,7 +1210,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                     Comparison Report
                   </h3>
-                  <p className="text-[11px]" style={{ color: "var(--text-muted)" }}>
+                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>
                     Compare current snapshot against a stored baseline
                   </p>
                 </div>
@@ -1228,10 +1228,10 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   className="rounded-lg px-3 py-2 mb-3 flex items-center justify-between"
                   style={{ background: "var(--surface-2)" }}
                 >
-                  <span className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
+                  <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                     Stored snapshot
                   </span>
-                  <span className="text-[11px] font-mono" style={{ color: "var(--text-secondary)" }}>
+                  <span className="text-xs font-mono" style={{ color: "var(--text-secondary)" }}>
                     {storedSnapshot.label} &mdash; {storedSnapshot.flights.length.toLocaleString()} flights
                   </span>
                 </div>
@@ -1260,7 +1260,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   {/* New flights */}
                   <div className="rounded-lg p-3" style={{ background: "var(--surface-2)" }}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#cbd5e1" }}>
+                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#cbd5e1" }}>
                         New Flights
                       </span>
                       <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "#cbd5e1" }}>
@@ -1269,12 +1269,12 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                     </div>
                     <div className="space-y-0.5 max-h-[100px] overflow-y-auto scrollbar-thin">
                       {comparisonData.newFlights.slice(0, 8).map((f) => (
-                        <div key={f.icao24} className="text-[10px] font-mono truncate" style={{ color: "var(--text-muted)" }}>
+                        <div key={f.icao24} className="text-xs font-mono truncate" style={{ color: "var(--text-muted)" }}>
                           {f.callsign?.trim() || f.icao24}
                         </div>
                       ))}
                       {comparisonData.newFlights.length > 8 && (
-                        <div className="text-[10px]" style={{ color: "var(--text-faint)" }}>
+                        <div className="text-xs" style={{ color: "var(--text-faint)" }}>
                           +{comparisonData.newFlights.length - 8} more
                         </div>
                       )}
@@ -1284,7 +1284,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   {/* Departed flights */}
                   <div className="rounded-lg p-3" style={{ background: "var(--surface-2)" }}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#e2e8f0" }}>
+                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#e2e8f0" }}>
                         Departed
                       </span>
                       <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "#e2e8f0" }}>
@@ -1293,12 +1293,12 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                     </div>
                     <div className="space-y-0.5 max-h-[100px] overflow-y-auto scrollbar-thin">
                       {comparisonData.departedFlights.slice(0, 8).map((f) => (
-                        <div key={f.icao24} className="text-[10px] font-mono truncate" style={{ color: "var(--text-muted)" }}>
+                        <div key={f.icao24} className="text-xs font-mono truncate" style={{ color: "var(--text-muted)" }}>
                           {f.callsign?.trim() || f.icao24}
                         </div>
                       ))}
                       {comparisonData.departedFlights.length > 8 && (
-                        <div className="text-[10px]" style={{ color: "var(--text-faint)" }}>
+                        <div className="text-xs" style={{ color: "var(--text-faint)" }}>
                           +{comparisonData.departedFlights.length - 8} more
                         </div>
                       )}
@@ -1308,7 +1308,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   {/* Altitude changes */}
                   <div className="rounded-lg p-3" style={{ background: "var(--surface-2)" }}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#cbd5e1" }}>
+                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#cbd5e1" }}>
                         Alt Changes
                       </span>
                       <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "#cbd5e1" }}>
@@ -1317,7 +1317,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                     </div>
                     <div className="space-y-0.5 max-h-[100px] overflow-y-auto scrollbar-thin">
                       {comparisonData.altitudeChanges.slice(0, 6).map((c) => (
-                        <div key={c.icao24} className="text-[10px] font-mono flex justify-between gap-1" style={{ color: "var(--text-muted)" }}>
+                        <div key={c.icao24} className="text-xs font-mono flex justify-between gap-1" style={{ color: "var(--text-muted)" }}>
                           <span className="truncate">{c.callsign}</span>
                           <span style={{ color: c.delta > 0 ? "#cbd5e1" : "#e2e8f0" }}>
                             {c.delta > 0 ? "+" : ""}
@@ -1331,7 +1331,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   {/* Speed changes */}
                   <div className="rounded-lg p-3" style={{ background: "var(--surface-2)" }}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#94a3b8" }}>
+                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#94a3b8" }}>
                         Speed Changes
                       </span>
                       <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "#94a3b8" }}>
@@ -1340,7 +1340,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                     </div>
                     <div className="space-y-0.5 max-h-[100px] overflow-y-auto scrollbar-thin">
                       {comparisonData.speedChanges.slice(0, 6).map((c) => (
-                        <div key={c.icao24} className="text-[10px] font-mono flex justify-between gap-1" style={{ color: "var(--text-muted)" }}>
+                        <div key={c.icao24} className="text-xs font-mono flex justify-between gap-1" style={{ color: "var(--text-muted)" }}>
                           <span className="truncate">{c.callsign}</span>
                           <span style={{ color: c.delta > 0 ? "#cbd5e1" : "#e2e8f0" }}>
                             {c.delta > 0 ? "+" : ""}
@@ -1367,14 +1367,14 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
                     Scheduled Export
                   </h3>
-                  <p className="text-[11px]" style={{ color: "var(--text-muted)" }}>
+                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>
                     Auto-export at regular intervals
                   </p>
                 </div>
               </div>
               <div className="space-y-3">
                 <div>
-                  <label className="text-[10px] font-medium block mb-1" style={{ color: "var(--text-muted)" }}>
+                  <label className="text-xs font-medium block mb-1" style={{ color: "var(--text-muted)" }}>
                     Frequency
                   </label>
                   <select
@@ -1392,7 +1392,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-medium block mb-1" style={{ color: "var(--text-muted)" }}>
+                  <label className="text-xs font-medium block mb-1" style={{ color: "var(--text-muted)" }}>
                     Format
                   </label>
                   <select
@@ -1427,13 +1427,13 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                     style={{ background: "rgba(226,232,240,0.06)", border: "1px solid rgba(226,232,240,0.15)" }}
                   >
                     <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: "#e2e8f0" }} />
-                    <span className="text-[10px]" style={{ color: "#e2e8f0" }}>
+                    <span className="text-xs" style={{ color: "#e2e8f0" }}>
                       Scheduled: {scheduleFormat.toUpperCase()} every {scheduleFreq} min
                     </span>
                   </div>
                 )}
 
-                <p className="text-[9px] italic" style={{ color: "var(--text-faint)" }}>
+                <p className="text-[11px] italic" style={{ color: "var(--text-faint)" }}>
                   UI placeholder -- scheduling not yet implemented server-side
                 </p>
               </div>

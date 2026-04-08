@@ -151,7 +151,7 @@ export default function AirportDetailSheet({
             {airport && (
               <>
                 <span>{airport.city}, {airport.country}</span>
-                <span className="text-[10px] tabular-nums" style={{ color: "var(--text-faint)" }}>
+                <span className="text-xs tabular-nums" style={{ color: "var(--text-faint)" }}>
                   {airport.lat.toFixed(3)}°, {airport.lon.toFixed(3)}°
                 </span>
               </>
@@ -181,8 +181,8 @@ export default function AirportDetailSheet({
                     return (
                       <div key={i} className={`rounded-xl border px-3.5 py-2.5 ${sev.bg} ${sev.border} animate-slide-up`}>
                         <div className="flex items-center gap-2">
-                          <span className={`text-[10px] font-bold uppercase ${sev.text}`}>{evt.severity}</span>
-                          <span className="text-[10px] tabular-nums" style={{ color: "var(--text-muted)" }}>
+                          <span className={`text-xs font-bold uppercase ${sev.text}`}>{evt.severity}</span>
+                          <span className="text-xs tabular-nums" style={{ color: "var(--text-muted)" }}>
                             {new Date(evt.detectedAt).toLocaleTimeString()}
                           </span>
                         </div>
@@ -210,7 +210,7 @@ export default function AirportDetailSheet({
                       return (
                         <div key={`${f.type}-${i}`} className="flex items-center justify-between rounded-lg px-3 py-1.5" style={{ background: "var(--surface-2)" }}>
                           <div className="flex items-center gap-2">
-                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: `${color}18`, border: `1px solid ${color}30`, color }}>{f.type}</span>
+                            <span className="text-[11px] font-bold px-1.5 py-0.5 rounded" style={{ background: `${color}18`, border: `1px solid ${color}30`, color }}>{f.type}</span>
                             <span className="text-xs" style={{ color: "var(--text-secondary)" }}>{f.name}</span>
                           </div>
                           <span className="font-mono text-xs font-bold tabular-nums" style={{ color }}>{f.frequency}</span>
@@ -238,12 +238,12 @@ export default function AirportDetailSheet({
                         <div key={app.name} className="rounded-lg px-3 py-2" style={{ background: "var(--surface-2)" }}>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: `${color}18`, border: `1px solid ${color}30`, color }}>{app.type}</span>
+                              <span className="text-[11px] font-bold px-1.5 py-0.5 rounded" style={{ background: `${color}18`, border: `1px solid ${color}30`, color }}>{app.type}</span>
                               <span className="text-xs font-medium" style={{ color: "var(--text-primary)" }}>{app.name}</span>
                             </div>
-                            <span className="text-[10px] font-mono tabular-nums" style={{ color: "var(--text-muted)" }}>{app.course.toString().padStart(3, "0")}{"\u00B0"}</span>
+                            <span className="text-xs font-mono tabular-nums" style={{ color: "var(--text-muted)" }}>{app.course.toString().padStart(3, "0")}{"\u00B0"}</span>
                           </div>
-                          <div className="flex items-center gap-3 mt-1 text-[10px] tabular-nums" style={{ color: "var(--text-muted)" }}>
+                          <div className="flex items-center gap-3 mt-1 text-xs tabular-nums" style={{ color: "var(--text-muted)" }}>
                             <span>DH {app.minimums.dh}ft</span>
                             <span>VIS {app.minimums.visibility}SM</span>
                             {app.glideslope !== undefined && <span>GS {app.glideslope.toFixed(1)}{"\u00B0"}</span>}
@@ -271,7 +271,7 @@ export default function AirportDetailSheet({
                       <div key={t.icao24} className="flex items-center justify-between rounded-xl px-3.5 py-2.5 transition-all" style={{ background: "var(--surface-2)" }}>
                         <div>
                           <span className="text-xs font-mono" style={{ color: "var(--text-primary)" }}>{t.callsign || t.icao24}</span>
-                          {t.airline_icao && <span className="text-[10px] ml-2" style={{ color: "var(--text-muted)" }}>{t.airline_icao}</span>}
+                          {t.airline_icao && <span className="text-xs ml-2" style={{ color: "var(--text-muted)" }}>{t.airline_icao}</span>}
                         </div>
                         <span className={`text-xs font-bold tabular-nums ${timeColor}`}>
                           {elapsed}m
@@ -303,7 +303,7 @@ export default function AirportDetailSheet({
                       >
                         <div className="flex items-center gap-2">
                           <span className="text-xs transition-colors" style={{ color: "var(--text-secondary)" }}>{c.name}</span>
-                          <span className="text-[10px] font-mono" style={{ color: "var(--text-faint)" }}>→ {other}</span>
+                          <span className="text-xs font-mono" style={{ color: "var(--text-faint)" }}>→ {other}</span>
                         </div>
                         {health && (
                           <div className="flex items-center gap-2">
@@ -311,7 +311,7 @@ export default function AirportDetailSheet({
                               {health.healthScore}
                             </span>
                             <span
-                              className="text-[9px] uppercase px-2 py-0.5 rounded-full font-bold"
+                              className="text-[11px] uppercase px-2 py-0.5 rounded-full font-bold"
                               style={{
                                 color: getStatusColor(health.status),
                                 background: getStatusColor(health.status) + "15",
@@ -343,7 +343,7 @@ export default function AirportDetailSheet({
                     return (
                       <div key={f.icao24} className="flex items-center justify-between rounded-lg px-3 py-2" style={{ background: "var(--surface-2)" }}>
                         <span className="text-xs font-mono" style={{ color: "var(--text-secondary)" }}>{f.callsign?.trim() || f.icao24}</span>
-                        <div className="flex items-center gap-3 text-[10px] tabular-nums" style={{ color: "var(--text-muted)" }}>
+                        <div className="flex items-center gap-3 text-xs tabular-nums" style={{ color: "var(--text-muted)" }}>
                           {alt !== null && <span>{alt.toLocaleString()} ft</span>}
                           <span>{dist.toFixed(1)} NM</span>
                           <span className={f.onGround ? "text-slate-400 font-bold" : "text-slate-400 font-bold"}>
@@ -399,11 +399,11 @@ function PressureSection({
         </div>
         <div>
           <div className="text-sm font-bold" style={{ color }}>{label} Pressure</div>
-          <div className="text-[10px] tabular-nums" style={{ color: "var(--text-muted)" }}>
+          <div className="text-xs tabular-nums" style={{ color: "var(--text-muted)" }}>
             Updated {new Date(pressure.updatedAt).toLocaleTimeString()}
           </div>
           {pressure.baselineDeviation !== null && (
-            <div className={`text-[10px] font-semibold mt-0.5 ${
+            <div className={`text-xs font-semibold mt-0.5 ${
               pressure.baselineDeviation > 20 ? "text-slate-400" : pressure.baselineDeviation > 0 ? "text-slate-400" : "text-slate-400"
             }`}>
               {pressure.baselineDeviation > 0 ? "+" : ""}{Math.round(pressure.baselineDeviation)}% vs baseline
@@ -422,7 +422,7 @@ function PressureSection({
           { label: "Go-Around", value: c.goAroundCount, icon: "⤴" },
         ].map((item) => (
           <div key={item.label} className="rounded-xl px-2 py-2 text-center" style={{ background: "var(--surface-2)" }}>
-            <div className="text-[10px]" style={{ color: "var(--text-faint)" }}>{item.icon}</div>
+            <div className="text-xs" style={{ color: "var(--text-faint)" }}>{item.icon}</div>
             <div className="text-sm font-bold tabular-nums" style={{ color: "var(--text-primary)" }}>{item.value}</div>
             <div className="text-[8px] uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>{item.label}</div>
           </div>
@@ -432,7 +432,7 @@ function PressureSection({
       {/* Baseline comparison */}
       {baseline && baseline.sampleCount > 3 && (
         <div className="rounded-xl p-3.5" style={{ background: "var(--surface-2)" }}>
-          <div className="text-[10px] font-bold uppercase tracking-wider mb-2.5" style={{ color: "var(--text-muted)" }}>
+          <div className="text-xs font-bold uppercase tracking-wider mb-2.5" style={{ color: "var(--text-muted)" }}>
             Baseline Comparison
           </div>
           <div className="grid grid-cols-2 gap-4 text-xs">
@@ -458,7 +458,7 @@ function BaselineBar({ label, current, avg, stddev }: { label: string; current: 
           {current}
         </span>
       </div>
-      <div className="flex items-center gap-1.5 text-[10px]" style={{ color: "var(--text-muted)" }}>
+      <div className="flex items-center gap-1.5 text-xs" style={{ color: "var(--text-muted)" }}>
         <span>avg {avg.toFixed(1)}</span>
         <span>({deviation > 0 ? "+" : ""}{deviation.toFixed(0)}%)</span>
       </div>
@@ -470,9 +470,9 @@ function Section({ title, count, children }: { title: string; count: number; chi
   return (
     <div>
       <div className="flex items-center justify-between mb-2.5">
-        <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>{title}</span>
+        <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>{title}</span>
         {count > 0 && (
-          <span className="text-[10px] font-bold border px-2 py-0.5 rounded-full tabular-nums" style={{ color: "var(--text-muted)", background: "var(--surface-3)", borderColor: "var(--border-subtle)" }}>
+          <span className="text-xs font-bold border px-2 py-0.5 rounded-full tabular-nums" style={{ color: "var(--text-muted)", background: "var(--surface-3)", borderColor: "var(--border-subtle)" }}>
             {count}
           </span>
         )}

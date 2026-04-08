@@ -113,7 +113,7 @@ export default function MapPreview() {
         <span className="w-2 h-2 rounded-full bg-[#e2e8f0] opacity-60" />
         <span className="w-2 h-2 rounded-full bg-[#94a3b8] opacity-60" />
         <span className="w-2 h-2 rounded-full bg-[#cbd5e1] opacity-60" />
-        <span className="ml-3 text-[10px] font-mono text-[var(--text-faint)]">
+        <span className="ml-3 text-xs font-mono text-[var(--text-faint)]">
           aerointel.io/map
         </span>
       </div>
@@ -127,21 +127,21 @@ export default function MapPreview() {
 
         {/* HUD overlay */}
         <div className="absolute top-3 left-3 px-2.5 py-1.5 rounded-md bg-[rgba(6,8,13,0.85)] border border-[var(--border-subtle)] backdrop-blur-sm">
-          <span className="text-[10px] font-mono text-[var(--text-muted)] block">LIVE TRACKING</span>
+          <span className="text-xs font-mono text-[var(--text-muted)] block">LIVE TRACKING</span>
           <span className="text-sm font-mono font-bold text-slate-300">2,847</span>
         </div>
 
         {/* Mini controls */}
         <div className="absolute top-3 right-3 flex flex-col gap-1">
-          <div className="w-6 h-6 rounded bg-[rgba(6,8,13,0.85)] border border-[var(--border-subtle)] flex items-center justify-center text-[10px] text-[var(--text-muted)]">+</div>
-          <div className="w-6 h-6 rounded bg-[rgba(6,8,13,0.85)] border border-[var(--border-subtle)] flex items-center justify-center text-[10px] text-[var(--text-muted)]">-</div>
+          <div className="w-6 h-6 rounded bg-[rgba(6,8,13,0.85)] border border-[var(--border-subtle)] flex items-center justify-center text-xs text-[var(--text-muted)]">+</div>
+          <div className="w-6 h-6 rounded bg-[rgba(6,8,13,0.85)] border border-[var(--border-subtle)] flex items-center justify-center text-xs text-[var(--text-muted)]">-</div>
         </div>
 
         {/* Bottom status bar */}
         <div className="absolute bottom-0 left-0 right-0 px-3 py-1.5 bg-[rgba(6,8,13,0.85)] border-t border-[var(--border-subtle)] flex items-center justify-between">
-          <span className="text-[9px] font-mono text-[var(--text-faint)]">METAR: ACTIVE</span>
-          <span className="text-[9px] font-mono text-[var(--text-faint)]">LAYERS: 6</span>
-          <span className="text-[9px] font-mono text-slate-300/70">3s REFRESH</span>
+          <span className="text-[11px] font-mono text-[var(--text-faint)]">METAR: ACTIVE</span>
+          <span className="text-[11px] font-mono text-[var(--text-faint)]">LAYERS: 6</span>
+          <span className="text-[11px] font-mono text-slate-300/70">3s REFRESH</span>
         </div>
       </div>
     </div>

@@ -26,7 +26,7 @@ export default function Legend({ inline = false, hiddenCategories, onToggleCateg
       style={inline ? { background: 'var(--surface-2)' } : { background: 'var(--surface-2)', border: '1px solid var(--border-default)' }}
     >
       {!inline && (
-        <div className="text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-muted)' }}>
+        <div className="text-xs font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--text-muted)' }}>
           Aircraft Type
         </div>
       )}
@@ -80,7 +80,7 @@ export default function Legend({ inline = false, hiddenCategories, onToggleCateg
                 />
               )}
             </svg>
-            <span className="text-[11px]" style={{ color: 'var(--text-secondary)' }}>
+            <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
               {getCategoryLabel(item.category)}
             </span>
           </div>

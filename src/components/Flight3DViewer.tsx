@@ -262,7 +262,7 @@ function HUD({ flight }: { flight: FlightState }) {
 function HUDItem({ label, value }: { label: string; value: string }) {
   return (
     <div className="text-center">
-      <div className="text-[10px] font-bold text-slate-400/80 tracking-wider">
+      <div className="text-xs font-bold text-slate-400/80 tracking-wider">
         {label}
       </div>
       <div className="text-sm font-mono font-semibold text-white">{value}</div>
@@ -288,7 +288,7 @@ export default function Flight3DViewer({ flight, onClose }: Flight3DViewerProps)
             <span className="text-white font-bold text-lg tracking-wide">{callsign}</span>
           </div>
           <span
-            className="inline-block px-2 py-0.5 rounded text-[10px] font-semibold"
+            className="inline-block px-2 py-0.5 rounded text-xs font-semibold"
             style={{
               backgroundColor: categoryColor + "30",
               color: categoryColor,
@@ -297,7 +297,7 @@ export default function Flight3DViewer({ flight, onClose }: Flight3DViewerProps)
             {flight.originCountry}
           </span>
           {flight.onGround && (
-            <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-500/20 text-slate-400">
+            <span className="px-2 py-0.5 rounded text-xs font-semibold bg-slate-500/20 text-slate-400">
               ON GROUND
             </span>
           )}
@@ -337,7 +337,7 @@ export default function Flight3DViewer({ flight, onClose }: Flight3DViewerProps)
         <HUD flight={flight} />
 
         {/* ICAO badge */}
-        <div className="absolute top-3 left-3 bg-gray-900/80 backdrop-blur border border-gray-700 rounded-lg px-2.5 py-1 text-[10px] text-gray-400 font-mono">
+        <div className="absolute top-3 left-3 bg-gray-900/80 backdrop-blur border border-gray-700 rounded-lg px-2.5 py-1 text-xs text-gray-400 font-mono">
           ICAO {flight.icao24.toUpperCase()}
         </div>
       </div>

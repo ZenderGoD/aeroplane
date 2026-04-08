@@ -339,7 +339,7 @@ export default function ReplayControls({
 
         {/* Slider row */}
         <div className="flex items-center gap-3 mb-2.5">
-          <span className="text-[10px] font-mono text-gray-500 tabular-nums w-10 text-right shrink-0">
+          <span className="text-xs font-mono text-gray-500 tabular-nums w-10 text-right shrink-0">
             {formatDuration(elapsed)}
           </span>
 
@@ -358,7 +358,7 @@ export default function ReplayControls({
             />
           </div>
 
-          <span className="text-[10px] font-mono text-gray-500 tabular-nums w-10 shrink-0">
+          <span className="text-xs font-mono text-gray-500 tabular-nums w-10 shrink-0">
             -{formatDuration(remaining)}
           </span>
         </div>
@@ -411,7 +411,7 @@ export default function ReplayControls({
           </div>
 
           {/* Time range labels */}
-          <div className="flex items-center gap-1.5 text-[10px] text-gray-600 font-mono tabular-nums">
+          <div className="flex items-center gap-1.5 text-xs text-gray-600 font-mono tabular-nums">
             <span>{formatTime(minTime)}</span>
             <span className="text-gray-700">--</span>
             <span>{formatTime(maxTime)}</span>

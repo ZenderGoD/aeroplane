@@ -193,7 +193,7 @@ export default function LandingPage() {
             {["ADS-B", "MLAT", "airplanes.live", "NOAA", "aviationweather.gov"].map((badge) => (
               <span
                 key={badge}
-                className="px-3 py-1 rounded-full text-[10px] font-mono font-medium text-[var(--text-faint)] border border-[var(--border-subtle)] bg-[rgba(10,10,10,0.5)]"
+                className="px-3 py-1 rounded-full text-xs font-mono font-medium text-[var(--text-faint)] border border-[var(--border-subtle)] bg-[rgba(10,10,10,0.5)]"
               >
                 {badge}
               </span>
@@ -273,12 +273,12 @@ export default function LandingPage() {
                       <Bot size={10} className="text-[var(--accent-primary)]" />
                     </div>
                     <div className="px-3 py-1.5 rounded-lg bg-[rgba(148,163,184,0.06)] border border-[rgba(148,163,184,0.1)]">
-                      <p className="text-[10px] text-[var(--text-secondary)]">Show me all Emirates A380s currently over Europe</p>
+                      <p className="text-xs text-[var(--text-secondary)]">Show me all Emirates A380s currently over Europe</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-2 justify-end">
                     <div className="px-3 py-1.5 rounded-lg bg-[var(--surface-2)] border border-[var(--border-subtle)]">
-                      <p className="text-[10px] text-[var(--text-muted)]">Found 4 Emirates A388 aircraft over European airspace...</p>
+                      <p className="text-xs text-[var(--text-muted)]">Found 4 Emirates A388 aircraft over European airspace...</p>
                     </div>
                   </div>
                 </div>
@@ -302,10 +302,10 @@ export default function LandingPage() {
                   ].map((airline) => (
                     <div key={airline.code} className="flex items-center justify-between px-2 py-1 rounded bg-[rgba(255,255,255,0.02)]">
                       <div className="flex items-center gap-2">
-                        <span className={`text-[10px] font-mono font-bold ${airline.color}`}>{airline.code}</span>
-                        <span className="text-[10px] text-[var(--text-muted)]">{airline.name}</span>
+                        <span className={`text-xs font-mono font-bold ${airline.color}`}>{airline.code}</span>
+                        <span className="text-xs text-[var(--text-muted)]">{airline.name}</span>
                       </div>
-                      <span className="text-[10px] font-mono text-[var(--text-faint)]">{airline.count} active</span>
+                      <span className="text-xs font-mono text-[var(--text-faint)]">{airline.count} active</span>
                     </div>
                   ))}
                 </div>
@@ -322,15 +322,15 @@ export default function LandingPage() {
                 <div className="p-3 space-y-1.5">
                   <div className="flex items-center gap-2 px-2 py-1.5 rounded bg-[rgba(226,232,240,0.06)] border border-[rgba(226,232,240,0.1)]">
                     <span className="w-1.5 h-1.5 rounded-full bg-slate-200 animate-pulse" />
-                    <span className="text-[10px] text-slate-200 font-mono">SQK 7700 - UAL2843 near KATL</span>
+                    <span className="text-xs text-slate-200 font-mono">SQK 7700 - UAL2843 near KATL</span>
                   </div>
                   <div className="flex items-center gap-2 px-2 py-1.5 rounded bg-[rgba(148,163,184,0.06)] border border-[rgba(148,163,184,0.1)]">
                     <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-                    <span className="text-[10px] text-slate-400 font-mono">Military activity - CZQX FIR</span>
+                    <span className="text-xs text-slate-400 font-mono">Military activity - CZQX FIR</span>
                   </div>
                   <div className="flex items-center gap-2 px-2 py-1.5 rounded bg-[rgba(148,163,184,0.06)] border border-[rgba(148,163,184,0.1)]">
                     <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
-                    <span className="text-[10px] text-slate-300 font-mono">N172SP entered your watchlist zone</span>
+                    <span className="text-xs text-slate-300 font-mono">N172SP entered your watchlist zone</span>
                   </div>
                 </div>
               </BentoFeatureCard>
@@ -355,7 +355,7 @@ export default function LandingPage() {
                   ].map((layer) => (
                     <div key={layer.label} className="flex flex-col items-center gap-1 p-2 rounded-lg bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.04)] transition-colors">
                       <span className={layer.color}>{layer.icon}</span>
-                      <span className="text-[9px] font-mono text-[var(--text-muted)]">{layer.label}</span>
+                      <span className="text-[11px] font-mono text-[var(--text-muted)]">{layer.label}</span>
                     </div>
                   ))}
                 </div>

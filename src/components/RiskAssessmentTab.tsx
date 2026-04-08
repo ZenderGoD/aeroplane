@@ -120,7 +120,7 @@ export default function RiskAssessmentTab({ riskyFlights, airports, corridors }:
               </svg>
               Generate Risk Assessment
             </button>
-            <p className="text-[9px] text-gray-600 mt-2">{remaining}/{DAILY_LIMIT} remaining today</p>
+            <p className="text-[11px] text-gray-600 mt-2">{remaining}/{DAILY_LIMIT} remaining today</p>
           </div>
         )}
 
@@ -134,7 +134,7 @@ export default function RiskAssessmentTab({ riskyFlights, airports, corridors }:
         {error && (
           <div className="text-center py-8">
             <p className="text-xs text-gray-400">Failed to generate assessment</p>
-            <button onClick={generate} className="text-[10px] text-gray-300 hover:underline mt-1">
+            <button onClick={generate} className="text-xs text-gray-300 hover:underline mt-1">
               Retry
             </button>
           </div>
@@ -148,14 +148,14 @@ export default function RiskAssessmentTab({ riskyFlights, airports, corridors }:
                 <span className={`text-xs font-bold ${OVERALL_LABELS[overallRisk]?.color || "text-gray-400"}`}>
                   {OVERALL_LABELS[overallRisk]?.text || overallRisk.toUpperCase()}
                 </span>
-                <span className="text-[9px] text-gray-600">
+                <span className="text-[11px] text-gray-600">
                   {assessments.length} items · {generatedAt ? new Date(generatedAt).toLocaleTimeString() : ""}
                 </span>
               </div>
               <button
                 onClick={generate}
                 disabled={remaining === 0}
-                className="text-[10px] text-gray-400 hover:text-gray-300 disabled:opacity-40"
+                className="text-xs text-gray-400 hover:text-gray-300 disabled:opacity-40"
               >
                 ↻ Refresh
               </button>
@@ -176,14 +176,14 @@ export default function RiskAssessmentTab({ riskyFlights, airports, corridors }:
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={icon} />
                       </svg>
                       <span className="text-xs font-mono font-bold text-gray-200">{a.entity}</span>
-                      <span className="text-[9px] text-gray-500 capitalize">{a.entityType}</span>
+                      <span className="text-[11px] text-gray-500 capitalize">{a.entityType}</span>
                     </div>
-                    <span className={`text-[9px] font-bold uppercase ${colors.text} px-1.5 py-0.5 rounded-full ${colors.bg}`}>
+                    <span className={`text-[11px] font-bold uppercase ${colors.text} px-1.5 py-0.5 rounded-full ${colors.bg}`}>
                       {a.riskLevel}
                     </span>
                   </div>
                   <p className="text-xs text-gray-300 leading-relaxed">{a.reason}</p>
-                  <p className="text-[10px] text-gray-400/70 leading-relaxed">→ {a.recommendation}</p>
+                  <p className="text-xs text-gray-400/70 leading-relaxed">→ {a.recommendation}</p>
                 </div>
               );
             })}

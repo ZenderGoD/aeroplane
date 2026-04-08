@@ -191,7 +191,7 @@ export default function ATCPanel({ icao, onClose }: ATCPanelProps) {
           FREQUENCIES
           {freqData && (
             <span
-              className="ml-1.5 text-[9px] px-1.5 py-0.5 rounded-full"
+              className="ml-1.5 text-[11px] px-1.5 py-0.5 rounded-full"
               style={{
                 background: "rgba(148,163,184,0.15)",
                 color: "#cbd5e1",
@@ -222,7 +222,7 @@ export default function ATCPanel({ icao, onClose }: ATCPanelProps) {
           APPROACHES
           {approachData && (
             <span
-              className="ml-1.5 text-[9px] px-1.5 py-0.5 rounded-full"
+              className="ml-1.5 text-[11px] px-1.5 py-0.5 rounded-full"
               style={{
                 background: "rgba(148,163,184,0.15)",
                 color: "#cbd5e1",
@@ -272,7 +272,7 @@ export default function ATCPanel({ icao, onClose }: ATCPanelProps) {
           <div className="space-y-3">
             {/* Airport name sub-header */}
             <div
-              className="text-[10px] font-semibold uppercase tracking-wider px-1"
+              className="text-xs font-semibold uppercase tracking-wider px-1"
               style={{ color: "var(--text-faint)" }}
             >
               {freqData.name}
@@ -285,7 +285,7 @@ export default function ATCPanel({ icao, onClose }: ATCPanelProps) {
                   {/* Group header */}
                   <div className="flex items-center gap-2 px-1 mb-1.5">
                     <span
-                      className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-md"
+                      className="text-[11px] font-bold uppercase px-2 py-0.5 rounded-md"
                       style={{
                         background: config.bg,
                         border: `1px solid ${config.border}`,
@@ -401,7 +401,7 @@ export default function ATCPanel({ icao, onClose }: ATCPanelProps) {
                   >
                     <div className="flex items-center gap-2">
                       <span
-                        className="text-[9px] font-bold px-1.5 py-0.5 rounded"
+                        className="text-[11px] font-bold px-1.5 py-0.5 rounded"
                         style={{
                           background: config.bg,
                           border: `1px solid ${config.border}`,
@@ -469,7 +469,7 @@ export default function ATCPanel({ icao, onClose }: ATCPanelProps) {
                       {/* Minimums */}
                       <div>
                         <div
-                          className="text-[9px] font-bold uppercase tracking-wider mb-1.5"
+                          className="text-[11px] font-bold uppercase tracking-wider mb-1.5"
                           style={{ color: "var(--text-faint)" }}
                         >
                           Minimums
@@ -495,13 +495,13 @@ export default function ATCPanel({ icao, onClose }: ATCPanelProps) {
                       {/* Missed Approach */}
                       <div>
                         <div
-                          className="text-[9px] font-bold uppercase tracking-wider mb-1"
+                          className="text-[11px] font-bold uppercase tracking-wider mb-1"
                           style={{ color: "var(--text-faint)" }}
                         >
                           Missed Approach
                         </div>
                         <p
-                          className="text-[11px] leading-relaxed"
+                          className="text-xs leading-relaxed"
                           style={{ color: "var(--text-secondary)" }}
                         >
                           {app.missed}
@@ -544,7 +544,7 @@ function DetailCell({
       style={{ background: "var(--surface-2)" }}
     >
       <div
-        className="text-[9px] uppercase tracking-wider mb-0.5"
+        className="text-[11px] uppercase tracking-wider mb-0.5"
         style={{ color: "var(--text-faint)" }}
       >
         {label}

@@ -90,7 +90,7 @@ export function KeyboardShortcutHelp({
         <div className="space-y-5 py-2">
           {shortcutGroups.map((group) => (
             <div key={group.title}>
-              <h3 className="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-2 px-1">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2 px-1">
                 {group.title}
               </h3>
               <div className="grid gap-1.5">

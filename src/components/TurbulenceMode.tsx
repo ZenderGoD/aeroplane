@@ -493,7 +493,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
             </div>
             <div>
               <div className="panel-title">Turbulence Map</div>
-              <div className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+              <div className="text-xs" style={{ color: "var(--text-muted)" }}>
                 {loading ? "Scanning..." : `${flightCount} aircraft tracked`}
               </div>
             </div>
@@ -532,7 +532,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
                   <span className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
                     {severityLabel(sev)}
                   </span>
-                  <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+                  <span className="text-xs" style={{ color: "var(--text-muted)" }}>
                     {sev === "light" && "(500-1000 fpm)"}
                     {sev === "moderate" && "(1000-2000 fpm)"}
                     {sev === "severe" && "(2000+ fpm)"}
@@ -558,7 +558,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
           <div className="grid grid-cols-3 gap-1">
             <button
               onClick={() => setAltitudeFilter("all")}
-              className="text-[10px] font-semibold px-2 py-1.5 rounded-md transition-all"
+              className="text-xs font-semibold px-2 py-1.5 rounded-md transition-all"
               style={{
                 background: altitudeFilter === "all" ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.04)",
                 color: altitudeFilter === "all" ? "#cbd5e1" : "var(--text-muted)",
@@ -571,7 +571,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
               <button
                 key={band.label}
                 onClick={() => setAltitudeFilter(band.label as AltitudeFilter)}
-                className="text-[10px] font-semibold px-2 py-1.5 rounded-md transition-all"
+                className="text-xs font-semibold px-2 py-1.5 rounded-md transition-all"
                 style={{
                   background:
                     altitudeFilter === band.label
@@ -634,7 +634,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
                 <div className="text-xs" style={{ color: "var(--text-muted)" }}>
                   No turbulence reports yet.
                 </div>
-                <div className="text-[10px] mt-1" style={{ color: "var(--text-faint)" }}>
+                <div className="text-xs mt-1" style={{ color: "var(--text-faint)" }}>
                   Monitoring aircraft for irregular flight patterns...
                 </div>
               </div>
@@ -659,17 +659,17 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
                           }}
                         />
                         <span
-                          className="text-[10px] font-bold uppercase"
+                          className="text-xs font-bold uppercase"
                           style={{ color: severityColor(report.severity) }}
                         >
                           {report.severity}
                         </span>
                       </div>
-                      <span className="text-[9px]" style={{ color: "var(--text-faint)" }}>
+                      <span className="text-[11px]" style={{ color: "var(--text-faint)" }}>
                         {formatTimeAgo(report.timestamp)}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-[10px]">
+                    <div className="flex items-center justify-between text-xs">
                       <span className="data-value" style={{ color: "var(--text-secondary)" }}>
                         {report.aircraft}
                       </span>
@@ -703,7 +703,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
               boxShadow: totalReports > 0 ? "0 0 6px #e2e8f060" : "0 0 6px #cbd5e160",
             }}
           />
-          <span className="text-[10px] font-medium" style={{ color: "var(--text-muted)" }}>
+          <span className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>
             REPORTS
           </span>
           <span className="data-value text-xs font-bold" style={{ color: "var(--text-primary)" }}>
@@ -719,7 +719,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
                 className="w-1.5 h-1.5 rounded-full"
                 style={{ background: severityColor(sev) }}
               />
-              <span className="text-[10px] data-value font-semibold" style={{ color: severityColor(sev) }}>
+              <span className="text-xs data-value font-semibold" style={{ color: severityColor(sev) }}>
                 {severityCounts[sev]}
               </span>
             </div>
@@ -730,11 +730,11 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
 
         {/* Current filter */}
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+          <span className="text-xs" style={{ color: "var(--text-muted)" }}>
             FILTER
           </span>
           <span
-            className="text-[10px] font-bold data-value px-1.5 py-0.5 rounded"
+            className="text-xs font-bold data-value px-1.5 py-0.5 rounded"
             style={{
               color: "#cbd5e1",
               background: "rgba(56,189,248,0.1)",
@@ -749,20 +749,20 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
 
         {/* Data age */}
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+          <span className="text-xs" style={{ color: "var(--text-muted)" }}>
             DATA
           </span>
-          <span className="text-[10px] font-semibold data-value" style={{ color: "var(--text-secondary)" }}>
+          <span className="text-xs font-semibold data-value" style={{ color: "var(--text-secondary)" }}>
             {dataAge}
           </span>
         </div>
 
         {/* Aircraft toggle indicator */}
         <div className="ml-auto flex items-center gap-1.5">
-          <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+          <span className="text-xs" style={{ color: "var(--text-muted)" }}>
             {showAllAircraft ? "ALL ACFT" : "AFFECTED ONLY"}
           </span>
-          <span className="data-value text-[10px] font-bold" style={{ color: "var(--text-secondary)" }}>
+          <span className="data-value text-xs font-bold" style={{ color: "var(--text-secondary)" }}>
             {flightCount}
           </span>
         </div>

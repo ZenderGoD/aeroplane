@@ -669,7 +669,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
             <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
               Alert System
             </h2>
-            <p className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
               {stats.active} active / {stats.totalTriggers} triggers
             </p>
           </div>
@@ -677,7 +677,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
         <div className="flex items-center gap-2">
           {/* Live data indicator */}
           <span
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium"
             style={{
               background: "rgba(203,213,225,0.1)",
               color: sharedLoading ? "var(--text-muted)" : "var(--status-nominal)",
@@ -713,7 +713,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className="relative px-3 py-2 text-[11px] font-semibold uppercase tracking-wider rounded-t-md transition-colors"
+            className="relative px-3 py-2 text-xs font-semibold uppercase tracking-wider rounded-t-md transition-colors"
             style={{
               color: tab === t ? "var(--text-primary)" : "var(--text-muted)",
               background: tab === t ? "var(--surface-0)" : "transparent",
@@ -723,7 +723,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
             {t === "alerts" ? "Alerts" : t === "log" ? "Log" : "Create"}
             {t === "alerts" && stats.active > 0 && (
               <span
-                className="ml-1.5 inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full text-[9px] font-bold"
+                className="ml-1.5 inline-flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full text-[11px] font-bold"
                 style={{ background: "var(--accent-primary)", color: "var(--surface-0)" }}
               >
                 {stats.active}
@@ -771,7 +771,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                     }}
                   >
                     <span className="text-lg">{tmpl.icon}</span>
-                    <span className="text-[10px] font-medium leading-tight whitespace-pre-line" style={{ color: tmpl.color }}>
+                    <span className="text-xs font-medium leading-tight whitespace-pre-line" style={{ color: tmpl.color }}>
                       {tmpl.label}
                     </span>
                   </button>
@@ -795,7 +795,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                   <p className="data-value text-base font-bold" style={{ color: s.color }}>
                     {s.value}
                   </p>
-                  <p className="text-[9px] uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>
+                  <p className="text-[11px] uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>
                     {s.label}
                   </p>
                 </div>
@@ -812,12 +812,12 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                 <p className="text-sm font-medium" style={{ color: "var(--text-muted)" }}>
                   No alerts configured
                 </p>
-                <p className="text-[11px] mt-1" style={{ color: "var(--text-faint)" }}>
+                <p className="text-xs mt-1" style={{ color: "var(--text-faint)" }}>
                   Use templates above or create custom alerts
                 </p>
                 <button
                   onClick={() => setTab("create")}
-                  className="mt-4 px-4 py-1.5 rounded-lg text-[11px] font-semibold transition-all hover:scale-105"
+                  className="mt-4 px-4 py-1.5 rounded-lg text-xs font-semibold transition-all hover:scale-105"
                   style={{ background: "var(--accent-primary)", color: "var(--surface-0)" }}
                 >
                   Create Alert
@@ -848,7 +848,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                             >
                               {alert.name}
                             </p>
-                            <p className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+                            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
                               {ALERT_TYPE_LABELS[alert.type]}
                             </p>
                           </div>
@@ -868,7 +868,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                       </div>
 
                       {/* Metadata row */}
-                      <div className="flex items-center gap-3 mt-2 text-[10px]" style={{ color: "var(--text-faint)" }}>
+                      <div className="flex items-center gap-3 mt-2 text-xs" style={{ color: "var(--text-faint)" }}>
                         {alert.triggerCount > 0 && (
                           <span className="data-value" style={{ color: sc.text }}>
                             {alert.triggerCount} fires
@@ -923,7 +923,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
               {logEntries.length > 0 && (
                 <button
                   onClick={clearLog}
-                  className="text-[10px] font-medium px-2 py-0.5 rounded transition-colors"
+                  className="text-xs font-medium px-2 py-0.5 rounded transition-colors"
                   style={{ color: "var(--text-muted)", background: "var(--surface-2)" }}
                 >
                   Clear
@@ -940,7 +940,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                 <p className="text-xs" style={{ color: "var(--text-muted)" }}>
                   No alerts triggered yet
                 </p>
-                <p className="text-[10px] mt-1" style={{ color: "var(--text-faint)" }}>
+                <p className="text-xs mt-1" style={{ color: "var(--text-faint)" }}>
                   Monitoring {stats.active} active alert{stats.active !== 1 ? "s" : ""}
                 </p>
               </div>
@@ -966,34 +966,34 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                               style={{ background: sc.dot }}
                             />
                             <span
-                              className="text-[11px] font-semibold truncate"
+                              className="text-xs font-semibold truncate"
                               style={{ color: sc.text }}
                             >
                               {entry.alertName}
                             </span>
                           </div>
                           <p
-                            className="text-[10px] mt-1 ml-3.5 leading-relaxed"
+                            className="text-xs mt-1 ml-3.5 leading-relaxed"
                             style={{ color: "var(--text-secondary)" }}
                           >
                             {entry.details}
                           </p>
                           <div className="flex items-center gap-2 mt-1 ml-3.5">
-                            <span className="data-value text-[10px]" style={{ color: "var(--text-muted)" }}>
+                            <span className="data-value text-xs" style={{ color: "var(--text-muted)" }}>
                               {entry.aircraftCallsign || entry.aircraftIcao}
                             </span>
                             {entry.aircraftRegistration && (
-                              <span className="data-value text-[10px]" style={{ color: "var(--text-faint)" }}>
+                              <span className="data-value text-xs" style={{ color: "var(--text-faint)" }}>
                                 {entry.aircraftRegistration}
                               </span>
                             )}
                           </div>
                         </div>
                         <div className="shrink-0 text-right">
-                          <p className="data-value text-[10px]" style={{ color: "var(--text-muted)" }}>
+                          <p className="data-value text-xs" style={{ color: "var(--text-muted)" }}>
                             {formatTimestamp(entry.timestamp)}
                           </p>
-                          <p className="text-[9px]" style={{ color: "var(--text-faint)" }}>
+                          <p className="text-[11px]" style={{ color: "var(--text-faint)" }}>
                             {formatDate(entry.timestamp)}
                           </p>
                         </div>
@@ -1022,7 +1022,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
 
               {/* Name */}
               <div>
-                <label className="block text-[11px] font-medium mb-1.5" style={{ color: "var(--text-tertiary)" }}>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-tertiary)" }}>
                   Alert Name
                 </label>
                 <input
@@ -1036,7 +1036,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
 
               {/* Type */}
               <div>
-                <label className="block text-[11px] font-medium mb-1.5" style={{ color: "var(--text-tertiary)" }}>
+                <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-tertiary)" }}>
                   Alert Type
                 </label>
                 <select
@@ -1055,11 +1055,11 @@ export default function AlertSystemMode({ onExitMode }: Props) {
               {/* Conditional fields */}
               {formType === "aircraft_spotted" && (
                 <div className="space-y-3">
-                  <p className="text-[10px] font-medium" style={{ color: "var(--text-muted)" }}>
+                  <p className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>
                     Match any of the following (at least one required):
                   </p>
                   <div>
-                    <label className="block text-[11px] font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
+                    <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
                       Registration
                     </label>
                     <input
@@ -1071,7 +1071,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
+                    <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
                       Callsign
                     </label>
                     <input
@@ -1083,7 +1083,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
+                    <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
                       ICAO Hex
                     </label>
                     <input
@@ -1101,7 +1101,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="block text-[11px] font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
+                      <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
                         Latitude
                       </label>
                       <input
@@ -1114,7 +1114,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
+                      <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
                         Longitude
                       </label>
                       <input
@@ -1128,7 +1128,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-[11px] font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
+                    <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
                       Radius (NM)
                     </label>
                     <input
@@ -1141,7 +1141,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                   </div>
                   {formType === "ground_stop" && (
                     <div>
-                      <label className="block text-[11px] font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
+                      <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
                         Ground Count Threshold
                       </label>
                       <input
@@ -1159,7 +1159,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
               {formType === "altitude_alert" && (
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-[11px] font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
+                    <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
                       Altitude (ft)
                     </label>
                     <input
@@ -1171,7 +1171,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
+                    <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
                       Trigger When
                     </label>
                     <div className="flex gap-2">
@@ -1179,7 +1179,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                         <button
                           key={op}
                           onClick={() => setFormAltitudeOp(op)}
-                          className="flex-1 py-2 rounded-lg text-[11px] font-semibold uppercase tracking-wider transition-all"
+                          className="flex-1 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all"
                           style={{
                             background: formAltitudeOp === op ? "var(--accent-primary-dim)" : "var(--surface-1)",
                             color: formAltitudeOp === op ? "var(--accent-primary)" : "var(--text-muted)",
@@ -1196,7 +1196,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
 
               {formType === "squawk_alert" && (
                 <div>
-                  <label className="block text-[11px] font-medium mb-2" style={{ color: "var(--text-tertiary)" }}>
+                  <label className="block text-xs font-medium mb-2" style={{ color: "var(--text-tertiary)" }}>
                     Squawk Codes
                   </label>
                   <div className="space-y-2">
@@ -1228,7 +1228,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                         <span className="data-value text-[12px] font-bold" style={{ color: sq.color }}>
                           {sq.code}
                         </span>
-                        <span className="text-[11px]" style={{ color: "var(--text-secondary)" }}>
+                        <span className="text-xs" style={{ color: "var(--text-secondary)" }}>
                           {sq.label}
                         </span>
                       </label>
@@ -1291,7 +1291,7 @@ export default function AlertSystemMode({ onExitMode }: Props) {
 function ConditionBadge({ label }: { label: string }) {
   return (
     <span
-      className="data-value inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-medium"
+      className="data-value inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium"
       style={{
         background: "var(--surface-3)",
         color: "var(--text-tertiary)",

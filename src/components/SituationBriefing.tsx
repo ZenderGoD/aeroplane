@@ -77,11 +77,11 @@ export default function SituationBriefing({
           </svg>
           <span className="text-sm font-semibold text-gray-300">AI Situation Briefing</span>
           {briefing && (
-            <span className="text-[9px] text-gray-500 ml-auto mr-2">
+            <span className="text-[11px] text-gray-500 ml-auto mr-2">
               {isStale ? "Stale" : "Fresh"} · {new Date(briefing.generatedAt).toLocaleTimeString()}
             </span>
           )}
-          <span className="text-[9px] text-gray-600">{remaining}/{DAILY_LIMIT}</span>
+          <span className="text-[11px] text-gray-600">{remaining}/{DAILY_LIMIT}</span>
           <svg
             className={`w-3.5 h-3.5 text-gray-500 transition-transform ${expanded ? "rotate-180" : ""}`}
             fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -115,7 +115,7 @@ export default function SituationBriefing({
             {error && (
               <div className="text-center py-4">
                 <p className="text-xs text-gray-400">Failed to generate briefing</p>
-                <button onClick={generate} className="text-[10px] text-gray-300 hover:underline mt-1">
+                <button onClick={generate} className="text-xs text-gray-300 hover:underline mt-1">
                   Retry
                 </button>
               </div>
@@ -125,14 +125,14 @@ export default function SituationBriefing({
               <div className="space-y-3">
                 {/* Summary */}
                 <div>
-                  <div className="text-[10px] font-bold text-gray-300 uppercase tracking-wider mb-1">Summary</div>
+                  <div className="text-xs font-bold text-gray-300 uppercase tracking-wider mb-1">Summary</div>
                   <p className="text-xs text-gray-300 leading-relaxed">{briefing.summary}</p>
                 </div>
 
                 {/* Hotspots */}
                 {briefing.hotspots && (
                   <div>
-                    <div className="text-[10px] font-bold text-gray-300 uppercase tracking-wider mb-1">
+                    <div className="text-xs font-bold text-gray-300 uppercase tracking-wider mb-1">
                       🔥 Hotspots
                     </div>
                     <p className="text-xs text-gray-300 leading-relaxed">{briefing.hotspots}</p>
@@ -142,7 +142,7 @@ export default function SituationBriefing({
                 {/* Corridors */}
                 {briefing.corridors && (
                   <div>
-                    <div className="text-[10px] font-bold text-gray-300 uppercase tracking-wider mb-1">
+                    <div className="text-xs font-bold text-gray-300 uppercase tracking-wider mb-1">
                       Corridors
                     </div>
                     <p className="text-xs text-gray-300 leading-relaxed">{briefing.corridors}</p>
@@ -152,7 +152,7 @@ export default function SituationBriefing({
                 {/* Outlook */}
                 {briefing.outlook && (
                   <div>
-                    <div className="text-[10px] font-bold text-gray-300 uppercase tracking-wider mb-1">
+                    <div className="text-xs font-bold text-gray-300 uppercase tracking-wider mb-1">
                       Outlook
                     </div>
                     <p className="text-xs text-gray-300 leading-relaxed">{briefing.outlook}</p>
@@ -163,7 +163,7 @@ export default function SituationBriefing({
                 {isStale && remaining > 0 && (
                   <button
                     onClick={generate}
-                    className="w-full text-[10px] text-gray-400 hover:text-gray-300 py-1 transition-colors"
+                    className="w-full text-xs text-gray-400 hover:text-gray-300 py-1 transition-colors"
                   >
                     ↻ Briefing is stale — regenerate
                   </button>

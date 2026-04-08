@@ -122,14 +122,14 @@ export default function AnomalyRootCause({ flight, anomalies, instability, nearb
       {isLoading && (
         <div className="flex items-center justify-center gap-2 py-4">
           <div className="w-3.5 h-3.5 border-2 border-gray-500/30 border-t-gray-400 rounded-full animate-spin" />
-          <span className="text-[10px] text-gray-400">Analyzing root causes...</span>
+          <span className="text-xs text-gray-400">Analyzing root causes...</span>
         </div>
       )}
 
       {error && (
         <div className="text-center py-2">
-          <p className="text-[10px] text-gray-400">Analysis failed</p>
-          <button onClick={analyze} className="text-[10px] text-gray-300 hover:underline">Retry</button>
+          <p className="text-xs text-gray-400">Analysis failed</p>
+          <button onClick={analyze} className="text-xs text-gray-300 hover:underline">Retry</button>
         </div>
       )}
 
@@ -137,8 +137,8 @@ export default function AnomalyRootCause({ flight, anomalies, instability, nearb
         <div className="rounded-lg border border-gray-700/40 bg-gray-900/20 px-3 py-2.5 space-y-2">
           {/* Header with confidence */}
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold text-gray-300 uppercase tracking-wider">Root Cause Analysis</span>
-            <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded ${CONFIDENCE_COLORS[result.confidence].bg} ${CONFIDENCE_COLORS[result.confidence].text}`}>
+            <span className="text-xs font-bold text-gray-300 uppercase tracking-wider">Root Cause Analysis</span>
+            <span className={`text-[11px] font-medium px-1.5 py-0.5 rounded ${CONFIDENCE_COLORS[result.confidence].bg} ${CONFIDENCE_COLORS[result.confidence].text}`}>
               {CONFIDENCE_COLORS[result.confidence].label}
             </span>
           </div>
@@ -149,11 +149,11 @@ export default function AnomalyRootCause({ flight, anomalies, instability, nearb
           {/* Factors */}
           {result.factors.length > 0 && (
             <div className="space-y-1">
-              <div className="text-[9px] font-semibold text-gray-500 uppercase">Contributing Factors</div>
+              <div className="text-[11px] font-semibold text-gray-500 uppercase">Contributing Factors</div>
               {result.factors.map((f, i) => (
                 <div key={i} className="flex items-start gap-1.5">
-                  <span className="text-gray-500 text-[10px] mt-0.5">•</span>
-                  <span className="text-[10px] text-gray-400 leading-relaxed">{f}</span>
+                  <span className="text-gray-500 text-xs mt-0.5">•</span>
+                  <span className="text-xs text-gray-400 leading-relaxed">{f}</span>
                 </div>
               ))}
             </div>
@@ -162,9 +162,9 @@ export default function AnomalyRootCause({ flight, anomalies, instability, nearb
           {/* Related flights */}
           {result.relatedFlights.length > 0 && (
             <div className="flex items-center gap-1 flex-wrap">
-              <span className="text-[9px] text-gray-500">Related:</span>
+              <span className="text-[11px] text-gray-500">Related:</span>
               {result.relatedFlights.map((f) => (
-                <span key={f} className="text-[9px] font-mono text-gray-300 bg-gray-800/30 px-1.5 py-0.5 rounded">
+                <span key={f} className="text-[11px] font-mono text-gray-300 bg-gray-800/30 px-1.5 py-0.5 rounded">
                   {f}
                 </span>
               ))}
@@ -173,7 +173,7 @@ export default function AnomalyRootCause({ flight, anomalies, instability, nearb
 
           {/* Watch suggestion */}
           {result.suggestion && (
-            <p className="text-[10px] text-gray-400/80 leading-relaxed">
+            <p className="text-xs text-gray-400/80 leading-relaxed">
               ⚠ {result.suggestion}
             </p>
           )}

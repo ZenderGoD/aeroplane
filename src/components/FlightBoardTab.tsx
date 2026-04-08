@@ -47,7 +47,7 @@ export default function FlightBoardTab({ airports }: Props) {
           <div className="flex bg-gray-900 rounded-lg overflow-hidden border border-gray-800 flex-1">
             <button
               onClick={() => setView("arrivals")}
-              className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-[11px] font-medium transition-all ${
+              className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-all ${
                 view === "arrivals"
                   ? "bg-gray-600 text-white"
                   : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
@@ -60,7 +60,7 @@ export default function FlightBoardTab({ airports }: Props) {
             </button>
             <button
               onClick={() => setView("departures")}
-              className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-[11px] font-medium transition-all ${
+              className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-all ${
                 view === "departures"
                   ? "bg-gray-600 text-white"
                   : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/50"
@@ -75,7 +75,7 @@ export default function FlightBoardTab({ airports }: Props) {
           {selectedAirport && (
             <button
               onClick={() => setSelectedAirport(null)}
-              className="text-[10px] text-gray-500 hover:text-gray-300 px-2 py-1"
+              className="text-xs text-gray-500 hover:text-gray-300 px-2 py-1"
             >
               All
             </button>
@@ -108,12 +108,12 @@ export default function FlightBoardTab({ airports }: Props) {
                   <span className="text-sm font-bold font-mono text-gray-100">
                     {airport.airportIcao}
                   </span>
-                  <span className="text-[10px] text-gray-500 truncate max-w-[160px]">
+                  <span className="text-xs text-gray-500 truncate max-w-[160px]">
                     {airport.airportName}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`text-[10px] font-bold ${pressure.color}`}>
+                  <span className={`text-xs font-bold ${pressure.color}`}>
                     {pressure.label}
                   </span>
                   <span className="text-xs font-mono text-gray-300 bg-gray-800 px-1.5 py-0.5 rounded">
@@ -125,7 +125,7 @@ export default function FlightBoardTab({ airports }: Props) {
               {/* Flight board rows */}
               <div className="border-t border-gray-800/50">
                 {/* Board header */}
-                <div className="flex items-center px-3 py-1 text-[9px] font-semibold text-gray-600 uppercase tracking-wider bg-gray-900/80">
+                <div className="flex items-center px-3 py-1 text-[11px] font-semibold text-gray-600 uppercase tracking-wider bg-gray-900/80">
                   <span className="w-[60px]">Status</span>
                   <span className="flex-1">Type</span>
                   <span className="w-[50px] text-right">Count</span>
@@ -162,7 +162,7 @@ export default function FlightBoardTab({ airports }: Props) {
                       />
                     )}
                     {airport.components.inboundCount === 0 && airport.components.groundCount === 0 && (
-                      <div className="px-3 py-2 text-[10px] text-gray-600 text-center">
+                      <div className="px-3 py-2 text-xs text-gray-600 text-center">
                         No inbound traffic
                       </div>
                     )}
@@ -184,7 +184,7 @@ export default function FlightBoardTab({ airports }: Props) {
                       />
                     )}
                     {airport.components.outboundCount === 0 && airport.components.groundCount === 0 && (
-                      <div className="px-3 py-2 text-[10px] text-gray-600 text-center">
+                      <div className="px-3 py-2 text-xs text-gray-600 text-center">
                         No outbound traffic
                       </div>
                     )}
@@ -193,7 +193,7 @@ export default function FlightBoardTab({ airports }: Props) {
               </div>
 
               {/* Summary bar */}
-              <div className="flex items-center gap-3 px-3 py-1.5 bg-gray-950/50 border-t border-gray-800/30 text-[9px] text-gray-500">
+              <div className="flex items-center gap-3 px-3 py-1.5 bg-gray-950/50 border-t border-gray-800/30 text-[11px] text-gray-500">
                 <span>Score: <strong className={pressure.color}>{Math.round(airport.pressureScore)}</strong></span>
                 <span>IN: {airport.components.inboundCount}</span>
                 <span>OUT: {airport.components.outboundCount}</span>
@@ -233,7 +233,7 @@ function BoardRow({
 
   return (
     <div className="flex items-center px-3 py-1.5 hover:bg-gray-800/30 transition-colors">
-      <span className={`w-[60px] text-[10px] font-medium px-1.5 py-0.5 rounded ${colors.bg} ${colors.text}`}>
+      <span className={`w-[60px] text-xs font-medium px-1.5 py-0.5 rounded ${colors.bg} ${colors.text}`}>
         {status}
       </span>
       <div className="flex-1 mx-2">

@@ -598,7 +598,7 @@ export default function SavedViewsPanel({
                   {tab.label}
                   {tab.count > 0 && (
                     <span
-                      className="text-[10px] px-1.5 py-0.5 rounded-full tabular-nums"
+                      className="text-xs px-1.5 py-0.5 rounded-full tabular-nums"
                       style={{
                         background: activeTab === tab.key ? "var(--accent-primary-dim)" : "var(--surface-4)",
                         color: activeTab === tab.key ? "var(--accent-primary)" : "var(--text-muted)",
@@ -652,7 +652,7 @@ export default function SavedViewsPanel({
                         <div className="text-xs font-medium truncate" style={{ color: "var(--text-primary)" }}>
                           {view.name}
                         </div>
-                        <div className="text-[10px] truncate mt-0.5" style={{ color: "var(--text-muted)" }}>
+                        <div className="text-xs truncate mt-0.5" style={{ color: "var(--text-muted)" }}>
                           {view.description}
                         </div>
                       </div>
@@ -801,7 +801,7 @@ export default function SavedViewsPanel({
                     <div className="text-xs font-medium mb-1" style={{ color: "var(--text-secondary)" }}>
                       No aircraft tracked
                     </div>
-                    <div className="text-[10px] max-w-[200px]" style={{ color: "var(--text-muted)" }}>
+                    <div className="text-xs max-w-[200px]" style={{ color: "var(--text-muted)" }}>
                       Add aircraft by registration, ICAO hex, or callsign to track them in real time.
                     </div>
                   </div>
@@ -836,14 +836,14 @@ export default function SavedViewsPanel({
                         {statusIndicator(ac.status)}
                       </div>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+                        <span className="text-xs" style={{ color: "var(--text-muted)" }}>
                           {ac.identifierType === "icao24" ? "ICAO" : ac.identifierType === "registration" ? "REG" : "CS"}
                         </span>
-                        <span className="text-[10px]" style={{ color: ac.status === "active" ? "var(--status-nominal)" : ac.status === "ground" ? "var(--status-caution)" : "var(--text-faint)" }}>
+                        <span className="text-xs" style={{ color: ac.status === "active" ? "var(--status-nominal)" : ac.status === "ground" ? "var(--status-caution)" : "var(--text-faint)" }}>
                           {statusLabel(ac.status)}
                         </span>
                         {ac.lastSeen && (
-                          <span className="text-[10px]" style={{ color: "var(--text-faint)" }}>
+                          <span className="text-xs" style={{ color: "var(--text-faint)" }}>
                             {timeAgo(ac.lastSeen)}
                           </span>
                         )}
@@ -877,7 +877,7 @@ export default function SavedViewsPanel({
                         <button
                           key={t}
                           onClick={() => setNewAircraftType(t)}
-                          className="flex-1 py-1 rounded text-[10px] font-medium transition-colors"
+                          className="flex-1 py-1 rounded text-xs font-medium transition-colors"
                           style={{
                             background: newAircraftType === t ? "var(--surface-4)" : "transparent",
                             color: newAircraftType === t ? "var(--text-primary)" : "var(--text-muted)",
@@ -954,7 +954,7 @@ export default function SavedViewsPanel({
                     <div className="text-xs font-medium mb-1" style={{ color: "var(--text-secondary)" }}>
                       No favorite airports
                     </div>
-                    <div className="text-[10px] max-w-[200px]" style={{ color: "var(--text-muted)" }}>
+                    <div className="text-xs max-w-[200px]" style={{ color: "var(--text-muted)" }}>
                       Save airports to quickly access them in Airport Radar mode.
                     </div>
                   </div>
@@ -990,12 +990,12 @@ export default function SavedViewsPanel({
                       </div>
                       <div className="flex items-center gap-2 mt-0.5">
                         {ap.city && (
-                          <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+                          <span className="text-xs" style={{ color: "var(--text-muted)" }}>
                             {ap.city}{ap.country ? `, ${ap.country}` : ""}
                           </span>
                         )}
                         {typeof ap.flightCount === "number" && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded-full"
+                          <span className="text-xs px-1.5 py-0.5 rounded-full"
                             style={{ background: "var(--accent-primary-dim)", color: "var(--accent-primary)" }}>
                             {ap.flightCount} flights
                           </span>

@@ -150,7 +150,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                     {formatCallsign(flight.callsign)}
                   </div>
                   <span
-                    className="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold border"
+                    className="inline-block px-2 py-0.5 rounded-md text-xs font-bold border"
                     style={{
                       backgroundColor: getCategoryColor(flight.category) + "15",
                       color: getCategoryColor(flight.category),
@@ -171,7 +171,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                   <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                     {flight.registration && (
                       <span
-                        className="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold"
+                        className="inline-block px-1.5 py-0.5 rounded text-xs font-mono font-semibold"
                         style={{
                           color: "var(--text-secondary)",
                           border: "1px solid var(--border-default)",
@@ -183,7 +183,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                     )}
                     {flight.typeCode && (
                       <span
-                        className="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold"
+                        className="inline-block px-1.5 py-0.5 rounded text-xs font-mono font-semibold"
                         style={{
                           color: "var(--text-secondary)",
                           border: "1px solid var(--border-default)",
@@ -195,7 +195,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                     )}
                     {flight.positionSource && (
                       <span
-                        className="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold uppercase"
+                        className="inline-block px-1.5 py-0.5 rounded text-xs font-bold uppercase"
                         style={{
                           color: flight.positionSource === "adsb_icao" ? "#cbd5e1"
                             : flight.positionSource === "mlat" ? "#94a3b8"
@@ -221,7 +221,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                   <AnomalyBadge anomalies={anomalies} />
                   {instability && instability.score > 10 && (
                     <span
-                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold border"
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-bold border"
                       style={{
                         backgroundColor: getInstabilityColor(instability.score) + "15",
                         color: getInstabilityColor(instability.score),
@@ -297,7 +297,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                       className="rounded-lg px-3 py-2"
                       style={{ background: "var(--surface-3)", border: "1px solid var(--border-subtle)" }}
                     >
-                      <div className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: "var(--text-muted)" }}>
+                      <div className="text-xs uppercase tracking-wider mb-0.5" style={{ color: "var(--text-muted)" }}>
                         IAS
                       </div>
                       <div className="flex items-center gap-1.5">
@@ -306,7 +306,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                         </svg>
                         <span className="text-sm font-medium tabular-nums" style={{ color: "var(--text-primary)" }}>
                           {Math.round(flight.ias)}
-                          <span className="text-[10px] ml-0.5" style={{ color: "var(--text-muted)" }}>kts</span>
+                          <span className="text-xs ml-0.5" style={{ color: "var(--text-muted)" }}>kts</span>
                         </span>
                       </div>
                     </div>
@@ -316,12 +316,12 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                       className="rounded-lg px-3 py-2"
                       style={{ background: "var(--surface-3)", border: "1px solid var(--border-subtle)" }}
                     >
-                      <div className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: "var(--text-muted)" }}>
+                      <div className="text-xs uppercase tracking-wider mb-0.5" style={{ color: "var(--text-muted)" }}>
                         TAS
                       </div>
                       <span className="text-sm font-medium tabular-nums" style={{ color: "var(--text-primary)" }}>
                         {Math.round(flight.tas)}
-                        <span className="text-[10px] ml-0.5" style={{ color: "var(--text-muted)" }}>kts</span>
+                        <span className="text-xs ml-0.5" style={{ color: "var(--text-muted)" }}>kts</span>
                       </span>
                     </div>
                   )}
@@ -330,7 +330,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                       className="rounded-lg px-3 py-2"
                       style={{ background: "var(--surface-3)", border: "1px solid var(--border-subtle)" }}
                     >
-                      <div className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: "var(--text-muted)" }}>
+                      <div className="text-xs uppercase tracking-wider mb-0.5" style={{ color: "var(--text-muted)" }}>
                         Mach
                       </div>
                       <span className="text-sm font-medium tabular-nums" style={{ color: "var(--text-primary)" }}>
@@ -343,7 +343,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                       className="rounded-lg px-3 py-2"
                       style={{ background: "var(--surface-3)", border: "1px solid var(--border-subtle)" }}
                     >
-                      <div className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: "var(--text-muted)" }}>
+                      <div className="text-xs uppercase tracking-wider mb-0.5" style={{ color: "var(--text-muted)" }}>
                         Roll
                       </div>
                       <div className="flex items-center gap-2">
@@ -393,7 +393,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                         </svg>
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>
+                        <div className="text-xs uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>
                           Wind
                         </div>
                         <div className="text-xs font-medium tabular-nums" style={{ color: "var(--text-secondary)" }}>
@@ -405,7 +405,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                   <div className="flex gap-3">
                     {flight.oat != null && (
                       <div className="flex-1">
-                        <div className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: "var(--text-muted)" }}>
+                        <div className="text-xs uppercase tracking-wider mb-0.5" style={{ color: "var(--text-muted)" }}>
                           OAT
                         </div>
                         <div className="flex items-center gap-1.5">
@@ -418,7 +418,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                     )}
                     {flight.tat != null && (
                       <div className="flex-1">
-                        <div className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: "var(--text-muted)" }}>
+                        <div className="text-xs uppercase tracking-wider mb-0.5" style={{ color: "var(--text-muted)" }}>
                           TAT
                         </div>
                         <span className="text-sm font-medium tabular-nums" style={{ color: "var(--text-primary)" }}>
@@ -457,7 +457,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                     return (
                       <span
                         key={mode}
-                        className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider"
+                        className="inline-block px-2 py-0.5 rounded-full text-xs font-bold tracking-wider"
                         style={{
                           color,
                           background: color + "15",
@@ -494,7 +494,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                       <div className="flex items-center justify-between mb-0.5">
                         <span className="text-xs text-slate-300">{f.name}</span>
                         <span
-                          className="text-[10px] font-bold tabular-nums"
+                          className="text-xs font-bold tabular-nums"
                           style={{ color: getInstabilityColor(f.value) }}
                         >
                           {f.value}
@@ -509,7 +509,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                           }}
                         />
                       </div>
-                      <div className="text-[9px] text-slate-600 mt-0.5">{f.detail}</div>
+                      <div className="text-xs text-slate-600 mt-0.5">{f.detail}</div>
                     </div>
                   ))}
                 </div>
@@ -675,7 +675,7 @@ function GPSIntegrityIndicator({ result }: { result: GPSIntegrityResult | null }
           {config.label}
         </span>
         <span
-          className="ml-auto text-[10px] font-bold tabular-nums"
+          className="ml-auto text-xs font-bold tabular-nums"
           style={{ color: config.color }}
         >
           {score}/100
@@ -687,7 +687,7 @@ function GPSIntegrityIndicator({ result }: { result: GPSIntegrityResult | null }
           {issues.map((issue, idx) => (
             <li
               key={idx}
-              className="text-[10px] leading-snug list-disc"
+              className="text-xs leading-snug list-disc"
               style={{ color: "var(--text-secondary)" }}
             >
               {issue.description}
@@ -706,7 +706,7 @@ function StatMini({ icon, label, value, unit }: { icon: string; label: string; v
       <div className="absolute top-0 left-3 right-3 h-px bg-gradient-to-r from-transparent via-slate-500/25 to-transparent" />
       <div className="data-label uppercase tracking-wider mb-1">{label}</div>
       <div className="data-readout">
-        {value}<span className="text-[11px] ml-1" style={{ color: "var(--text-muted)" }}>{unit}</span>
+        {value}<span className="text-xs ml-1" style={{ color: "var(--text-muted)" }}>{unit}</span>
       </div>
     </div>
   );
@@ -759,13 +759,13 @@ function DelayExplainer({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <span className="text-[10px] font-bold text-slate-300 uppercase tracking-wider">
+            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
               Flight Analysis
             </span>
           </div>
           <button
             onClick={() => setExplanation(null)}
-            className="text-[9px] text-slate-500 hover:text-slate-300 transition-colors"
+            className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
           >
             Clear
           </button>
@@ -834,7 +834,7 @@ function PhotoSection({
       />
       {photo.photographer && (
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-3 py-2">
-          <span className="text-[10px] text-slate-300">
+          <span className="text-xs text-slate-300">
             {photo.link ? (
               <a href={photo.link} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                 {photo.photographer} &middot; {photo.source}
@@ -865,7 +865,7 @@ function RouteSection({
         {departure && (
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-slate-500/10 border border-slate-500/20 flex items-center justify-center">
-              <span className="text-slate-300 text-[10px] font-bold">DEP</span>
+              <span className="text-slate-300 text-xs font-bold">DEP</span>
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-slate-200 truncate text-xs font-medium">
@@ -874,7 +874,7 @@ function RouteSection({
                   <span className="text-slate-500 ml-1 font-mono">({departure.airport.icao})</span>
                 )}
               </div>
-              <div className="text-slate-500 text-[10px]">
+              <div className="text-slate-500 text-xs">
                 {departure.airport.city}, {departure.airport.country}
               </div>
             </div>
@@ -893,7 +893,7 @@ function RouteSection({
 
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-slate-500/10 border border-slate-500/20 flex items-center justify-center">
-            <span className="text-slate-400 text-[10px] font-bold">NR</span>
+            <span className="text-slate-400 text-xs font-bold">NR</span>
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-slate-200 truncate text-xs font-medium">
@@ -902,7 +902,7 @@ function RouteSection({
                 <span className="text-slate-500 ml-1 font-mono">({nearest.airport.icao})</span>
               )}
             </div>
-            <div className="text-slate-500 text-[10px]">
+            <div className="text-slate-500 text-xs">
               {nearest.airport.city}, {nearest.airport.country} &middot; {nearest.distanceNm.toFixed(1)} nm away
             </div>
           </div>
@@ -952,7 +952,7 @@ function WeatherSection({
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <span
-            className="inline-block px-2.5 py-0.5 rounded-md text-[11px] font-bold border"
+            className="inline-block px-2.5 py-0.5 rounded-md text-xs font-bold border"
             style={{
               backgroundColor: catColor + "15",
               color: catColor,
@@ -1042,11 +1042,11 @@ function EmissionsSection({
             <div>
               <div className="data-readout text-base">{formatCO2(emissions.co2Kg)}</div>
               {emissions.typeName ? (
-                <div className="text-[10px]" style={{ color: "var(--text-secondary)" }}>
+                <div className="text-xs" style={{ color: "var(--text-secondary)" }}>
                   {emissions.typeName}
                 </div>
               ) : (
-                <div className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+                <div className="text-xs" style={{ color: "var(--text-muted)" }}>
                   CO2 total
                 </div>
               )}
@@ -1059,13 +1059,13 @@ function EmissionsSection({
                 style={{ backgroundColor: confidenceColor }}
                 title={`${emissions.confidence} confidence`}
               />
-              <span className="text-[10px] capitalize" style={{ color: "var(--text-muted)" }}>
+              <span className="text-xs capitalize" style={{ color: "var(--text-muted)" }}>
                 {emissions.confidence}
               </span>
             </div>
             {isTypeMatched && (
               <span
-                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider"
+                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider"
                 style={{
                   background: "rgba(148, 163, 184, 0.1)",
                   color: "var(--text-secondary)",
@@ -1087,7 +1087,7 @@ function EmissionsSection({
 
         {/* Tree offset equivalence */}
         <div
-          className="flex items-center gap-2 px-3 py-2 rounded-lg text-[11px]"
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs"
           style={{
             background: "rgba(148, 163, 184, 0.06)",
             border: "1px solid rgba(148, 163, 184, 0.12)",

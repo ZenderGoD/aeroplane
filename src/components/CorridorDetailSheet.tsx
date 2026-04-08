@@ -147,8 +147,8 @@ export default function CorridorDetailSheet({
             <span className="font-mono text-xs border px-2 py-0.5 rounded-md" style={{ background: "var(--surface-3)", borderColor: "var(--border-subtle)" }}>
               {corridor?.originIcao} → {corridor?.destinationIcao}
             </span>
-            <span className="text-[10px] tabular-nums">{Math.round(routeDistNm)} NM</span>
-            <span className="text-[10px]">Buffer: {corridor?.bufferNm} NM</span>
+            <span className="text-xs tabular-nums">{Math.round(routeDistNm)} NM</span>
+            <span className="text-xs">Buffer: {corridor?.bufferNm} NM</span>
           </SheetDescription>
         </SheetHeader>
 
@@ -186,7 +186,7 @@ export default function CorridorDetailSheet({
                         <span className="text-xs font-mono transition-colors" style={{ color: "var(--text-secondary)" }}>
                           {f.callsign?.trim() || f.icao24}
                         </span>
-                        <div className="flex items-center gap-3 text-[10px] tabular-nums" style={{ color: "var(--text-muted)" }}>
+                        <div className="flex items-center gap-3 text-xs tabular-nums" style={{ color: "var(--text-muted)" }}>
                           {alt !== null && <span>{alt.toLocaleString()} ft</span>}
                           {spd !== null && <span>{spd} kts</span>}
                           {f.trueTrack !== null && <span>{Math.round(f.trueTrack)}°</span>}
@@ -231,9 +231,9 @@ export default function CorridorDetailSheet({
                     return (
                       <div key={i} className={`rounded-xl border px-3.5 py-2.5 ${sev.bg} ${sev.border} animate-slide-up`}>
                         <div className="flex items-center gap-2">
-                          <span className={`text-[10px] font-bold uppercase ${sev.text}`}>{evt.severity}</span>
+                          <span className={`text-xs font-bold uppercase ${sev.text}`}>{evt.severity}</span>
                           {evt.airportIcao && (
-                            <span className="text-[10px] font-mono border px-1.5 py-0.5 rounded-md" style={{ color: "var(--text-tertiary)", background: "var(--surface-3)", borderColor: "var(--border-subtle)" }}>
+                            <span className="text-xs font-mono border px-1.5 py-0.5 rounded-md" style={{ color: "var(--text-tertiary)", background: "var(--surface-3)", borderColor: "var(--border-subtle)" }}>
                               {evt.airportIcao}
                             </span>
                           )}
@@ -280,7 +280,7 @@ function HealthSection({ health, pred }: { health: CorridorHealth; pred: Corrido
         </div>
         <div>
           <div className="text-sm font-bold" style={{ color }}>{label}</div>
-          <div className="text-[10px] tabular-nums" style={{ color: "var(--text-muted)" }}>
+          <div className="text-xs tabular-nums" style={{ color: "var(--text-muted)" }}>
             Updated {new Date(health.updatedAt).toLocaleTimeString()}
           </div>
         </div>
@@ -311,7 +311,7 @@ function PredictabilitySection({ pred, health }: { pred: CorridorPredictability;
 
   return (
     <div>
-      <div className="text-[10px] font-bold uppercase tracking-wider mb-2.5" style={{ color: "var(--text-muted)" }}>
+      <div className="text-xs font-bold uppercase tracking-wider mb-2.5" style={{ color: "var(--text-muted)" }}>
         Predictability
       </div>
       <div className="flex items-center gap-4 mb-3">
@@ -322,7 +322,7 @@ function PredictabilitySection({ pred, health }: { pred: CorridorPredictability;
         <div className="flex items-center gap-1 text-sm font-semibold" style={{ color: trendColor }}>
           {getTrendIcon(pred.trendLabel)} {pred.trendLabel}
         </div>
-        <div className="text-[10px] tabular-nums" style={{ color: "var(--text-faint)" }}>
+        <div className="text-xs tabular-nums" style={{ color: "var(--text-faint)" }}>
           σ {pred.healthStdDev} · {pred.sampleCount} samples
         </div>
       </div>
@@ -369,11 +369,11 @@ function AirportMiniCard({ icao, label, pressureScore, onClick }: { icao: string
     >
       <div className="flex items-center gap-2.5">
         <div className="w-7 h-7 rounded-lg bg-slate-500/10 border border-slate-500/20 flex items-center justify-center">
-          <span className="text-[9px] font-bold text-slate-400">{label === "Origin" ? "ORG" : "DST"}</span>
+          <span className="text-[11px] font-bold text-slate-400">{label === "Origin" ? "ORG" : "DST"}</span>
         </div>
         <div>
           <span className="text-xs font-mono transition-colors" style={{ color: "var(--text-primary)" }}>{icao}</span>
-          <span className="text-[10px] ml-2" style={{ color: "var(--text-muted)" }}>{label}</span>
+          <span className="text-xs ml-2" style={{ color: "var(--text-muted)" }}>{label}</span>
         </div>
       </div>
       {pressureScore !== null && (
@@ -392,9 +392,9 @@ function Section({ title, count, children }: { title: string; count: number; chi
   return (
     <div>
       <div className="flex items-center justify-between mb-2.5">
-        <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>{title}</span>
+        <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>{title}</span>
         {count > 0 && (
-          <span className="text-[10px] font-bold border px-2 py-0.5 rounded-full tabular-nums" style={{ color: "var(--text-muted)", background: "var(--surface-3)", borderColor: "var(--border-subtle)" }}>
+          <span className="text-xs font-bold border px-2 py-0.5 rounded-full tabular-nums" style={{ color: "var(--text-muted)", background: "var(--surface-3)", borderColor: "var(--border-subtle)" }}>
             {count}
           </span>
         )}

@@ -127,9 +127,9 @@ function StatCard({
           <p className="text-lg font-bold leading-tight tabular-nums" style={{ color: "var(--text-primary)" }}>
             {typeof value === "number" ? formatNumber(value) : value}
           </p>
-          <p className="text-[11px] truncate" style={{ color: "var(--text-muted)" }}>{label}</p>
+          <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>{label}</p>
           {sub && (
-            <p className="text-[10px] truncate" style={{ color: "var(--text-faint)" }}>{sub}</p>
+            <p className="text-xs truncate" style={{ color: "var(--text-faint)" }}>{sub}</p>
           )}
         </div>
       </CardContent>
@@ -526,7 +526,7 @@ export default function StatsPanel({ flights }: Props) {
                     <h4 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>
                       Altitude Distribution
                     </h4>
-                    <p className="text-[10px] mt-0.5" style={{ color: "var(--text-faint)" }}>
+                    <p className="text-xs mt-0.5" style={{ color: "var(--text-faint)" }}>
                       Airborne aircraft grouped by barometric altitude
                     </p>
                   </div>
@@ -583,7 +583,7 @@ export default function StatsPanel({ flights }: Props) {
                       );
                     })}
                   </div>
-                  <div className="flex justify-between text-[10px]" style={{ color: "var(--text-faint)" }}>
+                  <div className="flex justify-between text-xs" style={{ color: "var(--text-faint)" }}>
                     <span>0 ft</span>
                     <span>50,000+ ft</span>
                   </div>
@@ -597,7 +597,7 @@ export default function StatsPanel({ flights }: Props) {
                     <h4 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>
                       Speed Distribution
                     </h4>
-                    <p className="text-[10px] mt-0.5" style={{ color: "var(--text-faint)" }}>
+                    <p className="text-xs mt-0.5" style={{ color: "var(--text-faint)" }}>
                       Airborne aircraft grouped by ground speed
                     </p>
                   </div>
@@ -644,7 +644,7 @@ export default function StatsPanel({ flights }: Props) {
                       );
                     })}
                   </div>
-                  <div className="flex justify-between text-[10px]" style={{ color: "var(--text-faint)" }}>
+                  <div className="flex justify-between text-xs" style={{ color: "var(--text-faint)" }}>
                     <span>0 kts</span>
                     <span>600+ kts</span>
                   </div>

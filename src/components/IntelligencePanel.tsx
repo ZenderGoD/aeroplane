@@ -139,17 +139,17 @@ function EventCard({ event }: { event: FlightEvent }) {
             />
           </svg>
           <span
-            className={`text-[10px] font-bold uppercase tracking-wider ${severity.text}`}
+            className={`text-xs font-bold uppercase tracking-wider ${severity.text}`}
           >
             {severity.label}
           </span>
           {event.airportIcao && (
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded" style={{ color: "var(--text-tertiary)", background: "var(--surface-3)" }}>
+            <span className="text-xs font-mono px-1.5 py-0.5 rounded" style={{ color: "var(--text-tertiary)", background: "var(--surface-3)" }}>
               {event.airportIcao}
             </span>
           )}
         </div>
-        <span className="text-[10px] shrink-0 tabular-nums" style={{ color: "var(--text-muted)" }}>
+        <span className="text-xs shrink-0 tabular-nums" style={{ color: "var(--text-muted)" }}>
           {timeAgo(event.detectedAt)}
         </span>
       </div>
@@ -159,14 +159,14 @@ function EventCard({ event }: { event: FlightEvent }) {
           {event.affectedFlights.slice(0, 5).map((f) => (
             <span
               key={f}
-              className="text-[9px] font-mono px-1.5 py-0.5 rounded"
+              className="text-[11px] font-mono px-1.5 py-0.5 rounded"
               style={{ color: "var(--text-tertiary)", background: "var(--surface-3)" }}
             >
               {f}
             </span>
           ))}
           {event.affectedFlights.length > 5 && (
-            <span className="text-[9px]" style={{ color: "var(--text-muted)" }}>
+            <span className="text-[11px]" style={{ color: "var(--text-muted)" }}>
               +{event.affectedFlights.length - 5} more
             </span>
           )}
@@ -200,7 +200,7 @@ function PressureCard({ airport, baseline, events, turnarounds, corridors, onCli
           <span className="text-xs font-mono font-bold" style={{ color: "var(--text-primary)" }}>
             {airport.airportIcao}
           </span>
-          <span className="text-[10px] truncate max-w-[140px]" style={{ color: "var(--text-muted)" }}>
+          <span className="text-xs truncate max-w-[140px]" style={{ color: "var(--text-muted)" }}>
             {airport.airportName}
           </span>
         </div>
@@ -212,7 +212,7 @@ function PressureCard({ airport, baseline, events, turnarounds, corridors, onCli
             {Math.round(airport.pressureScore)}
           </span>
           <span
-            className="text-[9px] font-medium px-1.5 py-0.5 rounded-full"
+            className="text-[11px] font-medium px-1.5 py-0.5 rounded-full"
             style={{
               color,
               backgroundColor: `${color}20`,
@@ -244,7 +244,7 @@ function PressureCard({ airport, baseline, events, turnarounds, corridors, onCli
           { label: "G/A", value: airport.components.goAroundCount, color: "text-slate-300" },
         ].map((c) => (
           <div key={c.label} className="text-center">
-            <div className={`text-[10px] font-bold tabular-nums ${c.color}`}>
+            <div className={`text-xs font-bold tabular-nums ${c.color}`}>
               {c.value}
             </div>
             <div className="text-[8px] uppercase" style={{ color: "var(--text-faint)" }}>{c.label}</div>
@@ -350,7 +350,7 @@ function CorridorCard({
             {Math.round(corridor.healthScore)}
           </span>
           <span
-            className="text-[9px] font-medium px-1.5 py-0.5 rounded-full capitalize"
+            className="text-[11px] font-medium px-1.5 py-0.5 rounded-full capitalize"
             style={{
               color: statusColor,
               backgroundColor: `${statusColor}20`,
@@ -397,7 +397,7 @@ function CorridorCard({
           },
         ].map((s) => (
           <div key={s.label} className="text-center">
-            <div className={`text-[10px] font-bold tabular-nums ${s.color}`}>
+            <div className={`text-xs font-bold tabular-nums ${s.color}`}>
               {s.value}
             </div>
             <div className="text-[8px] uppercase" style={{ color: "var(--text-faint)" }}>{s.label}</div>
@@ -410,15 +410,15 @@ function CorridorCard({
         <div className="mt-2 pt-2 border-t" style={{ borderColor: "var(--border-subtle)" }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
-              <span className="text-[9px] uppercase" style={{ color: "var(--text-muted)" }}>Predictability</span>
+              <span className="text-[11px] uppercase" style={{ color: "var(--text-muted)" }}>Predictability</span>
               <span
-                className="text-[10px] font-bold tabular-nums"
+                className="text-xs font-bold tabular-nums"
                 style={{ color: getPredictabilityColor(predictability.predictabilityScore) }}
               >
                 {predictability.predictabilityScore}
               </span>
               <span
-                className="text-[9px] font-semibold"
+                className="text-[11px] font-semibold"
                 style={{ color: getTrendConfig(predictability.trendLabel).color }}
               >
                 {getTrendConfig(predictability.trendLabel).arrow}
@@ -435,7 +435,7 @@ function CorridorCard({
               color={statusColor}
             />
           </div>
-          <div className="flex items-center gap-3 mt-1 text-[9px]" style={{ color: "var(--text-muted)" }}>
+          <div className="flex items-center gap-3 mt-1 text-[11px]" style={{ color: "var(--text-muted)" }}>
             <span>Avg: {predictability.avgHealthScore}</span>
             <span>StdDev: {predictability.healthStdDev}</span>
             <span>{predictability.sampleCount} samples</span>
@@ -484,22 +484,22 @@ function TurnaroundCard({ record, isActive }: { record: TurnaroundRow; isActive:
           <span className="text-xs font-mono font-bold" style={{ color: "var(--text-primary)" }}>
             {record.callsign || record.icao24}
           </span>
-          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded" style={{ color: "var(--text-tertiary)", background: "var(--surface-3)" }}>
+          <span className="text-xs font-mono px-1.5 py-0.5 rounded" style={{ color: "var(--text-tertiary)", background: "var(--surface-3)" }}>
             {record.airport_icao}
           </span>
           {record.airline_icao && (
-            <span className="text-[9px]" style={{ color: "var(--text-muted)" }}>{record.airline_icao}</span>
+            <span className="text-[11px]" style={{ color: "var(--text-muted)" }}>{record.airline_icao}</span>
           )}
         </div>
         <span
-          className="text-[9px] font-medium px-1.5 py-0.5 rounded-full"
+          className="text-[11px] font-medium px-1.5 py-0.5 rounded-full"
           style={{ color, backgroundColor: `${color}20` }}
         >
           {isActive ? "On Ground" : "Departed"}
         </span>
       </div>
 
-      <div className="flex items-center gap-3 text-[10px]">
+      <div className="flex items-center gap-3 text-xs">
         <div>
           <span style={{ color: "var(--text-muted)" }}>Arrived: </span>
           <span className="tabular-nums" style={{ color: "var(--text-secondary)" }}>{formatTime(record.arrival_time)}</span>
@@ -562,7 +562,7 @@ function BaselineCard({
           {baseline.airportIcao}
         </span>
         <div className="flex items-center gap-1.5">
-          <span className="text-[9px]" style={{ color: "var(--text-muted)" }}>
+          <span className="text-[11px]" style={{ color: "var(--text-muted)" }}>
             {baseline.sampleCount} samples
           </span>
         </div>
@@ -576,18 +576,18 @@ function BaselineCard({
             <span className="text-sm font-bold tabular-nums" style={{ color: "var(--text-primary)" }}>
               {currentIn}
             </span>
-            <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+            <span className="text-xs" style={{ color: "var(--text-muted)" }}>
               / {baseline.avgArrivals.toFixed(1)} avg
             </span>
           </div>
           <div className="flex items-center gap-1 mt-0.5">
             <span
-              className="text-[10px] font-bold tabular-nums"
+              className="text-xs font-bold tabular-nums"
               style={{ color: arrColor }}
             >
               {getDeviationLabel(currentIn, baseline.avgArrivals, baseline.stddevArrivals)}
             </span>
-            <span className="text-[9px]" style={{ color: "var(--text-faint)" }}>
+            <span className="text-[11px]" style={{ color: "var(--text-faint)" }}>
               (σ {baseline.stddevArrivals.toFixed(1)})
             </span>
           </div>
@@ -600,18 +600,18 @@ function BaselineCard({
             <span className="text-sm font-bold tabular-nums" style={{ color: "var(--text-primary)" }}>
               {currentOut}
             </span>
-            <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+            <span className="text-xs" style={{ color: "var(--text-muted)" }}>
               / {baseline.avgDepartures.toFixed(1)} avg
             </span>
           </div>
           <div className="flex items-center gap-1 mt-0.5">
             <span
-              className="text-[10px] font-bold tabular-nums"
+              className="text-xs font-bold tabular-nums"
               style={{ color: depColor }}
             >
               {getDeviationLabel(currentOut, baseline.avgDepartures, baseline.stddevDepartures)}
             </span>
-            <span className="text-[9px]" style={{ color: "var(--text-faint)" }}>
+            <span className="text-[11px]" style={{ color: "var(--text-faint)" }}>
               (σ {baseline.stddevDepartures.toFixed(1)})
             </span>
           </div>
@@ -620,7 +620,7 @@ function BaselineCard({
 
       {/* Pressure comparison */}
       {currentPressure && baseline.avgPressureScore > 0 && (
-        <div className="mt-2 pt-2 border-t flex items-center gap-2 text-[10px]" style={{ borderColor: "var(--border-subtle)" }}>
+        <div className="mt-2 pt-2 border-t flex items-center gap-2 text-xs" style={{ borderColor: "var(--border-subtle)" }}>
           <span style={{ color: "var(--text-muted)" }}>Pressure:</span>
           <span
             className="font-bold tabular-nums"
@@ -770,7 +770,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
         />
         {/* Alert badge */}
         {alertCount > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-slate-400 text-white text-[9px] font-bold px-1">
+          <span className="absolute -top-1 -right-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-slate-400 text-white text-[11px] font-bold px-1">
             {alertCount}
           </span>
         )}
@@ -800,7 +800,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
               </svg>
               Aviation Intelligence
               <span
-                className={`ml-auto flex items-center gap-1.5 text-[10px] font-normal ${
+                className={`ml-auto flex items-center gap-1.5 text-xs font-normal ${
                   workerActive ? "text-slate-400" : "text-gray-500"
                 }`}
               >
@@ -857,7 +857,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                 </svg>
                 Events
                 {alertCount > 0 && (
-                  <span className="ml-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-slate-500/80 text-white text-[9px] font-bold px-1">
+                  <span className="ml-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-slate-500/80 text-white text-[11px] font-bold px-1">
                     {alertCount}
                   </span>
                 )}
@@ -882,7 +882,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                 </svg>
                 Pressure
                 {sortedPressure.length > 0 && (
-                  <span className="ml-1 text-[9px]" style={{ color: "var(--text-muted)" }}>
+                  <span className="ml-1 text-[11px]" style={{ color: "var(--text-muted)" }}>
                     {sortedPressure.length}
                   </span>
                 )}
@@ -907,7 +907,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                 </svg>
                 Corridors
                 {sortedCorridors.length > 0 && (
-                  <span className="ml-1 text-[9px]" style={{ color: "var(--text-muted)" }}>
+                  <span className="ml-1 text-[11px]" style={{ color: "var(--text-muted)" }}>
                     {sortedCorridors.length}
                   </span>
                 )}
@@ -932,7 +932,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                 </svg>
                 Gate
                 {activeTurnarounds.length > 0 && (
-                  <span className="ml-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-slate-500/80 text-white text-[9px] font-bold px-1">
+                  <span className="ml-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-slate-500/80 text-white text-[11px] font-bold px-1">
                     {activeTurnarounds.length}
                   </span>
                 )}
@@ -957,7 +957,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                 </svg>
                 Baseline
                 {sortedBaselines.length > 0 && (
-                  <span className="ml-1 text-[9px]" style={{ color: "var(--text-muted)" }}>
+                  <span className="ml-1 text-[11px]" style={{ color: "var(--text-muted)" }}>
                     {sortedBaselines.length}
                   </span>
                 )}
@@ -1009,7 +1009,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
               <ScrollArea className="h-[calc(100vh-200px)]">
                 <div className="space-y-3 pb-6 pr-2">
                   {/* Summary bar */}
-                  <div className="flex items-center gap-3 text-[10px]">
+                  <div className="flex items-center gap-3 text-xs">
                     <div className="flex items-center gap-1">
                       <span className="w-2 h-2 rounded-full bg-slate-400" />
                       <span style={{ color: "var(--text-tertiary)" }}>
@@ -1058,7 +1058,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                       <p className="text-xs" style={{ color: "var(--text-faint)" }}>
                         No events detected yet
                       </p>
-                      <p className="text-[10px] mt-1" style={{ color: "var(--text-faint)" }}>
+                      <p className="text-xs mt-1" style={{ color: "var(--text-faint)" }}>
                         {workerActive
                           ? "Worker is running — events will appear as they're detected"
                           : "Start the worker with: npm run worker:dev"}
@@ -1079,7 +1079,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                 <div className="space-y-3 pb-6 pr-2">
                   {/* Summary */}
                   {sortedPressure.length > 0 && (
-                    <div className="flex items-center gap-2 text-[10px]" style={{ color: "var(--text-muted)" }}>
+                    <div className="flex items-center gap-2 text-xs" style={{ color: "var(--text-muted)" }}>
                       <span>
                         Tracking {sortedPressure.length} airports
                       </span>
@@ -1125,7 +1125,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                       <p className="text-xs" style={{ color: "var(--text-faint)" }}>
                         No pressure data yet
                       </p>
-                      <p className="text-[10px] mt-1" style={{ color: "var(--text-faint)" }}>
+                      <p className="text-xs mt-1" style={{ color: "var(--text-faint)" }}>
                         {workerActive
                           ? "Calculating pressure scores..."
                           : "Start the worker to see airport pressure"}
@@ -1176,7 +1176,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                 <div className="space-y-3 pb-6 pr-2">
                   {/* Summary */}
                   {sortedCorridors.length > 0 && (
-                    <div className="flex items-center gap-2 text-[10px]" style={{ color: "var(--text-muted)" }}>
+                    <div className="flex items-center gap-2 text-xs" style={{ color: "var(--text-muted)" }}>
                       <span>
                         Monitoring {sortedCorridors.length} corridors
                       </span>
@@ -1188,7 +1188,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
 
                   {/* Status summary */}
                   {sortedCorridors.length > 0 && (
-                    <div className="flex items-center gap-3 text-[10px]">
+                    <div className="flex items-center gap-3 text-xs">
                       {(
                         [
                           ["normal", "#94a3b8"],
@@ -1237,7 +1237,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                       <p className="text-xs" style={{ color: "var(--text-faint)" }}>
                         No corridor data yet
                       </p>
-                      <p className="text-[10px] mt-1" style={{ color: "var(--text-faint)" }}>
+                      <p className="text-xs mt-1" style={{ color: "var(--text-faint)" }}>
                         {workerActive
                           ? "Analyzing corridor health..."
                           : "Start the worker to see corridor health"}
@@ -1261,7 +1261,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                 <div className="space-y-3 pb-6 pr-2">
                   {/* Summary */}
                   {(activeTurnarounds.length > 0 || recentTurnarounds.length > 0) && (
-                    <div className="flex items-center gap-3 text-[10px]" style={{ color: "var(--text-muted)" }}>
+                    <div className="flex items-center gap-3 text-xs" style={{ color: "var(--text-muted)" }}>
                       <span>{activeTurnarounds.length} on ground</span>
                       <span>{recentTurnarounds.length} recent</span>
                       {avgTurnaround !== null && (
@@ -1290,7 +1290,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                       <p className="text-xs" style={{ color: "var(--text-faint)" }}>
                         No turnaround data yet
                       </p>
-                      <p className="text-[10px] mt-1" style={{ color: "var(--text-faint)" }}>
+                      <p className="text-xs mt-1" style={{ color: "var(--text-faint)" }}>
                         {workerActive
                           ? "Monitoring airports for turnarounds..."
                           : "Start the worker to track turnarounds"}
@@ -1301,7 +1301,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                       {/* Active on ground */}
                       {activeTurnarounds.length > 0 && (
                         <>
-                          <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
+                          <div className="text-xs text-slate-400 font-medium uppercase tracking-wider">
                             Currently On Ground
                           </div>
                           {activeTurnarounds.map((r, i) => (
@@ -1320,7 +1320,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                           {activeTurnarounds.length > 0 && (
                             <Separator style={{ background: "var(--border-subtle)" }} />
                           )}
-                          <div className="text-[10px] font-medium uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>
+                          <div className="text-xs font-medium uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>
                             Recent Turnarounds
                           </div>
                           {recentTurnarounds.slice(0, 20).map((r, i) => (
@@ -1344,7 +1344,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                 <div className="space-y-3 pb-6 pr-2">
                   {/* Summary */}
                   {sortedBaselines.length > 0 && (
-                    <div className="flex items-center gap-3 text-[10px]" style={{ color: "var(--text-muted)" }}>
+                    <div className="flex items-center gap-3 text-xs" style={{ color: "var(--text-muted)" }}>
                       {(() => {
                         let above = 0, below = 0, normal = 0;
                         for (const b of sortedBaselines) {
@@ -1407,7 +1407,7 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                       <p className="text-xs" style={{ color: "var(--text-faint)" }}>
                         No baseline data yet
                       </p>
-                      <p className="text-[10px] mt-1" style={{ color: "var(--text-faint)" }}>
+                      <p className="text-xs mt-1" style={{ color: "var(--text-faint)" }}>
                         {workerActive
                           ? "Building baseline statistics..."
                           : "Start the worker to build hourly baselines"}

@@ -281,7 +281,7 @@ export default function MobileNav({
                       saveMapStyleId(ms.id);
                       window.location.reload();
                     }}
-                    className="flex flex-col items-center gap-1 py-3 px-2 rounded-xl text-[10px] font-semibold transition-all"
+                    className="flex flex-col items-center gap-1 py-3 px-2 rounded-xl text-xs font-semibold transition-all"
                     style={{
                       background: active
                         ? "linear-gradient(180deg, var(--surface-4), var(--surface-3))"
@@ -292,7 +292,7 @@ export default function MobileNav({
                       color: active ? "#fff" : "var(--text-muted)",
                     }}
                   >
-                    <span className="text-[11px] font-bold leading-tight">{ms.name}</span>
+                    <span className="text-xs font-bold leading-tight">{ms.name}</span>
                     <span className="opacity-60 leading-tight">{ms.preview}</span>
                   </button>
                 );
@@ -307,7 +307,7 @@ export default function MobileNav({
                   <button
                     key={layer.key}
                     onClick={dataLayerToggles[layer.key]}
-                    className="mobile-tool-btn relative flex flex-col items-center gap-2 py-4 px-2 rounded-xl text-[11px] font-semibold"
+                    className="mobile-tool-btn relative flex flex-col items-center gap-2 py-4 px-2 rounded-xl text-xs font-semibold"
                     style={{
                       background: active
                         ? `linear-gradient(180deg, var(--surface-4), var(--surface-3))`
@@ -357,7 +357,7 @@ export default function MobileNav({
                       toolToggles[tool.key]();
                       closeSheet();
                     }}
-                    className="mobile-tool-btn relative flex flex-col items-center gap-2 py-4 px-2 rounded-xl text-[11px] font-semibold"
+                    className="mobile-tool-btn relative flex flex-col items-center gap-2 py-4 px-2 rounded-xl text-xs font-semibold"
                     style={{
                       background: active
                         ? `linear-gradient(180deg, var(--surface-4), var(--surface-3))`
@@ -405,7 +405,7 @@ export default function MobileNav({
                     onViewModeChange(mode.key);
                     closeSheet();
                   }}
-                  className="mobile-tool-btn relative flex flex-col items-center gap-1.5 py-3 rounded-xl text-[10px] font-semibold"
+                  className="mobile-tool-btn relative flex flex-col items-center gap-1.5 py-3 rounded-xl text-xs font-semibold"
                   style={{
                     background: viewMode === mode.key ? "var(--surface-4)" : "var(--surface-2)",
                     color: viewMode === mode.key ? "var(--accent-primary)" : "var(--text-muted)",
@@ -496,7 +496,7 @@ export default function MobileNav({
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={tab.icon} />
               </svg>
-              <span className="text-[10px] font-semibold leading-none">{tab.label}</span>
+              <span className="text-xs font-semibold leading-none">{tab.label}</span>
             </button>
           );
         })}

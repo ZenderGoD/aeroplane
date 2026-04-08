@@ -631,13 +631,13 @@ export default function ComparisonMode({ onExitMode }: Props) {
 
     return (
       <tr key={label} className="border-b border-[var(--border-subtle)]">
-        <td className="py-1.5 px-3 text-[11px] font-medium text-[var(--text-tertiary)] whitespace-nowrap">
+        <td className="py-1.5 px-3 text-xs font-medium text-[var(--text-tertiary)] whitespace-nowrap">
           {label}
         </td>
         {aircraft.map((ac, idx) => {
           if (!ac.state) {
             return (
-              <td key={ac.id} className="py-1.5 px-3 text-center text-[11px] text-[var(--text-faint)]">
+              <td key={ac.id} className="py-1.5 px-3 text-center text-xs text-[var(--text-faint)]">
                 --
               </td>
             );
@@ -659,10 +659,10 @@ export default function ComparisonMode({ onExitMode }: Props) {
 
           return (
             <td key={ac.id} className="py-1.5 px-3 text-center">
-              <span className="data-value text-[11px] text-[var(--text-primary)]">{val}</span>
+              <span className="data-value text-xs text-[var(--text-primary)]">{val}</span>
               {deltaStr && (
                 <span
-                  className="ml-1.5 text-[9px] font-semibold"
+                  className="ml-1.5 text-[11px] font-semibold"
                   style={{ color }}
                 >
                   {deltaStr}
@@ -685,7 +685,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
         return (
           <div key={ac.id} className="flex items-center gap-1.5">
             <div className="w-3 h-0.5 rounded-full" style={{ background: color }} />
-            <span className="text-[10px] font-mono font-medium" style={{ color }}>
+            <span className="text-xs font-mono font-medium" style={{ color }}>
               {label}
             </span>
           </div>
@@ -710,7 +710,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
             </svg>
             <span className="panel-title">Multi-Aircraft Comparison</span>
           </div>
-          <span className="text-[10px] font-mono text-[var(--text-faint)]">
+          <span className="text-xs font-mono text-[var(--text-faint)]">
             {aircraft.length}/{MAX_AIRCRAFT}
           </span>
         </div>
@@ -718,7 +718,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
         {onExitMode && (
           <button
             onClick={onExitMode}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
             style={{
               color: "var(--text-secondary)",
               background: "var(--surface-2)",
@@ -764,7 +764,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
         <button
           onClick={addAircraft}
           disabled={!searchText.trim() || aircraft.length >= MAX_AIRCRAFT}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all disabled:opacity-40"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all disabled:opacity-40"
           style={{
             background: "var(--accent-primary-dim)",
             color: "var(--accent-primary)",
@@ -779,7 +779,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
       </div>
 
       {searchError && (
-        <div className="px-4 py-1.5 text-[11px] font-medium" style={{ color: "var(--status-warning)" }}>
+        <div className="px-4 py-1.5 text-xs font-medium" style={{ color: "var(--status-warning)" }}>
           {searchError}
         </div>
       )}
@@ -793,7 +793,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
             return (
               <div
                 key={ac.id}
-                className="flex items-center gap-2 px-2.5 py-1 rounded-lg text-[11px] font-mono font-medium transition-all"
+                className="flex items-center gap-2 px-2.5 py-1 rounded-lg text-xs font-mono font-medium transition-all"
                 style={{
                   background: `${color}12`,
                   border: `1px solid ${color}30`,
@@ -809,7 +809,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
                   label
                 )}
                 {ac.state?.typeCode && (
-                  <span className="text-[9px] opacity-60">{ac.state.typeCode}</span>
+                  <span className="text-[11px] opacity-60">{ac.state.typeCode}</span>
                 )}
                 <button
                   onClick={() => removeAircraft(ac.id)}
@@ -842,7 +842,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className="px-3 py-2 text-[11px] font-semibold transition-all relative"
+              className="px-3 py-2 text-xs font-semibold transition-all relative"
               style={{
                 color: activeTab === tab.key ? "var(--accent-primary)" : "var(--text-muted)",
               }}
@@ -877,7 +877,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
               <p className="text-[13px] font-semibold" style={{ color: "var(--text-primary)" }}>
                 Compare up to 4 aircraft side-by-side
               </p>
-              <p className="text-[11px] mt-1" style={{ color: "var(--text-muted)" }}>
+              <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
                 Search by callsign, ICAO24 hex code, or registration to begin.
               </p>
             </div>
@@ -889,7 +889,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
               <table className="w-full text-left" style={{ background: "var(--surface-1)" }}>
                 <thead>
                   <tr style={{ background: "var(--surface-2)" }}>
-                    <th className="py-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                    <th className="py-2 px-3 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
                       Parameter
                     </th>
                     {aircraft.map((ac, idx) => {
@@ -898,7 +898,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
                       return (
                         <th
                           key={ac.id}
-                          className="py-2 px-3 text-center text-[10px] font-semibold uppercase tracking-wider"
+                          className="py-2 px-3 text-center text-xs font-semibold uppercase tracking-wider"
                           style={{ color }}
                         >
                           {label}
@@ -912,7 +912,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
                   <tr className="border-b border-[var(--border-subtle)]">
                     <td
                       colSpan={aircraft.length + 1}
-                      className="py-1.5 px-3 text-[9px] font-bold uppercase tracking-[0.1em]"
+                      className="py-1.5 px-3 text-[11px] font-bold uppercase tracking-[0.1em]"
                       style={{ color: "var(--text-faint)", background: "var(--surface-0)" }}
                     >
                       Identity
@@ -928,7 +928,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
                   <tr className="border-b border-[var(--border-subtle)]">
                     <td
                       colSpan={aircraft.length + 1}
-                      className="py-1.5 px-3 text-[9px] font-bold uppercase tracking-[0.1em]"
+                      className="py-1.5 px-3 text-[11px] font-bold uppercase tracking-[0.1em]"
                       style={{ color: "var(--text-faint)", background: "var(--surface-0)" }}
                     >
                       Position & Motion
@@ -966,7 +966,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
                   <tr className="border-b border-[var(--border-subtle)]">
                     <td
                       colSpan={aircraft.length + 1}
-                      className="py-1.5 px-3 text-[9px] font-bold uppercase tracking-[0.1em]"
+                      className="py-1.5 px-3 text-[11px] font-bold uppercase tracking-[0.1em]"
                       style={{ color: "var(--text-faint)", background: "var(--surface-0)" }}
                     >
                       Speed Variants
@@ -980,7 +980,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
                   <tr className="border-b border-[var(--border-subtle)]">
                     <td
                       colSpan={aircraft.length + 1}
-                      className="py-1.5 px-3 text-[9px] font-bold uppercase tracking-[0.1em]"
+                      className="py-1.5 px-3 text-[11px] font-bold uppercase tracking-[0.1em]"
                       style={{ color: "var(--text-faint)", background: "var(--surface-0)" }}
                     >
                       Weather (Derived)
@@ -993,7 +993,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
                   <tr className="border-b border-[var(--border-subtle)]">
                     <td
                       colSpan={aircraft.length + 1}
-                      className="py-1.5 px-3 text-[9px] font-bold uppercase tracking-[0.1em]"
+                      className="py-1.5 px-3 text-[11px] font-bold uppercase tracking-[0.1em]"
                       style={{ color: "var(--text-faint)", background: "var(--surface-0)" }}
                     >
                       Data Quality
@@ -1131,7 +1131,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
 
                     {isConverging && (
                       <div
-                        className="mt-2 flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] font-semibold"
+                        className="mt-2 flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-semibold"
                         style={{
                           background: "rgba(148,163,184,0.08)",
                           color: "var(--status-caution)",

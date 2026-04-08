@@ -336,7 +336,7 @@ const SearchBar = forwardRef<SearchBarHandle, Props>(function SearchBar({
           >
             {groupedResults.map((group) => (
               <div key={group.category}>
-                <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-500 flex items-center gap-1.5">
+                <div className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-gray-500 flex items-center gap-1.5">
                   {CATEGORY_ICONS[group.category]}
                   {group.category}
                 </div>
@@ -357,13 +357,13 @@ const SearchBar = forwardRef<SearchBarHandle, Props>(function SearchBar({
                         {highlightMatch(item.primary, query)}
                       </div>
                       {item.secondary && (
-                        <div className="text-[11px] text-gray-500 truncate">
+                        <div className="text-xs text-gray-500 truncate">
                           {highlightMatch(item.secondary, query)}
                         </div>
                       )}
                     </div>
                     {item.category === "Flights" && (
-                      <span className="text-[10px] text-gray-600 font-mono shrink-0">
+                      <span className="text-xs text-gray-600 font-mono shrink-0">
                         {item.value}
                       </span>
                     )}
@@ -371,7 +371,7 @@ const SearchBar = forwardRef<SearchBarHandle, Props>(function SearchBar({
                 ))}
               </div>
             ))}
-            <div className="px-3 py-1.5 border-t border-gray-800/60 flex items-center gap-2 text-[10px] text-gray-600">
+            <div className="px-3 py-1.5 border-t border-gray-800/60 flex items-center gap-2 text-xs text-gray-600">
               <kbd className="px-1 py-0.5 rounded border border-gray-700 bg-gray-800 font-mono text-gray-400">↑↓</kbd>
               navigate
               <kbd className="px-1 py-0.5 rounded border border-gray-700 bg-gray-800 font-mono text-gray-400 ml-1">↵</kbd>
@@ -387,7 +387,7 @@ const SearchBar = forwardRef<SearchBarHandle, Props>(function SearchBar({
           <svg className="w-3 h-3 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
           </svg>
-          <span className="text-[10px] text-slate-400 font-medium">AI-powered search</span>
+          <span className="text-xs text-slate-400 font-medium">AI-powered search</span>
         </div>
       )}
     </div>

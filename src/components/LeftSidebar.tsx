@@ -201,7 +201,7 @@ function MapStyleSection() {
                   saveMapStyleId(ms.id);
                   window.location.reload();
                 }}
-                className="flex flex-col items-start gap-0.5 py-2 px-2.5 rounded-lg text-[10px] transition-all text-left"
+                className="flex flex-col items-start gap-0.5 py-2 px-2.5 rounded-lg text-xs transition-all text-left"
                 style={{
                   background: active
                     ? "linear-gradient(180deg, var(--surface-4), var(--surface-3))"
@@ -212,7 +212,7 @@ function MapStyleSection() {
                   color: active ? "#fff" : "var(--text-muted)",
                 }}
               >
-                <span className="text-[11px] font-bold leading-tight">{ms.name}</span>
+                <span className="text-xs font-bold leading-tight">{ms.name}</span>
                 <span className="opacity-50 leading-tight">{ms.preview}</span>
               </button>
             );
@@ -394,7 +394,7 @@ export default function LeftSidebar({
                     <div className="w-2 h-2 rounded-full bg-slate-300" />
                     <div className="absolute inset-0 w-2 h-2 rounded-full bg-slate-300 animate-ping opacity-40" />
                   </div>
-                  <span className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+                  <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
                     Live
                   </span>
                 </div>
@@ -460,7 +460,7 @@ export default function LeftSidebar({
                   <button
                     key={mode.key}
                     onClick={() => onViewModeChange(mode.key)}
-                    className="relative flex flex-col items-center gap-1 py-2.5 rounded-lg text-[11px] font-medium transition-all duration-200"
+                    className="relative flex flex-col items-center gap-1 py-2.5 rounded-lg text-xs font-medium transition-all duration-200"
                     style={{
                       background: viewMode === mode.key ? "var(--surface-4)" : "transparent",
                       color: viewMode === mode.key ? "var(--accent-primary)" : "var(--text-muted)",
@@ -496,7 +496,7 @@ export default function LeftSidebar({
                         render={
                           <button
                             onClick={toolToggles[tool.key]}
-                            className="tool-card relative flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl text-[10px] font-semibold"
+                            className="tool-card relative flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl text-xs font-semibold"
                             style={{
                               background: active
                                 ? `linear-gradient(180deg, var(--surface-4), var(--surface-3))`
@@ -556,7 +556,7 @@ export default function LeftSidebar({
                         render={
                           <button
                             onClick={dataLayerToggles[layer.key]}
-                            className="tool-card relative flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl text-[10px] font-semibold"
+                            className="tool-card relative flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl text-xs font-semibold"
                             style={{
                               background: active
                                 ? `linear-gradient(180deg, var(--surface-4), var(--surface-3))`
@@ -637,7 +637,7 @@ export default function LeftSidebar({
         {/* ── Bottom status bar ─────────────────── */}
         <div className="px-4 py-2.5 shrink-0 relative">
           <div className="absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-slate-700/30 to-transparent" />
-          <div className="flex items-center justify-between text-[10px]" style={{ color: "var(--text-faint)" }}>
+          <div className="flex items-center justify-between text-xs" style={{ color: "var(--text-faint)" }}>
             <div className="flex items-center gap-2">
               <span className="font-medium">ADS-B Intelligence</span>
               <ThemeToggle />

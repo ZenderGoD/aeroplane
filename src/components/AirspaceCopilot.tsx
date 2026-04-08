@@ -137,7 +137,7 @@ export default function AirspaceCopilot() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
         </svg>
         {messages.length > 0 && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-slate-200 rounded-full text-[9px] text-slate-900 flex items-center justify-center font-bold">
+          <span className="absolute -top-1 -right-1 w-4 h-4 bg-slate-200 rounded-full text-[11px] text-slate-900 flex items-center justify-center font-bold">
             {messages.filter(m => m.role === "assistant").length}
           </span>
         )}
@@ -152,7 +152,7 @@ export default function AirspaceCopilot() {
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-slate-400 animate-pulse" />
           <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Airspace Copilot</span>
-          <span className="text-[9px]" style={{ color: 'var(--text-faint)' }}>{remaining} left</span>
+          <span className="text-[11px]" style={{ color: 'var(--text-faint)' }}>{remaining} left</span>
         </div>
         <button
           onClick={() => setOpen(false)}
@@ -177,7 +177,7 @@ export default function AirspaceCopilot() {
               </svg>
             </div>
             <p className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>Ask about your airspace</p>
-            <p className="text-[10px]" style={{ color: 'var(--text-faint)' }}>Try: &quot;Which airport is busiest?&quot;</p>
+            <p className="text-xs" style={{ color: 'var(--text-faint)' }}>Try: &quot;Which airport is busiest?&quot;</p>
           </div>
         )}
 
@@ -218,7 +218,7 @@ export default function AirspaceCopilot() {
               <button
                 key={i}
                 onClick={() => sendMessage(q)}
-                className="text-[10px] text-slate-300 bg-slate-800/20 hover:bg-slate-800/40 border border-slate-700/30 px-2 py-1 rounded-full transition-colors"
+                className="text-xs text-slate-300 bg-slate-800/20 hover:bg-slate-800/40 border border-slate-700/30 px-2 py-1 rounded-full transition-colors"
               >
                 {q}
               </button>

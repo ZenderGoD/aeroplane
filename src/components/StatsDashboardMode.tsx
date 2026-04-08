@@ -266,7 +266,7 @@ function KpiCard({
         {value}
       </div>
       {sub && (
-        <span className="text-[10px] mt-1 block" style={{ color: "var(--text-faint)" }}>
+        <span className="text-xs mt-1 block" style={{ color: "var(--text-faint)" }}>
           {sub}
         </span>
       )}
@@ -285,7 +285,7 @@ function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }
         {title}
       </h3>
       {subtitle && (
-        <p className="text-[10px] mt-0.5 ml-3" style={{ color: "var(--text-faint)" }}>
+        <p className="text-xs mt-0.5 ml-3" style={{ color: "var(--text-faint)" }}>
           {subtitle}
         </p>
       )}
@@ -314,7 +314,7 @@ function HBar({
   return (
     <div className="flex items-center gap-2 group" style={{ animationDelay: `${index * 30}ms` }}>
       <span
-        className="w-20 shrink-0 text-[11px] text-right truncate font-medium"
+        className="w-20 shrink-0 text-xs text-right truncate font-medium"
         style={{ color: "var(--text-tertiary)", fontFamily: "var(--font-mono, monospace)" }}
       >
         {label}
@@ -341,13 +341,13 @@ function HBar({
         />
       </div>
       <span
-        className="w-10 shrink-0 text-[11px] text-right font-bold tabular-nums"
+        className="w-10 shrink-0 text-xs text-right font-bold tabular-nums"
         style={{ color: "var(--text-secondary)", fontFamily: "var(--font-mono, monospace)" }}
       >
         {fmt(value)}
       </span>
       <span
-        className="w-12 shrink-0 text-[10px] text-right tabular-nums"
+        className="w-12 shrink-0 text-xs text-right tabular-nums"
         style={{ color: "var(--text-faint)", fontFamily: "var(--font-mono, monospace)" }}
       >
         {pct(value, total)}%
@@ -362,7 +362,7 @@ function QualityIndicator({ label, value, max }: { label: string; value: number;
     ratio >= 0.7 ? "var(--status-nominal)" : ratio >= 0.4 ? "var(--status-caution)" : "var(--status-critical)";
   return (
     <div className="flex items-center justify-between">
-      <span className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
+      <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
         {label}
       </span>
       <div className="flex items-center gap-2">
@@ -373,7 +373,7 @@ function QualityIndicator({ label, value, max }: { label: string; value: number;
           />
         </div>
         <span
-          className="text-[11px] font-bold tabular-nums w-8 text-right"
+          className="text-xs font-bold tabular-nums w-8 text-right"
           style={{ color, fontFamily: "var(--font-mono, monospace)" }}
         >
           {value.toFixed(1)}
@@ -402,21 +402,21 @@ function RankRow({
       style={{ borderBottom: "1px solid var(--border-subtle)" }}
     >
       <span
-        className="w-5 h-5 flex items-center justify-center rounded text-[10px] font-bold"
+        className="w-5 h-5 flex items-center justify-center rounded text-xs font-bold"
         style={{ background: `${color}15`, color }}
       >
         {rank}
       </span>
-      <span className="flex-1 text-[11px] truncate font-medium" style={{ color: "var(--text-secondary)" }}>
+      <span className="flex-1 text-xs truncate font-medium" style={{ color: "var(--text-secondary)" }}>
         {label}
       </span>
       <span
-        className="text-[11px] font-bold tabular-nums"
+        className="text-xs font-bold tabular-nums"
         style={{ color, fontFamily: "var(--font-mono, monospace)" }}
       >
         {value}
       </span>
-      <span className="text-[9px]" style={{ color: "var(--text-faint)" }}>
+      <span className="text-[11px]" style={{ color: "var(--text-faint)" }}>
         {unit}
       </span>
     </div>
@@ -490,7 +490,7 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
             <h1 className="panel-title text-sm">Statistics Dashboard</h1>
           </div>
           {lastUpdated && (
-            <span className="text-[10px] tabular-nums" style={{ color: "var(--text-faint)" }}>
+            <span className="text-xs tabular-nums" style={{ color: "var(--text-faint)" }}>
               Updated {lastUpdated.toLocaleTimeString()}
             </span>
           )}
@@ -500,7 +500,7 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
               className="w-1.5 h-1.5 rounded-full animate-anomaly-pulse"
               style={{ background: "var(--status-nominal)" }}
             />
-            <span className="text-[10px] font-medium" style={{ color: "var(--status-nominal)" }}>
+            <span className="text-xs font-medium" style={{ color: "var(--status-nominal)" }}>
               LIVE
             </span>
           </div>
@@ -509,12 +509,12 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
         <div className="flex items-center gap-3">
           {/* Refresh interval selector */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>Refresh:</span>
+            <span className="text-xs" style={{ color: "var(--text-muted)" }}>Refresh:</span>
             {[5, 10, 30, 60].map((sec) => (
               <button
                 key={sec}
                 onClick={() => setRefreshInterval(sec)}
-                className="px-2 py-0.5 rounded text-[10px] font-medium transition-all"
+                className="px-2 py-0.5 rounded text-xs font-medium transition-all"
                 style={{
                   background: refreshInterval === sec ? "var(--accent-primary-dim)" : "transparent",
                   color: refreshInterval === sec ? "var(--accent-primary)" : "var(--text-muted)",
@@ -663,7 +663,7 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
                     />
                   ))}
                   {stats.typeCounts.length === 0 && (
-                    <span className="text-[11px]" style={{ color: "var(--text-faint)" }}>
+                    <span className="text-xs" style={{ color: "var(--text-faint)" }}>
                       No type code data available
                     </span>
                   )}
@@ -728,7 +728,7 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
 
                 {/* Source breakdown */}
                 <div className="mb-4">
-                  <span className="section-label text-[10px] block mb-2" style={{ color: "var(--text-muted)" }}>
+                  <span className="section-label text-xs block mb-2" style={{ color: "var(--text-muted)" }}>
                     POSITION SOURCES
                   </span>
                   <div className="space-y-1.5">
@@ -746,12 +746,12 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
                               className="w-2 h-2 rounded-full"
                               style={{ background: srcColor }}
                             />
-                            <span className="text-[11px]" style={{ color: "var(--text-secondary)" }}>
+                            <span className="text-xs" style={{ color: "var(--text-secondary)" }}>
                               {src.source}
                             </span>
                           </div>
                           <span
-                            className="text-[11px] font-bold tabular-nums"
+                            className="text-xs font-bold tabular-nums"
                             style={{ color: srcColor, fontFamily: "var(--font-mono, monospace)" }}
                           >
                             {fmt(src.count)}
@@ -764,7 +764,7 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
 
                 {/* Navigation integrity */}
                 <div className="mb-4">
-                  <span className="section-label text-[10px] block mb-2" style={{ color: "var(--text-muted)" }}>
+                  <span className="section-label text-xs block mb-2" style={{ color: "var(--text-muted)" }}>
                     NAVIGATION INTEGRITY
                   </span>
                   <div className="space-y-2">
@@ -779,11 +779,11 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
                   className="flex items-center justify-between rounded-lg px-3 py-2"
                   style={{ background: "var(--surface-3)", border: "1px solid var(--border-subtle)" }}
                 >
-                  <span className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
+                  <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                     Military Aircraft
                   </span>
                   <span
-                    className="text-[11px] font-bold tabular-nums"
+                    className="text-xs font-bold tabular-nums"
                     style={{ color: "var(--status-warning)", fontFamily: "var(--font-mono, monospace)" }}
                   >
                     {fmt(stats.militaryCount)}
@@ -808,17 +808,17 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
                       <div key={q.label} className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span
-                            className="w-6 text-center text-[10px] font-bold rounded py-0.5"
+                            className="w-6 text-center text-xs font-bold rounded py-0.5"
                             style={{ background: `${qColor}15`, color: qColor }}
                           >
                             {q.label}
                           </span>
-                          <span className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
+                          <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                             Hemisphere
                           </span>
                         </div>
                         <span
-                          className="text-[11px] font-bold tabular-nums"
+                          className="text-xs font-bold tabular-nums"
                           style={{ color: qColor, fontFamily: "var(--font-mono, monospace)" }}
                         >
                           {fmt(q.count)}
@@ -847,7 +847,7 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
                     />
                   ))}
                   {stats.highestAlt.length === 0 && (
-                    <span className="text-[10px]" style={{ color: "var(--text-faint)" }}>No data</span>
+                    <span className="text-xs" style={{ color: "var(--text-faint)" }}>No data</span>
                   )}
                 </div>
               </div>
@@ -870,7 +870,7 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
                     />
                   ))}
                   {stats.fastest.length === 0 && (
-                    <span className="text-[10px]" style={{ color: "var(--text-faint)" }}>No data</span>
+                    <span className="text-xs" style={{ color: "var(--text-faint)" }}>No data</span>
                   )}
                 </div>
               </div>
@@ -893,7 +893,7 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
                     />
                   ))}
                   {stats.topPrefixes.length === 0 && (
-                    <span className="text-[10px]" style={{ color: "var(--text-faint)" }}>No data</span>
+                    <span className="text-xs" style={{ color: "var(--text-faint)" }}>No data</span>
                   )}
                 </div>
               </div>

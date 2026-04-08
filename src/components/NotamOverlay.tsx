@@ -340,7 +340,7 @@ export default function NotamOverlay({ map, visible }: NotamOverlayProps) {
                   NOTAM / TFR Overlay
                 </h3>
               </div>
-              <div className="flex items-center gap-3 text-[10px] text-gray-400 font-mono">
+              <div className="flex items-center gap-3 text-xs text-gray-400 font-mono">
                 <span>
                   <span className="text-slate-400 font-bold">{tfrCount}</span> TFR
                 </span>
@@ -360,7 +360,7 @@ export default function NotamOverlay({ map, visible }: NotamOverlayProps) {
               {/* Type toggles */}
               <button
                 onClick={() => setShowTFR((v) => !v)}
-                className={`px-2 py-0.5 rounded text-[10px] font-semibold border transition-colors ${
+                className={`px-2 py-0.5 rounded text-xs font-semibold border transition-colors ${
                   showTFR
                     ? "bg-slate-500/20 border-slate-500/40 text-slate-300"
                     : "bg-gray-800/40 border-gray-700/30 text-gray-500"
@@ -370,7 +370,7 @@ export default function NotamOverlay({ map, visible }: NotamOverlayProps) {
               </button>
               <button
                 onClick={() => setShowNOTAM((v) => !v)}
-                className={`px-2 py-0.5 rounded text-[10px] font-semibold border transition-colors ${
+                className={`px-2 py-0.5 rounded text-xs font-semibold border transition-colors ${
                   showNOTAM
                     ? "bg-slate-500/20 border-slate-500/40 text-slate-300"
                     : "bg-gray-800/40 border-gray-700/30 text-gray-500"
@@ -386,7 +386,7 @@ export default function NotamOverlay({ map, visible }: NotamOverlayProps) {
                 <button
                   key={sev}
                   onClick={() => toggleSeverity(sev)}
-                  className={`px-2 py-0.5 rounded text-[10px] font-semibold border transition-colors ${
+                  className={`px-2 py-0.5 rounded text-xs font-semibold border transition-colors ${
                     severityFilter.has(sev)
                       ? `border-current`
                       : "bg-gray-800/40 border-gray-700/30 text-gray-500"
@@ -410,7 +410,7 @@ export default function NotamOverlay({ map, visible }: NotamOverlayProps) {
               {/* Active only */}
               <button
                 onClick={() => setActiveOnly((v) => !v)}
-                className={`px-2 py-0.5 rounded text-[10px] font-semibold border transition-colors ${
+                className={`px-2 py-0.5 rounded text-xs font-semibold border transition-colors ${
                   activeOnly
                     ? "bg-slate-500/20 border-slate-500/40 text-slate-300"
                     : "bg-gray-800/40 border-gray-700/30 text-gray-500"
@@ -447,12 +447,12 @@ export default function NotamOverlay({ map, visible }: NotamOverlayProps) {
                         style={{ background: color }}
                       />
                       <span
-                        className="text-[9px] font-bold tracking-wider"
+                        className="text-[11px] font-bold tracking-wider"
                         style={{ color }}
                       >
                         {n.type}
                       </span>
-                      <span className="text-[9px] text-gray-500 font-mono">
+                      <span className="text-[11px] text-gray-500 font-mono">
                         {n.id}
                       </span>
                       {active && (
@@ -461,10 +461,10 @@ export default function NotamOverlay({ map, visible }: NotamOverlayProps) {
                         </span>
                       )}
                     </div>
-                    <div className="text-[11px] text-gray-200 font-medium leading-tight line-clamp-2 mb-1">
+                    <div className="text-xs text-gray-200 font-medium leading-tight line-clamp-2 mb-1">
                       {n.title}
                     </div>
-                    <div className="flex items-center gap-2 text-[9px] text-gray-500 font-mono">
+                    <div className="flex items-center gap-2 text-[11px] text-gray-500 font-mono">
                       {n.affectedAirport && (
                         <span className="text-slate-400">{n.affectedAirport}</span>
                       )}
@@ -477,7 +477,7 @@ export default function NotamOverlay({ map, visible }: NotamOverlayProps) {
             </div>
 
             {/* ── Footer ─────────────────────────────────────────── */}
-            <div className="px-4 py-2 border-t border-gray-700/20 text-[9px] text-gray-600 font-mono">
+            <div className="px-4 py-2 border-t border-gray-700/20 text-[11px] text-gray-600 font-mono">
               {filtered.length} of {NOTAMS.length} items shown
             </div>
           </div>
