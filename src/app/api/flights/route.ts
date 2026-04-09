@@ -1,117 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRawRedis, KEYS } from "@/lib/redis";
-import { parseAirplanesLive } from "@/lib/airplaneslive";
+import { parseAirplanesLive, AIRPLANES_LIVE_URL } from "@/lib/airplaneslive";
 import { parseStateVector } from "@/lib/opensky";
-import { getOgnFlights, startOgnConnection, updateOgnFilter, getOgnStatus } from "@/lib/ogn";
-import { enrichFlightWithRegistry, ensureRegistryLoaded, getRegistrySize } from "@/lib/faaRegistry";
 import type { FlightState, BoundingBox } from "@/types/flight";
 
-// ── Data source URLs ────────────────────────────────────────────────
-// Three ADS-B aggregator networks — each has different feeders.
-// Querying all three and merging by ICAO24 gives us the UNION of all
-// aircraft that ANY receiver in ANY network can see. This is critical
-// for small/GA/training aircraft that only appear on one network.
-const ADSB_SOURCES = [
-  {
-    name: "airplaneslive" as const,
-    baseUrl: "https://api.airplanes.live/v2",
-    urlBuilder: (lat: number, lon: number, radius: number) =>
-      `https://api.airplanes.live/v2/point/${lat.toFixed(4)}/${lon.toFixed(4)}/${radius}`,
-    responseKey: "ac" as const,
-  },
-  {
-    name: "adsbfi" as const,
-    baseUrl: "https://opendata.adsb.fi/api/v2",
-    // adsb.fi: /lat/{lat}/lon/{lon}/dist/{radius}, integer coords, "aircraft" key
-    urlBuilder: (lat: number, lon: number, radius: number) =>
-      `https://opendata.adsb.fi/api/v2/lat/${Math.round(lat)}/lon/${Math.round(lon)}/dist/${radius}`,
-    responseKey: "aircraft" as const,
-  },
-  {
-    name: "adsblol" as const,
-    baseUrl: "https://api.adsb.lol/v2",
-    urlBuilder: (lat: number, lon: number, radius: number) =>
-      `https://api.adsb.lol/v2/point/${lat.toFixed(4)}/${lon.toFixed(4)}/${radius}`,
-    responseKey: "ac" as const,
-  },
-  {
-    name: "adsbone" as const,
-    baseUrl: "https://api.adsb.one/v2",
-    // ADSB One: same v2 format as airplanes.live, unfiltered (military/blocked/PIA)
-    urlBuilder: (lat: number, lon: number, radius: number) =>
-      `https://api.adsb.one/v2/point/${lat.toFixed(4)}/${lon.toFixed(4)}/${radius}`,
-    responseKey: "ac" as const,
-  },
-];
-
+// ── Data source constants ────────────────────────────────────────────
 const OPENSKY_URL = "https://opensky-network.org/api/states/all";
 const TOKEN_URL =
   "https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token";
 
-// ── Strategic center points for global count (landing page only) ────
-// Only 1 tile — just enough for an approximate flight count.
-// The tracker page sends a bbox and gets proper multi-tile coverage.
+// ── Strategic center points for global coverage via airplanes.live ───
+// Each entry: [lat, lon, radius_nm]
 const GLOBAL_TILES: [number, number, number][] = [
-  [50, 10, 250],    // Europe central (busiest airspace = best count proxy)
+  [39, -98, 250],   // US central
+  [50, 10, 250],    // Europe central
+  [35, 105, 250],   // East Asia
+  [25, 55, 250],    // Middle East
 ];
 
-// ── API key detection ───────────────────────────────────────────────
-const HAS_API_KEY = !!process.env.AIRPLANES_LIVE_API_KEY;
-
-// ── Cache layer ─────────────────────────────────────────────────────
-interface CacheEntry {
-  flights: FlightState[];
-  time: number;
-  source: string;
-  sources: string[];       // which networks contributed
-  timestamp: number;
-}
-
-const regionCache = new Map<string, CacheEntry>();
-const CACHE_TTL = HAS_API_KEY ? 15_000 : 30_000; // shorter cache = fresher data
-const STALE_TTL = 600_000;
-
-// ── Daily request counter ───────────────────────────────────────────
-let dailyRequestCount = 0;
-let dailyCounterResetDate = new Date().toISOString().slice(0, 10);
-// Higher limits since we query multiple sources
-const DAILY_WARN_THRESHOLD = HAS_API_KEY ? 7_000 : 1_200;
-const DAILY_HARD_LIMIT = HAS_API_KEY ? 8_000 : 1_440; // 3 sources × 480
-
-function trackDailyRequest(): boolean {
-  const today = new Date().toISOString().slice(0, 10);
-  if (today !== dailyCounterResetDate) {
-    dailyRequestCount = 0;
-    dailyCounterResetDate = today;
-  }
-  dailyRequestCount++;
-  if (dailyRequestCount >= DAILY_HARD_LIMIT) {
-    console.warn(`[Flights] Daily limit reached: ${dailyRequestCount}/${DAILY_HARD_LIMIT}`);
-    return false;
-  }
-  return true;
-}
-
-// ── Per-source rate limiting ────────────────────────────────────────
-const sourceState = new Map<string, { lastRequest: number; backoffUntil: number }>();
-
-function getSourceState(name: string) {
-  if (!sourceState.has(name)) {
-    sourceState.set(name, { lastRequest: 0, backoffUntil: 0 });
-  }
-  return sourceState.get(name)!;
-}
-
-// ── OpenSky auth ────────────────────────────────────────────────────
+// ── OAuth2 Token Manager (OpenSky) ──────────────────────────────────
 let accessToken: string | null = null;
 let tokenExpiresAt = 0;
+const TOKEN_REFRESH_MARGIN = 30_000;
 
 async function getAccessToken(): Promise<string | null> {
   const clientId = process.env.OPENSKY_CLIENT_ID;
   const clientSecret = process.env.OPENSKY_CLIENT_SECRET;
+
   if (!clientId || !clientSecret) return null;
 
-  if (accessToken && Date.now() < tokenExpiresAt - 30_000) return accessToken;
+  const now = Date.now();
+  if (accessToken && now < tokenExpiresAt - TOKEN_REFRESH_MARGIN) {
+    return accessToken;
+  }
 
   try {
     const res = await fetch(TOKEN_URL, {
@@ -124,24 +45,101 @@ async function getAccessToken(): Promise<string | null> {
       }),
       cache: "no-store",
     });
-    if (!res.ok) return null;
+
+    if (!res.ok) {
+      console.error("OpenSky token error:", res.status, await res.text());
+      accessToken = null;
+      return null;
+    }
+
     const data = await res.json();
     accessToken = data.access_token;
-    tokenExpiresAt = Date.now() + (data.expires_in ?? 1800) * 1000;
+    tokenExpiresAt = now + (data.expires_in ?? 1800) * 1000;
     return accessToken;
-  } catch {
+  } catch (err) {
+    console.error("OpenSky token fetch failed:", err);
+    accessToken = null;
     return null;
   }
 }
 
+// ── API key detection ───────────────────────────────────────────────
+const HAS_API_KEY = !!process.env.AIRPLANES_LIVE_API_KEY;
+
+// ── Cache layer ─────────────────────────────────────────────────────
+interface CacheEntry {
+  flights: FlightState[];
+  time: number;
+  source: "airplaneslive" | "opensky";
+  timestamp: number; // cache write time (Date.now())
+}
+
+const regionCache = new Map<string, CacheEntry>();
+const CACHE_TTL = HAS_API_KEY ? 15_000 : 60_000; // 15s with key, 60s without
+const STALE_TTL = 600_000; // 10min — serve stale data rather than burn quota
+
+// ── Daily request counter (resets at midnight UTC) ──────────────────
+let dailyRequestCount = 0;
+let dailyCounterResetDate = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+// With API key: 8,640/day. Without: 500/day.
+// We use smaller tiles for better GA coverage, so need more headroom.
+const DAILY_WARN_THRESHOLD = HAS_API_KEY ? 7_000 : 400;
+const DAILY_HARD_LIMIT = HAS_API_KEY ? 8_000 : 480;
+
+function trackDailyRequest(): boolean {
+  const today = new Date().toISOString().slice(0, 10);
+  if (today !== dailyCounterResetDate) {
+    dailyRequestCount = 0;
+    dailyCounterResetDate = today;
+    console.log("[Flights] Daily request counter reset for", today);
+  }
+  dailyRequestCount++;
+  if (dailyRequestCount >= DAILY_HARD_LIMIT) {
+    console.warn(
+      `[Flights] Daily request limit approaching! ${dailyRequestCount}/${DAILY_HARD_LIMIT} — blocking further upstream requests`
+    );
+    return false; // do not allow this request
+  }
+  if (dailyRequestCount >= DAILY_WARN_THRESHOLD) {
+    console.warn(
+      `[Flights] Daily requests: ${dailyRequestCount} — approaching limit`
+    );
+  }
+  return true; // request allowed
+}
+
+// ── Airplanes.live rate limiter ──────────────────────────────────────
+let lastAirplanesLiveRequest = 0;
+const AIRPLANES_LIVE_MIN_INTERVAL = HAS_API_KEY ? 3_000 : 10_000; // 3s with key, 10s without
+let airplanesLiveRateLimitedUntil = 0;
+
+async function throttledFetch(url: string): Promise<Response> {
+  const now = Date.now();
+  const wait = AIRPLANES_LIVE_MIN_INTERVAL - (now - lastAirplanesLiveRequest);
+  if (wait > 0) {
+    await new Promise((resolve) => setTimeout(resolve, wait));
+  }
+  lastAirplanesLiveRequest = Date.now();
+
+  const headers: HeadersInit = {};
+  const apiKey = process.env.AIRPLANES_LIVE_API_KEY;
+  if (apiKey) {
+    headers["api-auth"] = apiKey;
+  }
+
+  return fetch(url, { cache: "no-store", headers });
+}
+
 // ── OpenSky rate limit tracking ─────────────────────────────────────
-let osRateLimitedUntil = 0;
-let osQuotaExhausted = false;
-let osRateLimitMessage = "";
+let rateLimitedUntil = 0;
+let quotaExhausted = false;
+let rateLimitMessage = "";
+const RATE_LIMIT_BACKOFF = 30_000;
 
 // ── Helpers ─────────────────────────────────────────────────────────
 
 function bboxFromParams(searchParams: URLSearchParams): BoundingBox | null {
+  // Support lat/lon/radius params (used by AirportRadarMode etc.)
   const lat = searchParams.get("lat");
   const lon = searchParams.get("lon");
   const radius = searchParams.get("radius");
@@ -149,6 +147,7 @@ function bboxFromParams(searchParams: URLSearchParams): BoundingBox | null {
     const latF = parseFloat(lat);
     const lonF = parseFloat(lon);
     const radiusNm = parseFloat(radius);
+    // Convert radius in NM to approximate degrees
     const latDelta = radiusNm / 60;
     const lonDelta = radiusNm / (60 * Math.cos((latF * Math.PI) / 180));
     return {
@@ -172,172 +171,130 @@ function bboxFromParams(searchParams: URLSearchParams): BoundingBox | null {
   };
 }
 
-const MAX_TILE_RADIUS = 250;
-
 /**
- * Compute a SINGLE tile (center + 250nm) for the bbox.
- * Free ADS-B APIs only allow ~1 request per 10 seconds,
- * so we cannot split into multiple tiles.  We query 3 sources
- * in parallel instead — that's how we get broad coverage.
+ * Compute tile centers needed to cover a bounding box.
+ *
+ * IMPORTANT: Using smaller tiles (~250nm max) returns MORE aircraft.
+ * The airplanes.live API caps results per request, so a single 500nm+
+ * request misses small/GA aircraft. Breaking into smaller tiles ensures
+ * we get complete data including training aircraft, Cessnas, etc.
+ *
+ * Returns array of [lat, lon, radius_nm].
  */
-function computeTile(bbox: BoundingBox): [number, number, number] {
+const MAX_TILE_RADIUS = 250; // sweet spot: complete results without too many requests
+
+function computeTiles(bbox: BoundingBox): [number, number, number][] {
   const centerLat = (bbox.lamin + bbox.lamax) / 2;
   const centerLon = (bbox.lomin + bbox.lomax) / 2;
   const midLatRad = (centerLat * Math.PI) / 180;
 
+  // Approximate bbox dimensions in NM
   const heightNm = Math.abs(bbox.lamax - bbox.lamin) * 60;
-  const widthNm = Math.abs(bbox.lomax - bbox.lomin) * 60 * Math.cos(midLatRad);
-  const neededRadius = Math.min(
-    Math.ceil(Math.sqrt((heightNm / 2) ** 2 + (widthNm / 2) ** 2)),
-    MAX_TILE_RADIUS,
+  const widthNm =
+    Math.abs(bbox.lomax - bbox.lomin) * 60 * Math.cos(midLatRad);
+
+  // Radius needed to cover the bbox from its center
+  const neededRadius = Math.ceil(
+    Math.sqrt((heightNm / 2) ** 2 + (widthNm / 2) ** 2)
   );
 
-  return [centerLat, centerLon, neededRadius];
-}
-
-// ── Fetch from a single ADS-B v2 source (1 request) ────────────────
-async function fetchFromAdsbSource(
-  source: typeof ADSB_SOURCES[number],
-  tile: [number, number, number],
-): Promise<{ flights: Map<string, FlightState>; name: string }> {
-  const state = getSourceState(source.name);
-  const now = Date.now();
-  const result = new Map<string, FlightState>();
-
-  // Skip if in backoff (free APIs need ~10s between requests)
-  if (now < state.backoffUntil) {
-    return { flights: result, name: source.name };
+  // Small enough for a single request — return as-is
+  if (neededRadius <= MAX_TILE_RADIUS) {
+    return [[centerLat, centerLon, neededRadius]];
   }
 
-  // Per-source throttle: 10s between requests (tested empirically)
-  const wait = 10_000 - (now - state.lastRequest);
-  if (wait > 0) await new Promise((r) => setTimeout(r, wait));
-  state.lastRequest = Date.now();
+  // Large area: split into a grid of smaller tiles for complete coverage
+  // Each tile covers ~250nm radius, overlap ensures no gaps
+  const tileSpacingNm = MAX_TILE_RADIUS * 1.5; // 1.5x radius = overlap
+  const tileSpacingLat = tileSpacingNm / 60;
+  const tileSpacingLon = tileSpacingNm / (60 * Math.cos(midLatRad));
 
-  if (!trackDailyRequest()) return { flights: result, name: source.name };
+  const tiles: [number, number, number][] = [];
+  const maxTiles = 6; // cap to avoid rate limiting (each tile = 1 API call)
 
-  const [lat, lon, radius] = tile;
-
-  try {
-    const url = source.urlBuilder(lat, lon, radius);
-
-    const headers: HeadersInit = {};
-    if (source.name === "airplaneslive" && process.env.AIRPLANES_LIVE_API_KEY) {
-      headers["api-auth"] = process.env.AIRPLANES_LIVE_API_KEY;
+  for (let lat = bbox.lamin + tileSpacingLat / 2; lat < bbox.lamax; lat += tileSpacingLat) {
+    for (let lon = bbox.lomin + tileSpacingLon / 2; lon < bbox.lomax; lon += tileSpacingLon) {
+      tiles.push([lat, lon, MAX_TILE_RADIUS]);
+      if (tiles.length >= maxTiles) break;
     }
-
-    const res = await fetch(url, {
-      cache: "no-store",
-      headers,
-      signal: AbortSignal.timeout(10_000),
-    });
-
-    if (res.status === 429) {
-      state.backoffUntil = Date.now() + 15_000;
-      console.warn(`[Flights] ${source.name} rate limited, backing off 15s`);
-      return { flights: result, name: source.name };
-    }
-    if (!res.ok) {
-      console.warn(`[Flights] ${source.name} returned ${res.status} for ${url}`);
-      return { flights: result, name: source.name };
-    }
-
-    const data = await res.json();
-    const acList = data?.[source.responseKey];
-    if (!Array.isArray(acList)) {
-      console.warn(`[Flights] ${source.name} missing "${source.responseKey}" key, got: ${Object.keys(data || {}).join(",")}`);
-      return { flights: result, name: source.name };
-    }
-
-    for (const ac of acList) {
-      const parsed = parseAirplanesLive(ac as Record<string, unknown>);
-      if (parsed?.icao24) {
-        parsed.dataSource = source.name as FlightState["dataSource"];
-        result.set(parsed.icao24, parsed);
-      }
-    }
-  } catch {
-    // Timeout or network error
+    if (tiles.length >= maxTiles) break;
   }
 
-  return { flights: result, name: source.name };
+  // If grid produced no tiles (shouldn't happen), fallback to center
+  if (tiles.length === 0) {
+    return [[centerLat, centerLon, MAX_TILE_RADIUS]];
+  }
+
+  return tiles;
 }
 
 /**
- * Fetch from ALL ADS-B networks in parallel and merge by ICAO24.
- * Different networks have different feeders — the union captures
- * small/GA aircraft that only ONE network sees.
+ * Fetch from airplanes.live using tile strategy.
+ * Returns parsed FlightState array or null on failure.
  */
-async function fetchAllAdsbSources(
+async function fetchAirplanesLive(
   bbox: BoundingBox | null
-): Promise<{ merged: FlightState[]; sources: string[] } | null> {
-  const tile: [number, number, number] = bbox
-    ? computeTile(bbox)
-    : GLOBAL_TILES[0];
+): Promise<FlightState[] | null> {
+  // Skip if we're in a rate-limit backoff
+  if (Date.now() < airplanesLiveRateLimitedUntil) return null;
 
-  // For global (no-bbox) requests (e.g. landing page flight count),
-  // only query the primary source — saves rate limit budget.
-  // For regional (bbox) requests, query ALL sources in parallel —
-  // each makes exactly 1 request with the same center tile.
-  // Different feeder networks see different aircraft, so we get
-  // the UNION of all three networks.
-  const sourcesToQuery = bbox ? ADSB_SOURCES : [ADSB_SOURCES[0]];
+  // Check daily quota before making upstream requests
+  if (!trackDailyRequest()) return null;
 
-  // All sources in parallel — each makes exactly 1 API request
-  const results = await Promise.allSettled(
-    sourcesToQuery.map((src) => fetchFromAdsbSource(src, tile))
-  );
+  const tiles = bbox ? computeTiles(bbox) : GLOBAL_TILES;
 
-  // Merge all aircraft by ICAO24 — prefer the entry with most data
-  const merged = new Map<string, FlightState>();
-  const activeSources: string[] = [];
+  try {
+    const allAircraft = new Map<string, FlightState>();
 
-  for (const result of results) {
-    if (result.status !== "fulfilled") continue;
-    const { flights, name } = result.value;
+    // Fetch tiles sequentially with throttle to avoid rate limits
+    for (const [lat, lon, radius] of tiles) {
+      const url = `${AIRPLANES_LIVE_URL}/point/${lat.toFixed(4)}/${lon.toFixed(4)}/${radius}`;
+      const res = await throttledFetch(url);
 
-    if (flights.size > 0) activeSources.push(name);
+      if (res.status === 429) {
+        // Back off for 60s on rate limit — stop fetching more tiles
+        airplanesLiveRateLimitedUntil = Date.now() + 60_000;
+        console.warn("[Flights] airplanes.live rate limited, backing off 60s");
+        break;
+      }
+      if (!res.ok) {
+        console.warn(`[Flights] airplanes.live tile error: ${res.status}`);
+        continue;
+      }
 
-    for (const [icao, flight] of flights) {
-      const existing = merged.get(icao);
-      if (!existing) {
-        merged.set(icao, flight);
-      } else {
-        // Keep whichever has more complete data (callsign, altitude, speed)
-        const existingScore =
-          (existing.callsign ? 1 : 0) +
-          (existing.baroAltitude !== null ? 1 : 0) +
-          (existing.velocity !== null ? 1 : 0) +
-          (existing.registration ? 1 : 0);
-        const newScore =
-          (flight.callsign ? 1 : 0) +
-          (flight.baroAltitude !== null ? 1 : 0) +
-          (flight.velocity !== null ? 1 : 0) +
-          (flight.registration ? 1 : 0);
-        if (newScore > existingScore) {
-          merged.set(icao, flight);
+      const data = await res.json();
+      const acList = data?.ac;
+      if (!Array.isArray(acList)) continue;
+
+      for (const ac of acList) {
+        const parsed = parseAirplanesLive(ac as Record<string, unknown>);
+        if (parsed && parsed.icao24) {
+          allAircraft.set(parsed.icao24, parsed);
         }
       }
     }
+
+    if (allAircraft.size === 0) return null;
+    return Array.from(allAircraft.values());
+  } catch (err) {
+    console.error("[Flights] airplanes.live fetch failed:", err);
+    return null;
   }
-
-  if (merged.size === 0) return null;
-
-  console.log(
-    `[Flights] Merged ${merged.size} aircraft from ${activeSources.length} sources: ${activeSources.join(", ")}`
-  );
-
-  return { merged: Array.from(merged.values()), sources: activeSources };
 }
 
 /**
- * Fetch from OpenSky (fallback).
+ * Fetch from OpenSky (existing logic preserved).
+ * Returns parsed FlightState array or null on failure.
  */
 async function fetchOpenSky(
   bbox: BoundingBox | null
-): Promise<FlightState[] | null> {
+): Promise<{ flights: FlightState[]; rawData: unknown } | null> {
   const now = Date.now();
-  if (now < osRateLimitedUntil) return null;
+
+  // Respect rate limit backoff
+  if (now < rateLimitedUntil) {
+    return null;
+  }
 
   const params = new URLSearchParams();
   if (bbox) {
@@ -348,55 +305,72 @@ async function fetchOpenSky(
   }
 
   const url = bbox ? `${OPENSKY_URL}?${params.toString()}` : OPENSKY_URL;
+
   const headers: HeadersInit = {};
   const token = await getAccessToken();
-  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const hasAuth = !!token;
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
 
   try {
-    const response = await fetch(url, {
-      cache: "no-store",
-      headers,
-      signal: AbortSignal.timeout(10000),
-    });
+    const response = await fetch(url, { cache: "no-store", headers });
 
     if (response.status === 429) {
       const retryAfterSec = parseInt(
-        response.headers.get("x-rate-limit-retry-after-seconds") ?? "0", 10
+        response.headers.get("x-rate-limit-retry-after-seconds") ?? "0",
+        10
       );
-      osRateLimitedUntil = now + (retryAfterSec > 0 ? retryAfterSec * 1000 : 30_000);
-      osQuotaExhausted = retryAfterSec > 3600;
-      osRateLimitMessage = retryAfterSec > 3600
-        ? `OpenSky quota exhausted. Resets in ~${Math.ceil(retryAfterSec / 3600)}h.`
-        : "Rate limited by OpenSky.";
+      const backoffMs =
+        retryAfterSec > 0
+          ? Math.min(retryAfterSec * 1000, 86_400_000)
+          : RATE_LIMIT_BACKOFF;
+      rateLimitedUntil = now + backoffMs;
+
+      const retryHours =
+        retryAfterSec > 3600 ? Math.ceil(retryAfterSec / 3600) : null;
+
+      quotaExhausted = retryAfterSec > 3600;
+      rateLimitMessage = retryHours
+        ? `Daily API quota exhausted. Resets in ~${retryHours}h.${!hasAuth ? " Add OpenSky credentials for 10x higher limits." : ""}`
+        : `Rate limited by OpenSky API.${!hasAuth ? " Create a free account for higher limits." : ""}`;
+
       return null;
     }
 
-    if (!response.ok) return null;
+    if (!response.ok) {
+      return null;
+    }
+
     const data = await response.json();
+
     if (!data?.states) return null;
 
-    osRateLimitedUntil = 0;
-    osQuotaExhausted = false;
-    osRateLimitMessage = "";
+    // Reset rate limit state on success
+    rateLimitedUntil = 0;
+    quotaExhausted = false;
+    rateLimitMessage = "";
 
-    return (data.states as unknown[][])
+    const flights = (data.states as unknown[][])
       .map((raw) => {
         const f = parseStateVector(raw);
         if (f) (f as FlightState).dataSource = "opensky";
         return f;
       })
       .filter((f): f is FlightState => f !== null);
-  } catch {
+
+    return { flights, rawData: data };
+  } catch (err) {
+    console.error("[Flights] OpenSky fetch failed:", err);
     return null;
   }
 }
 
-// ── Normalized response ─────────────────────────────────────────────
+// ── Normalized response format ──────────────────────────────────────
 interface NormalizedResponse {
   flights: FlightState[];
   time: number;
-  source: string;
-  sources: string[];
+  source: "airplaneslive" | "opensky";
   total: number;
   error?: string;
   rateLimited?: boolean;
@@ -410,101 +384,128 @@ export async function GET(request: NextRequest) {
   const bbox = bboxFromParams(searchParams);
 
   const cacheKey = bbox
-    ? `${bbox.lamin.toFixed(2)},${bbox.lomin.toFixed(2)},${bbox.lamax.toFixed(2)},${bbox.lomax.toFixed(2)}`
+    ? `${bbox.lamin},${bbox.lomin},${bbox.lamax},${bbox.lomax}`
     : "__global__";
 
   const now = Date.now();
 
-  // Return fresh cached data
+  // Return fresh cached data if available
   const cached = regionCache.get(cacheKey);
   if (cached && now - cached.timestamp < CACHE_TTL) {
-    return NextResponse.json(
-      {
+    const resp: NormalizedResponse = {
+      flights: cached.flights,
+      time: cached.time,
+      source: cached.source,
+      total: cached.flights.length,
+    };
+    const remainingTtl = Math.max(0, CACHE_TTL - (now - cached.timestamp));
+    return NextResponse.json(resp, {
+      headers: {
+        "X-Data-Source": "cache",
+        "X-Cache-Age": String(now - cached.timestamp),
+        "X-Cache-TTL": String(remainingTtl),
+        "X-Daily-Requests": String(dailyRequestCount),
+      },
+    });
+  }
+
+  // Helper to build stale response
+  const serveStale = (extraHeaders: Record<string, string> = {}) => {
+    if (cached && now - cached.timestamp < STALE_TTL) {
+      const resp: NormalizedResponse = {
         flights: cached.flights,
         time: cached.time,
         source: cached.source,
-        sources: cached.sources,
         total: cached.flights.length,
-      } as NormalizedResponse,
-      {
+      };
+      return NextResponse.json(resp, {
         headers: {
-          "X-Data-Source": "cache",
-          "X-Data-Sources": cached.sources.join(","),
+          "X-Data-Source": "stale",
           "X-Cache-Age": String(now - cached.timestamp),
-          "X-Daily-Requests": String(dailyRequestCount),
+          ...extraHeaders,
         },
-      }
-    );
-  }
-
-  // Serve stale helper
-  const serveStale = (extra: Record<string, string> = {}) => {
-    if (cached && now - cached.timestamp < STALE_TTL) {
-      return NextResponse.json(
-        {
-          flights: cached.flights,
-          time: cached.time,
-          source: cached.source,
-          sources: cached.sources,
-          total: cached.flights.length,
-        } as NormalizedResponse,
-        { headers: { "X-Data-Source": "stale", ...extra } }
-      );
+      });
     }
     return null;
   };
 
-  // ── Start OGN connection if bbox is available ──────────────────────
-  if (bbox) {
-    const centerLat = (bbox.lamin + bbox.lamax) / 2;
-    const centerLon = (bbox.lomin + bbox.lomax) / 2;
-    startOgnConnection(centerLat, centerLon, 250);
-    updateOgnFilter(centerLat, centerLon, 250);
-  }
+  // ── Try airplanes.live first (primary) ────────────────────────────
+  const alFlights = await fetchAirplanesLive(bbox);
 
-  // ── Load FAA registry in background (non-blocking) ────────────────
-  ensureRegistryLoaded().catch(() => {});
-
-  // ── Query all ADS-B networks in parallel ──────────────────────────
-  const adsbResult = await fetchAllAdsbSources(bbox);
-
-  if (adsbResult && adsbResult.merged.length > 0) {
-    // ── Merge OGN flights (FLARM/gliders/ultralights) ───────────────
-    const ognFlights = getOgnFlights();
-    let ognMerged = 0;
-    if (ognFlights.length > 0) {
-      for (const ogn of ognFlights) {
-        // Only include OGN aircraft within the bbox
-        if (bbox && ogn.latitude !== null && ogn.longitude !== null) {
-          if (ogn.latitude < bbox.lamin || ogn.latitude > bbox.lamax ||
-              ogn.longitude < bbox.lomin || ogn.longitude > bbox.lomax) {
-            continue;
-          }
-        }
-        // OGN uses "ogn-XXXXXX" IDs — won't collide with ICAO hex
-        adsbResult.merged.push(ogn);
-        ognMerged++;
-      }
-      if (ognMerged > 0) {
-        adsbResult.sources.push("ogn");
-      }
-    }
-
-    // ── Enrich with FAA registry data ───────────────────────────────
-    const registrySize = getRegistrySize();
-    if (registrySize > 0) {
-      for (const flight of adsbResult.merged) {
-        enrichFlightWithRegistry(flight);
-      }
-    }
-
-    const ognStatus = getOgnStatus();
+  if (alFlights && alFlights.length > 0) {
     const time = Math.floor(now / 1000);
     regionCache.set(cacheKey, {
-      flights: adsbResult.merged,
+      flights: alFlights,
       time,
-      source: adsbResult.sources[0] || "multi",
-      sources: adsbResult.sources,
+      source: "airplaneslive",
+      timestamp: now,
+    });
+
+    // Check if worker is active
+    let workerActive = false;
+    try {
+      const r = getRawRedis();
+      if (r && r.status === "ready") {
+        const hb = await r.get(KEYS.workerHeartbeat);
+        workerActive = !!hb && Date.now() - parseInt(hb, 10) < 60_000;
+      }
+    } catch {
+      // Redis not available
+    }
+
+    const resp: NormalizedResponse = {
+      flights: alFlights,
+      time,
+      source: "airplaneslive",
+      total: alFlights.length,
+    };
+
+    return NextResponse.json(resp, {
+      headers: {
+        "X-Data-Source": "airplaneslive",
+        "X-Worker-Active": workerActive ? "true" : "false",
+      },
+    });
+  }
+
+  // ── Fall back to OpenSky ──────────────────────────────────────────
+  console.log(
+    "[Flights] airplanes.live returned empty/failed, falling back to OpenSky"
+  );
+
+  // Check if we're in rate-limit backoff for OpenSky
+  if (now < rateLimitedUntil) {
+    const stale = serveStale({
+      "X-Rate-Limited": "true",
+      "X-Quota-Exhausted": quotaExhausted ? "true" : "false",
+      "X-Rate-Limit-Message": rateLimitMessage || "",
+    });
+    if (stale) return stale;
+
+    return NextResponse.json(
+      {
+        flights: [],
+        time: Math.floor(now / 1000),
+        source: "opensky" as const,
+        total: 0,
+        error:
+          rateLimitMessage || "Rate limited by OpenSky. Waiting to retry...",
+        rateLimited: true,
+        quotaExhausted,
+        retryAfter: Math.ceil((rateLimitedUntil - now) / 1000),
+      },
+      { status: 429, headers: { "X-Rate-Limited": "true" } }
+    );
+  }
+
+  const osResult = await fetchOpenSky(bbox);
+
+  if (osResult && osResult.flights.length > 0) {
+    const time = Math.floor(now / 1000);
+    regionCache.set(cacheKey, {
+      flights: osResult.flights,
+      time,
+      source: "opensky",
       timestamp: now,
     });
 
@@ -515,78 +516,26 @@ export async function GET(request: NextRequest) {
         const hb = await r.get(KEYS.workerHeartbeat);
         workerActive = !!hb && Date.now() - parseInt(hb, 10) < 60_000;
       }
-    } catch { /* Redis not available */ }
+    } catch {
+      // Redis not available
+    }
 
-    return NextResponse.json(
-      {
-        flights: adsbResult.merged,
-        time,
-        source: "multi",
-        sources: adsbResult.sources,
-        total: adsbResult.merged.length,
-      } as NormalizedResponse,
-      {
-        headers: {
-          "X-Data-Source": "multi",
-          "X-Data-Sources": adsbResult.sources.join(","),
-          "X-Aircraft-Count": String(adsbResult.merged.length),
-          "X-OGN-Connected": ognStatus.connected ? "true" : "false",
-          "X-OGN-Aircraft": String(ognMerged),
-          "X-FAA-Registry": String(registrySize),
-          "X-Worker-Active": workerActive ? "true" : "false",
-        },
-      }
-    );
-  }
-
-  // ── Fall back to OpenSky ──────────────────────────────────────────
-  console.log("[Flights] All ADS-B sources failed, falling back to OpenSky");
-
-  if (now < osRateLimitedUntil) {
-    const stale = serveStale({ "X-Rate-Limited": "true" });
-    if (stale) return stale;
-
-    return NextResponse.json(
-      {
-        flights: [],
-        time: Math.floor(now / 1000),
-        source: "opensky",
-        sources: [],
-        total: 0,
-        error: osRateLimitMessage || "Rate limited. Waiting to retry...",
-        rateLimited: true,
-        quotaExhausted: osQuotaExhausted,
-        retryAfter: Math.ceil((osRateLimitedUntil - now) / 1000),
-      } as NormalizedResponse,
-      { status: 429 }
-    );
-  }
-
-  const osFlights = await fetchOpenSky(bbox);
-
-  if (osFlights && osFlights.length > 0) {
-    const time = Math.floor(now / 1000);
-    regionCache.set(cacheKey, {
-      flights: osFlights,
+    const resp: NormalizedResponse = {
+      flights: osResult.flights,
       time,
       source: "opensky",
-      sources: ["opensky"],
-      timestamp: now,
-    });
+      total: osResult.flights.length,
+    };
 
-    return NextResponse.json(
-      {
-        flights: osFlights,
-        time,
-        source: "opensky",
-        sources: ["opensky"],
-        total: osFlights.length,
-      } as NormalizedResponse,
-      { headers: { "X-Data-Source": "opensky" } }
-    );
+    return NextResponse.json(resp, {
+      headers: {
+        "X-Data-Source": "opensky",
+        "X-Worker-Active": workerActive ? "true" : "false",
+      },
+    });
   }
 
-  // All sources failed
+  // Both sources failed — serve stale or error
   const stale = serveStale();
   if (stale) return stale;
 
@@ -594,11 +543,10 @@ export async function GET(request: NextRequest) {
     {
       flights: [],
       time: Math.floor(now / 1000),
-      source: "none",
-      sources: [],
+      source: "opensky" as const,
       total: 0,
       error: "Failed to fetch flight data from all sources",
-    } as NormalizedResponse,
+    },
     { status: 500 }
   );
 }
