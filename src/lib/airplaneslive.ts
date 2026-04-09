@@ -43,6 +43,26 @@ function mapCategory(cat: unknown): number {
 }
 
 /**
+ * Derive signal type from readsb/tar1090 "type" field.
+ * This tells us HOW the aircraft was tracked:
+ *   adsb  = direct ADS-B transponder (most reliable)
+ *   mlat  = multilateration from Mode S (calculated position)
+ *   tisb  = TIS-B rebroadcast (FAA radar target → ADS-B format)
+ *   adsr  = ADS-R rebroadcast (UAT → 1090 relay)
+ *   ogn   = Open Glider Network / FLARM
+ */
+function deriveSignalType(type: string): FlightState["signalType"] {
+  if (!type) return "unknown";
+  const t = type.toLowerCase();
+  if (t.startsWith("adsb_")) return "adsb";
+  if (t === "mlat") return "mlat";
+  if (t.startsWith("tisb_")) return "tisb";
+  if (t.startsWith("adsr_")) return "adsr";
+  if (t === "ogn" || t === "flarm") return "ogn";
+  return "unknown";
+}
+
+/**
  * Parse a single aircraft object from the airplanes.live API response
  * into our unified FlightState format. Returns null for aircraft
  * that lack valid position data.
@@ -129,6 +149,12 @@ export function parseAirplanesLive(
 
     // Position source
     positionSource: typeof ac.type === "string" ? ac.type : undefined,
+
+    // Signal type (derived from position source)
+    signalType: deriveSignalType(typeof ac.type === "string" ? ac.type : ""),
+
+    // Military flag (dbFlags bit 0 = military in readsb)
+    isMilitary: typeof ac.dbFlags === "number" ? (ac.dbFlags & 1) !== 0 : undefined,
   };
 
   return result;

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getRawRedis, KEYS } from "@/lib/redis";
 import { parseAirplanesLive } from "@/lib/airplaneslive";
 import { parseStateVector } from "@/lib/opensky";
+import { getOgnFlights, startOgnConnection, updateOgnFilter, getOgnStatus } from "@/lib/ogn";
+import { enrichFlightWithRegistry, ensureRegistryLoaded, getRegistrySize } from "@/lib/faaRegistry";
 import type { FlightState, BoundingBox } from "@/types/flight";
 
 // ── Data source URLs ────────────────────────────────────────────────
@@ -13,7 +15,6 @@ const ADSB_SOURCES = [
   {
     name: "airplaneslive" as const,
     baseUrl: "https://api.airplanes.live/v2",
-    // URL: /point/{lat}/{lon}/{radius}  Response key: "ac"
     urlBuilder: (lat: number, lon: number, radius: number) =>
       `https://api.airplanes.live/v2/point/${lat.toFixed(4)}/${lon.toFixed(4)}/${radius}`,
     responseKey: "ac" as const,
@@ -21,8 +22,7 @@ const ADSB_SOURCES = [
   {
     name: "adsbfi" as const,
     baseUrl: "https://opendata.adsb.fi/api/v2",
-    // URL: /lat/{lat}/lon/{lon}/dist/{radius}  Response key: "aircraft"
-    // adsb.fi requires integer coordinates (decimals return 400)
+    // adsb.fi: /lat/{lat}/lon/{lon}/dist/{radius}, integer coords, "aircraft" key
     urlBuilder: (lat: number, lon: number, radius: number) =>
       `https://opendata.adsb.fi/api/v2/lat/${Math.round(lat)}/lon/${Math.round(lon)}/dist/${radius}`,
     responseKey: "aircraft" as const,
@@ -30,9 +30,16 @@ const ADSB_SOURCES = [
   {
     name: "adsblol" as const,
     baseUrl: "https://api.adsb.lol/v2",
-    // URL: /point/{lat}/{lon}/{radius}  Response key: "ac"
     urlBuilder: (lat: number, lon: number, radius: number) =>
       `https://api.adsb.lol/v2/point/${lat.toFixed(4)}/${lon.toFixed(4)}/${radius}`,
+    responseKey: "ac" as const,
+  },
+  {
+    name: "adsbone" as const,
+    baseUrl: "https://api.adsb.one/v2",
+    // ADSB One: same v2 format as airplanes.live, unfiltered (military/blocked/PIA)
+    urlBuilder: (lat: number, lon: number, radius: number) =>
+      `https://api.adsb.one/v2/point/${lat.toFixed(4)}/${lon.toFixed(4)}/${radius}`,
     responseKey: "ac" as const,
   },
 ];
@@ -447,10 +454,51 @@ export async function GET(request: NextRequest) {
     return null;
   };
 
+  // ── Start OGN connection if bbox is available ──────────────────────
+  if (bbox) {
+    const centerLat = (bbox.lamin + bbox.lamax) / 2;
+    const centerLon = (bbox.lomin + bbox.lomax) / 2;
+    startOgnConnection(centerLat, centerLon, 250);
+    updateOgnFilter(centerLat, centerLon, 250);
+  }
+
+  // ── Load FAA registry in background (non-blocking) ────────────────
+  ensureRegistryLoaded().catch(() => {});
+
   // ── Query all ADS-B networks in parallel ──────────────────────────
   const adsbResult = await fetchAllAdsbSources(bbox);
 
   if (adsbResult && adsbResult.merged.length > 0) {
+    // ── Merge OGN flights (FLARM/gliders/ultralights) ───────────────
+    const ognFlights = getOgnFlights();
+    let ognMerged = 0;
+    if (ognFlights.length > 0) {
+      for (const ogn of ognFlights) {
+        // Only include OGN aircraft within the bbox
+        if (bbox && ogn.latitude !== null && ogn.longitude !== null) {
+          if (ogn.latitude < bbox.lamin || ogn.latitude > bbox.lamax ||
+              ogn.longitude < bbox.lomin || ogn.longitude > bbox.lomax) {
+            continue;
+          }
+        }
+        // OGN uses "ogn-XXXXXX" IDs — won't collide with ICAO hex
+        adsbResult.merged.push(ogn);
+        ognMerged++;
+      }
+      if (ognMerged > 0) {
+        adsbResult.sources.push("ogn");
+      }
+    }
+
+    // ── Enrich with FAA registry data ───────────────────────────────
+    const registrySize = getRegistrySize();
+    if (registrySize > 0) {
+      for (const flight of adsbResult.merged) {
+        enrichFlightWithRegistry(flight);
+      }
+    }
+
+    const ognStatus = getOgnStatus();
     const time = Math.floor(now / 1000);
     regionCache.set(cacheKey, {
       flights: adsbResult.merged,
@@ -482,6 +530,9 @@ export async function GET(request: NextRequest) {
           "X-Data-Source": "multi",
           "X-Data-Sources": adsbResult.sources.join(","),
           "X-Aircraft-Count": String(adsbResult.merged.length),
+          "X-OGN-Connected": ognStatus.connected ? "true" : "false",
+          "X-OGN-Aircraft": String(ognMerged),
+          "X-FAA-Registry": String(registrySize),
           "X-Worker-Active": workerActive ? "true" : "false",
         },
       }

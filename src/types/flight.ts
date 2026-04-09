@@ -46,11 +46,19 @@ export interface FlightState {
   oat?: number;
   tat?: number;
 
-  // Position source
+  // Position source (adsb_icao, adsb_icao_nt, adsr_icao, tisb_icao, tisb_trackfile, mlat, etc.)
   positionSource?: string;
 
-  // Data source tracking
-  dataSource?: "opensky" | "airplaneslive" | "adsbfi" | "adsblol";
+  // Signal type derived from positionSource
+  signalType?: "adsb" | "mlat" | "tisb" | "adsr" | "ogn" | "unknown";
+
+  // Data source tracking (which network provided this aircraft)
+  dataSource?: "opensky" | "airplaneslive" | "adsbfi" | "adsblol" | "adsbone" | "ogn";
+
+  // Aircraft description from registry enrichment
+  aircraftDesc?: string;       // e.g. "CESSNA 172S"
+  ownerName?: string;          // e.g. "XYZ Flight School"
+  isMilitary?: boolean;        // military dbFlags or registry
 }
 
 export interface FlightHistoryEntry {
