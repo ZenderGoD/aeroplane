@@ -181,51 +181,76 @@ function bboxFromParams(searchParams: URLSearchParams): BoundingBox | null {
  *
  * Returns array of [lat, lon, radius_nm].
  */
-const MAX_TILE_RADIUS = 250; // sweet spot: complete results without too many requests
+// airplanes.live API cap: 250nm max radius per request
+const MAX_TILE_RADIUS = 250;
 
+/**
+ * Compute tile centers to cover a bounding box.
+ *
+ * Key insight: the previous implementation's inner loop broke early,
+ * clustering all 6 tiles in the south-west corner of the bbox and
+ * leaving the north and east uncovered — which is why only commercial
+ * jets around Bangalore/Mumbai/Chennai were visible.
+ *
+ * We now evenly sample tiles across the whole bbox so every region
+ * gets coverage.  Tiles are fired in parallel by fetchAirplanesLive,
+ * so the total runs in ~1 API roundtrip regardless of tile count.
+ */
 function computeTiles(bbox: BoundingBox): [number, number, number][] {
   const centerLat = (bbox.lamin + bbox.lamax) / 2;
   const centerLon = (bbox.lomin + bbox.lomax) / 2;
   const midLatRad = (centerLat * Math.PI) / 180;
 
-  // Approximate bbox dimensions in NM
   const heightNm = Math.abs(bbox.lamax - bbox.lamin) * 60;
-  const widthNm =
-    Math.abs(bbox.lomax - bbox.lomin) * 60 * Math.cos(midLatRad);
-
-  // Radius needed to cover the bbox from its center
+  const widthNm = Math.abs(bbox.lomax - bbox.lomin) * 60 * Math.cos(midLatRad);
   const neededRadius = Math.ceil(
-    Math.sqrt((heightNm / 2) ** 2 + (widthNm / 2) ** 2)
+    Math.sqrt((heightNm / 2) ** 2 + (widthNm / 2) ** 2),
   );
 
-  // Small enough for a single request — return as-is
+  // Small enough for a single tile
   if (neededRadius <= MAX_TILE_RADIUS) {
     return [[centerLat, centerLon, neededRadius]];
   }
 
-  // Large area: split into a grid of smaller tiles for complete coverage
-  // Each tile covers ~250nm radius, overlap ensures no gaps
-  const tileSpacingNm = MAX_TILE_RADIUS * 1.5; // 1.5x radius = overlap
-  const tileSpacingLat = tileSpacingNm / 60;
-  const tileSpacingLon = tileSpacingNm / (60 * Math.cos(midLatRad));
+  // Large area: lay out a grid that actually covers the whole bbox.
+  // Compute rows and columns needed, then distribute tiles evenly.
+  const tileSpacingNm = MAX_TILE_RADIUS * 1.6; // ~400nm spacing with overlap
+  const rowsNeeded = Math.max(1, Math.ceil(heightNm / tileSpacingNm));
+  const colsNeeded = Math.max(1, Math.ceil(widthNm / tileSpacingNm));
+
+  // Cap total tiles — parallel fetches still hit rate limits so we use
+  // max 9 tiles for continent-sized views (3x3 grid).
+  const MAX_TILES = 9;
+  const totalNeeded = rowsNeeded * colsNeeded;
+  const ratio = Math.sqrt(MAX_TILES / totalNeeded);
+  const rows = totalNeeded > MAX_TILES
+    ? Math.max(1, Math.floor(rowsNeeded * ratio))
+    : rowsNeeded;
+  const cols = totalNeeded > MAX_TILES
+    ? Math.max(1, Math.floor(colsNeeded * ratio))
+    : colsNeeded;
+
+  // Tile radius scales up if we need to cover more area per tile
+  const actualRowSpacing = heightNm / rows;
+  const actualColSpacing = widthNm / cols;
+  const tileRadius = Math.min(
+    MAX_TILE_RADIUS,
+    Math.ceil(Math.max(actualRowSpacing, actualColSpacing) / 1.4),
+  );
+
+  const latStep = (bbox.lamax - bbox.lamin) / rows;
+  const lonStep = (bbox.lomax - bbox.lomin) / cols;
 
   const tiles: [number, number, number][] = [];
-  const maxTiles = 6; // cap to avoid rate limiting (each tile = 1 API call)
-
-  for (let lat = bbox.lamin + tileSpacingLat / 2; lat < bbox.lamax; lat += tileSpacingLat) {
-    for (let lon = bbox.lomin + tileSpacingLon / 2; lon < bbox.lomax; lon += tileSpacingLon) {
-      tiles.push([lat, lon, MAX_TILE_RADIUS]);
-      if (tiles.length >= maxTiles) break;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const lat = bbox.lamin + latStep * (r + 0.5);
+      const lon = bbox.lomin + lonStep * (c + 0.5);
+      tiles.push([lat, lon, tileRadius]);
     }
-    if (tiles.length >= maxTiles) break;
   }
 
-  // If grid produced no tiles (shouldn't happen), fallback to center
-  if (tiles.length === 0) {
-    return [[centerLat, centerLon, MAX_TILE_RADIUS]];
-  }
-
-  return tiles;
+  return tiles.length > 0 ? tiles : [[centerLat, centerLon, MAX_TILE_RADIUS]];
 }
 
 /**
@@ -244,35 +269,60 @@ async function fetchAirplanesLive(
   const tiles = bbox ? computeTiles(bbox) : GLOBAL_TILES;
 
   try {
+    const apiKey = process.env.AIRPLANES_LIVE_API_KEY;
+    const headers: HeadersInit = {};
+    if (apiKey) headers["api-auth"] = apiKey;
+
+    // Fire ALL tiles in parallel. Rate-limited tiles (429) return 0
+    // aircraft — that's fine, the other tiles still give partial coverage
+    // covering the REST of the bbox.  Previously sequential+break-on-429
+    // meant a single early 429 killed all subsequent tiles.
+    const results = await Promise.allSettled(
+      tiles.map(async ([lat, lon, radius]) => {
+        const url = `${AIRPLANES_LIVE_URL}/point/${lat.toFixed(4)}/${lon.toFixed(4)}/${radius}`;
+        const res = await fetch(url, {
+          cache: "no-store",
+          headers,
+          signal: AbortSignal.timeout(8000),
+        });
+        if (res.status === 429) return { aircraft: [], limited: true };
+        if (!res.ok) return { aircraft: [], limited: false };
+        const data = await res.json();
+        return {
+          aircraft: Array.isArray(data?.ac) ? data.ac : [],
+          limited: false,
+        };
+      }),
+    );
+
     const allAircraft = new Map<string, FlightState>();
+    let limitedCount = 0;
+    let successCount = 0;
 
-    // Fetch tiles sequentially with throttle to avoid rate limits
-    for (const [lat, lon, radius] of tiles) {
-      const url = `${AIRPLANES_LIVE_URL}/point/${lat.toFixed(4)}/${lon.toFixed(4)}/${radius}`;
-      const res = await throttledFetch(url);
-
-      if (res.status === 429) {
-        // Back off for 60s on rate limit — stop fetching more tiles
-        airplanesLiveRateLimitedUntil = Date.now() + 60_000;
-        console.warn("[Flights] airplanes.live rate limited, backing off 60s");
-        break;
-      }
-      if (!res.ok) {
-        console.warn(`[Flights] airplanes.live tile error: ${res.status}`);
+    for (const r of results) {
+      if (r.status !== "fulfilled") continue;
+      if (r.value.limited) {
+        limitedCount++;
         continue;
       }
-
-      const data = await res.json();
-      const acList = data?.ac;
-      if (!Array.isArray(acList)) continue;
-
-      for (const ac of acList) {
+      successCount++;
+      for (const ac of r.value.aircraft) {
         const parsed = parseAirplanesLive(ac as Record<string, unknown>);
-        if (parsed && parsed.icao24) {
+        if (parsed?.icao24) {
           allAircraft.set(parsed.icao24, parsed);
         }
       }
     }
+
+    // If MOST tiles rate-limited, set backoff for a short while
+    if (limitedCount >= tiles.length * 0.75) {
+      airplanesLiveRateLimitedUntil = Date.now() + 20_000;
+    }
+
+    console.log(
+      `[Flights] airplanes.live: ${allAircraft.size} aircraft from ` +
+        `${successCount}/${tiles.length} tiles (${limitedCount} rate-limited)`,
+    );
 
     if (allAircraft.size === 0) return null;
     return Array.from(allAircraft.values());
