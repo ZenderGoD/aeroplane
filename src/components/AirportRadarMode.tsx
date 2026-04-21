@@ -332,6 +332,40 @@ function AirportMapInner({
     });
     L.marker([airport.lat, airport.lon], { icon: airportIcon }).addTo(map);
 
+    // Radar sweep — anchored to the airport (not the viewport center) so
+    // it doesn't drift away when the user pans the map. Scales with zoom
+    // to always represent ~150nm radius in world coordinates.
+    const sweepMarkerRef: { marker: L.Marker | null } = { marker: null };
+    const updateSweep = () => {
+      if (sweepMarkerRef.marker) {
+        map.removeLayer(sweepMarkerRef.marker);
+        sweepMarkerRef.marker = null;
+      }
+      // Compute 150nm in pixels at current zoom, centered on airport
+      const edgeLat = airport.lat + 150 / 60; // 150 NM north
+      const airportPx = map.latLngToContainerPoint([airport.lat, airport.lon]);
+      const edgePx = map.latLngToContainerPoint([edgeLat, airport.lon]);
+      const radiusPx = Math.max(60, Math.min(600, Math.abs(edgePx.y - airportPx.y)));
+      const diameter = radiusPx * 2;
+
+      const sweepIcon = L.divIcon({
+        className: "radar-sweep-icon",
+        html: `<div style="position:relative;width:${diameter}px;height:${diameter}px;pointer-events:none;">
+          <div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg, transparent 0deg, rgba(203,213,225,0.10) 30deg, transparent 60deg);animation:radarSweep 4s linear infinite;"></div>
+        </div>`,
+        iconSize: [diameter, diameter],
+        iconAnchor: [radiusPx, radiusPx],
+      });
+      sweepMarkerRef.marker = L.marker([airport.lat, airport.lon], {
+        icon: sweepIcon,
+        interactive: false,
+        zIndexOffset: -1000, // behind everything else
+        keyboard: false,
+      }).addTo(map);
+    };
+    updateSweep();
+    map.on("zoomend", updateSweep);
+
     // Runway overlay on zoom
     const updateRunway = () => {
       if (!runwayLayerRef.current) return;
@@ -364,7 +398,7 @@ function AirportMapInner({
 
     const ro = new ResizeObserver(() => map.invalidateSize());
     ro.observe(containerRef.current);
-    return () => { ro.disconnect(); map.off("zoomend", updateRunway); map.off("zoomend", updateRingVisibility); map.remove(); mapRef.current = null; layersRef.current = null; separationLayerRef.current = null; runwayLayerRef.current = null; };
+    return () => { ro.disconnect(); map.off("zoomend", updateRunway); map.off("zoomend", updateRingVisibility); map.off("zoomend", updateSweep); map.remove(); mapRef.current = null; layersRef.current = null; separationLayerRef.current = null; runwayLayerRef.current = null; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [airport.lat, airport.lon]);
 
@@ -581,42 +615,6 @@ function AirportMapInner({
   return (
     <div className="relative h-full w-full">
       <div ref={containerRef} className="h-full w-full" />
-      {/* Radar Sweep Overlay */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0, left: 0, right: 0, bottom: 0,
-          pointerEvents: "none",
-          zIndex: 450,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          className="radar-sweep"
-          style={{
-            width: "600px",
-            height: "600px",
-            borderRadius: "50%",
-            background: "conic-gradient(from 0deg, transparent 0deg, rgba(203,213,225,0.08) 30deg, transparent 60deg)",
-            animation: "radarSweep 4s linear infinite",
-          }}
-        />
-        <div
-          className="radar-pulse"
-          style={{
-            position: "absolute",
-            width: "12px",
-            height: "12px",
-            borderRadius: "50%",
-            background: "rgba(203,213,225,0.15)",
-            border: "1px solid rgba(203,213,225,0.3)",
-            animation: "radarPulse 4s ease-in-out infinite",
-          }}
-        />
-      </div>
     </div>
   );
 }
