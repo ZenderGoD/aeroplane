@@ -75,8 +75,12 @@ interface CacheEntry {
 }
 
 const regionCache = new Map<string, CacheEntry>();
-const CACHE_TTL = HAS_API_KEY ? 15_000 : 60_000; // 15s with key, 60s without
-const STALE_TTL = 600_000; // 10min — serve stale data rather than burn quota
+// Cache TTL: without an API key, airplanes.live rate-limits at ~1 req/10s
+// per IP.  Since Vercel shares IPs across all users, we need longer caches.
+// 2-minute fresh cache + 30-minute stale tolerance keeps the site working
+// even when airplanes.live blocks us temporarily.
+const CACHE_TTL = HAS_API_KEY ? 15_000 : 120_000;
+const STALE_TTL = HAS_API_KEY ? 600_000 : 1_800_000;
 
 // ── Daily request counter (resets at midnight UTC) ──────────────────
 let dailyRequestCount = 0;
@@ -459,19 +463,54 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  // Helper to build stale response
+  // Helper to build stale response.
+  // Tries exact-key match first, then falls back to any cached entry that
+  // geographically covers the requested bbox — a point query at Bangalore
+  // can reuse cached data from a wider India bbox query, keeping the UI
+  // populated even when airplanes.live rate-limits us.
   const serveStale = (extraHeaders: Record<string, string> = {}) => {
+    let source: CacheEntry | null = null;
+    let filtered: FlightState[] | null = null;
+
     if (cached && now - cached.timestamp < STALE_TTL) {
+      source = cached;
+    } else if (bbox) {
+      // Scan all cached entries for one that covers our bbox and filter it
+      let best: { entry: CacheEntry; age: number } | null = null;
+      for (const [, entry] of regionCache) {
+        const age = now - entry.timestamp;
+        if (age >= STALE_TTL) continue;
+        if (best && age >= best.age) continue;
+        best = { entry, age };
+      }
+      if (best) {
+        source = best.entry;
+        filtered = best.entry.flights.filter(
+          (f) =>
+            f.latitude !== null &&
+            f.longitude !== null &&
+            f.latitude >= bbox.lamin &&
+            f.latitude <= bbox.lamax &&
+            f.longitude >= bbox.lomin &&
+            f.longitude <= bbox.lomax,
+        );
+      }
+    }
+
+    if (source) {
+      const flights = filtered ?? source.flights;
+      if (flights.length === 0) return null;
       const resp: NormalizedResponse = {
-        flights: cached.flights,
-        time: cached.time,
-        source: cached.source,
-        total: cached.flights.length,
+        flights,
+        time: source.time,
+        source: source.source,
+        total: flights.length,
       };
       return NextResponse.json(resp, {
         headers: {
           "X-Data-Source": "stale",
-          "X-Cache-Age": String(now - cached.timestamp),
+          "X-Cache-Age": String(now - source.timestamp),
+          "X-Cache-Filtered": filtered ? "true" : "false",
           ...extraHeaders,
         },
       });
@@ -519,6 +558,12 @@ export async function GET(request: NextRequest) {
   }
 
   // ── Fall back to OpenSky ──────────────────────────────────────────
+  // Before hitting OpenSky (which has tight quotas), try to serve stale
+  // cached data.  When airplanes.live is rate-limiting us, stale data
+  // from 30 seconds ago is much better than 0 aircraft.
+  const preOpenSkyStale = serveStale({ "X-Stale-Reason": "airplaneslive-failed" });
+  if (preOpenSkyStale) return preOpenSkyStale;
+
   console.log(
     "[Flights] airplanes.live returned empty/failed, falling back to OpenSky"
   );

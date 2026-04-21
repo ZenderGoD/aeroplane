@@ -264,8 +264,13 @@ function AirportMapInner({
     separationLayerRef.current = L.layerGroup().addTo(map);
     runwayLayerRef.current = L.layerGroup().addTo(map);
 
+    // Range rings — each ring is a separate L.circle + L.marker pair stored
+    // so we can show/hide them based on zoom (small rings stack into an
+    // unreadable blob at low zoom).
+    type RingEntry = { ringNm: number; circle: L.Circle; label: L.Marker };
+    const ringEntries: RingEntry[] = [];
     RANGE_RINGS.forEach((ringNm, i) => {
-      L.circle([airport.lat, airport.lon], {
+      const circle = L.circle([airport.lat, airport.lon], {
         radius: ringNm * NM_TO_METERS, color: ringColors[i] || "rgba(203,213,225,0.10)",
         weight: 1, dashArray: "6 4", fill: false,
       }).addTo(map);
@@ -275,8 +280,38 @@ function AirportMapInner({
         html: `<div style="color:#cbd5e1;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;background:rgba(6,8,13,0.88);padding:1px 6px;border-radius:3px;border:1px solid rgba(203,213,225,0.25);white-space:nowrap;text-align:center;letter-spacing:0.5px">${ringNm} NM</div>`,
         iconSize: [0, 0], iconAnchor: [0, 8],
       });
-      L.marker([northLat, airport.lon], { icon: labelIcon, interactive: false }).addTo(map);
+      const label = L.marker([northLat, airport.lon], { icon: labelIcon, interactive: false }).addTo(map);
+      ringEntries.push({ ringNm, circle, label });
     });
+
+    // Show only rings that are visually distinguishable at the current zoom.
+    // Rule of thumb: a ring needs at least ~40 pixels between its edge and
+    // the next ring for its label to be readable.
+    const updateRingVisibility = () => {
+      const zoom = map.getZoom();
+      // Pick which rings to show based on zoom level
+      // zoom 5-6: only 100, 150 (very wide view)
+      // zoom 7-8: 50, 75, 100, 150
+      // zoom 9-10: 10, 25, 50, 100, 150
+      // zoom 11+: all rings
+      let visible: number[];
+      if (zoom <= 6) visible = [100, 150];
+      else if (zoom <= 8) visible = [25, 50, 75, 100, 150];
+      else if (zoom <= 10) visible = [10, 25, 50, 75, 100, 150];
+      else visible = RANGE_RINGS;
+
+      for (const entry of ringEntries) {
+        const show = visible.includes(entry.ringNm);
+        const hasCircle = map.hasLayer(entry.circle);
+        const hasLabel = map.hasLayer(entry.label);
+        if (show && !hasCircle) entry.circle.addTo(map);
+        if (show && !hasLabel) entry.label.addTo(map);
+        if (!show && hasCircle) map.removeLayer(entry.circle);
+        if (!show && hasLabel) map.removeLayer(entry.label);
+      }
+    };
+    updateRingVisibility();
+    map.on("zoomend", updateRingVisibility);
 
     const airportIcon = L.divIcon({
       className: "leaflet-div-icon",
@@ -322,7 +357,7 @@ function AirportMapInner({
 
     const ro = new ResizeObserver(() => map.invalidateSize());
     ro.observe(containerRef.current);
-    return () => { ro.disconnect(); map.off("zoomend", updateRunway); map.remove(); mapRef.current = null; layersRef.current = null; separationLayerRef.current = null; runwayLayerRef.current = null; };
+    return () => { ro.disconnect(); map.off("zoomend", updateRunway); map.off("zoomend", updateRingVisibility); map.remove(); mapRef.current = null; layersRef.current = null; separationLayerRef.current = null; runwayLayerRef.current = null; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [airport.lat, airport.lon]);
 
