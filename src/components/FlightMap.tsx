@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import type { FlightState } from "@/types/flight";
 import type { Region } from "@/lib/regions";
@@ -15,6 +16,47 @@ const MapContent = dynamic(() => import("./MapContent"), {
     </div>
   ),
 });
+
+const MapContentMaplibre = dynamic(() => import("./MapContentMaplibre"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full w-full items-center justify-center bg-gray-900">
+      <div className="text-white text-lg">Loading vector map...</div>
+    </div>
+  ),
+});
+
+/**
+ * Feature flag: whether to use MapLibre-GL vector tiles for the main
+ * tracker map. Controlled by localStorage key "aerointel.map_engine".
+ * Values: "maplibre" (vector, smooth zoom) | "leaflet" (default).
+ */
+function useMapEngine(): "maplibre" | "leaflet" {
+  const [engine, setEngine] = useState<"maplibre" | "leaflet">("leaflet");
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("aerointel.map_engine");
+      if (saved === "maplibre" || saved === "leaflet") setEngine(saved);
+    } catch { /* ignore */ }
+    const handler = (e: StorageEvent) => {
+      if (e.key === "aerointel.map_engine" && (e.newValue === "maplibre" || e.newValue === "leaflet")) {
+        setEngine(e.newValue);
+      }
+    };
+    window.addEventListener("storage", handler);
+    // Custom event for same-tab updates (storage event only fires for OTHER tabs)
+    const customHandler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail === "maplibre" || detail === "leaflet") setEngine(detail);
+    };
+    window.addEventListener("map-engine-change", customHandler);
+    return () => {
+      window.removeEventListener("storage", handler);
+      window.removeEventListener("map-engine-change", customHandler);
+    };
+  }, []);
+  return engine;
+}
 
 const GlobeView = dynamic(() => import("./GlobeView"), {
   ssr: false,
@@ -56,6 +98,8 @@ interface Props {
 }
 
 export default function FlightMap(props: Props) {
+  const engine = useMapEngine();
+
   if (props.viewMode === "globe") {
     return (
       <GlobeView
@@ -66,5 +110,25 @@ export default function FlightMap(props: Props) {
       />
     );
   }
+
+  if (engine === "maplibre") {
+    // MapLibre base map — smooth vector-tile zoom. Overlays not ported
+    // yet, so advanced features (weather, METAR, runways, routes, etc.)
+    // remain available only in Leaflet mode for now.
+    return (
+      <MapContentMaplibre
+        flights={props.flights}
+        selectedFlight={props.selectedFlight}
+        onSelectFlight={props.onSelectFlight}
+        region={props.region}
+        anomalyIcaos={props.anomalyIcaos}
+        instabilityScores={props.instabilityScores}
+        viewMode={props.viewMode}
+        flightHistory={props.flightHistory}
+        hiddenCategories={props.hiddenCategories}
+      />
+    );
+  }
+
   return <MapContent {...props} />;
 }

@@ -7,6 +7,64 @@ import RegionSelector from "@/components/RegionSelector";
 import type { ViewMode } from "@/types/viewMode";
 import { MAP_STYLES, getSavedMapStyleId, saveMapStyleId } from "@/lib/mapStyles";
 
+/**
+ * Toggle between Leaflet (raster) and MapLibre-GL (vector) base maps.
+ * Vector = smoother zoom (GPU-rendered) but overlays not yet ported.
+ */
+function MapEngineToggle() {
+  const [engine, setEngine] = useState<"leaflet" | "maplibre">("leaflet");
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("aerointel.map_engine");
+      if (saved === "maplibre" || saved === "leaflet") setEngine(saved);
+    } catch { /* ignore */ }
+  }, []);
+
+  const choose = (next: "leaflet" | "maplibre") => {
+    setEngine(next);
+    try {
+      localStorage.setItem("aerointel.map_engine", next);
+      window.dispatchEvent(new CustomEvent("map-engine-change", { detail: next }));
+    } catch { /* ignore */ }
+  };
+
+  const options: Array<{
+    id: "leaflet" | "maplibre";
+    label: string;
+    desc: string;
+  }> = [
+    { id: "leaflet", label: "Classic", desc: "Full feature support" },
+    { id: "maplibre", label: "Vector", desc: "Smoother zoom (beta)" },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 gap-2">
+      {options.map((opt) => {
+        const active = engine === opt.id;
+        return (
+          <button
+            key={opt.id}
+            onClick={() => choose(opt.id)}
+            className="flex flex-col items-start gap-0.5 py-3 px-3 rounded-xl transition-all text-left"
+            style={{
+              background: active
+                ? "linear-gradient(180deg, var(--surface-4), var(--surface-3))"
+                : "var(--surface-2)",
+              border: active
+                ? "1px solid rgba(255,255,255,0.2)"
+                : "1px solid transparent",
+              color: active ? "var(--text-primary)" : "var(--text-muted)",
+            }}
+          >
+            <span className="text-sm font-bold leading-tight">{opt.label}</span>
+            <span className="text-[10px] opacity-70 leading-tight">{opt.desc}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 /* ── Tab definitions ───────────────────────────────────── */
 
 type TabKey = "map" | "search" | "layers" | "tools" | "menu";
@@ -298,6 +356,10 @@ export default function MobileNav({
                 );
               })}
             </div>
+
+            {/* ── Map Engine (Leaflet vs MapLibre) ───────────── */}
+            <div className="section-label">Map Engine</div>
+            <MapEngineToggle />
 
             <div className="section-label">Data Layers</div>
             <div className="grid grid-cols-3 gap-3">
