@@ -12,25 +12,25 @@ const FREQ_TYPE_CONFIG: Record<
   ATCFrequency["type"],
   { bg: string; border: string; text: string; label: string }
 > = {
-  ATIS: { bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.25)", text: "#cbd5e1", label: "ATIS" },
-  GND: { bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.25)", text: "#cbd5e1", label: "GND" },
-  TWR: { bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.25)", text: "#94a3b8", label: "TWR" },
-  DEP: { bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.25)", text: "#cbd5e1", label: "DEP" },
-  APP: { bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.25)", text: "#94a3b8", label: "APP" },
-  CTR: { bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.25)", text: "#e2e8f0", label: "CTR" },
-  UNICOM: { bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.25)", text: "#94a3b8", label: "UNI" },
+  ATIS: { bg: "var(--border-default)", border: "var(--border-accent)", text: "var(--text-secondary)", label: "ATIS" },
+  GND: { bg: "var(--border-default)", border: "var(--border-accent)", text: "var(--text-secondary)", label: "GND" },
+  TWR: { bg: "var(--border-default)", border: "var(--border-accent)", text: "var(--text-tertiary)", label: "TWR" },
+  DEP: { bg: "var(--border-default)", border: "var(--border-accent)", text: "var(--text-secondary)", label: "DEP" },
+  APP: { bg: "var(--border-default)", border: "var(--border-accent)", text: "var(--text-tertiary)", label: "APP" },
+  CTR: { bg: "var(--border-default)", border: "var(--border-accent)", text: "var(--accent-primary)", label: "CTR" },
+  UNICOM: { bg: "var(--border-default)", border: "var(--border-accent)", text: "var(--text-tertiary)", label: "UNI" },
 };
 
 const APPROACH_TYPE_CONFIG: Record<
   ApproachProcedure["type"],
   { bg: string; border: string; text: string }
 > = {
-  ILS: { bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.25)", text: "#cbd5e1" },
-  RNAV: { bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.25)", text: "#cbd5e1" },
-  VOR: { bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.25)", text: "#94a3b8" },
-  NDB: { bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.25)", text: "#94a3b8" },
-  VISUAL: { bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.25)", text: "#94a3b8" },
-  LOC: { bg: "rgba(148,163,184,0.12)", border: "rgba(148,163,184,0.25)", text: "#cbd5e1" },
+  ILS: { bg: "var(--border-default)", border: "var(--border-accent)", text: "var(--text-secondary)" },
+  RNAV: { bg: "var(--border-default)", border: "var(--border-accent)", text: "var(--text-secondary)" },
+  VOR: { bg: "var(--border-default)", border: "var(--border-accent)", text: "var(--text-tertiary)" },
+  NDB: { bg: "var(--border-default)", border: "var(--border-accent)", text: "var(--text-tertiary)" },
+  VISUAL: { bg: "var(--border-default)", border: "var(--border-accent)", text: "var(--text-tertiary)" },
+  LOC: { bg: "var(--border-default)", border: "var(--border-accent)", text: "var(--text-secondary)" },
 };
 
 // ── Frequency ordering ──────────────────────────────────────────────────
@@ -111,7 +111,7 @@ export default function ATCPanel({ icao, onClose }: ATCPanelProps) {
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center"
             style={{
-              background: "rgba(148,163,184,0.1)",
+              background: "var(--border-default)",
               border: "1px solid rgba(148,163,184,0.2)",
             }}
           >
@@ -120,7 +120,7 @@ export default function ATCPanel({ icao, onClose }: ATCPanelProps) {
               height="14"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#94a3b8"
+              stroke="var(--text-tertiary)"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -132,7 +132,7 @@ export default function ATCPanel({ icao, onClose }: ATCPanelProps) {
           <div>
             <span
               className="font-mono text-xs font-bold"
-              style={{ color: "#94a3b8" }}
+              style={{ color: "var(--text-tertiary)" }}
             >
               {icao}
             </span>
@@ -177,7 +177,7 @@ export default function ATCPanel({ icao, onClose }: ATCPanelProps) {
             fontSize: "11px",
             fontWeight: 700,
             letterSpacing: "0.05em",
-            color: activeTab === "freq" ? "#cbd5e1" : "var(--text-muted)",
+            color: activeTab === "freq" ? "var(--text-secondary)" : "var(--text-muted)",
             background:
               activeTab === "freq"
                 ? "rgba(148,163,184,0.08)"
@@ -193,8 +193,8 @@ export default function ATCPanel({ icao, onClose }: ATCPanelProps) {
             <span
               className="ml-1.5 text-[11px] px-1.5 py-0.5 rounded-full"
               style={{
-                background: "rgba(148,163,184,0.15)",
-                color: "#cbd5e1",
+                background: "var(--border-strong)",
+                color: "var(--text-secondary)",
               }}
             >
               {freqData.frequencies.length}
@@ -208,7 +208,7 @@ export default function ATCPanel({ icao, onClose }: ATCPanelProps) {
             fontSize: "11px",
             fontWeight: 700,
             letterSpacing: "0.05em",
-            color: activeTab === "app" ? "#cbd5e1" : "var(--text-muted)",
+            color: activeTab === "app" ? "var(--text-secondary)" : "var(--text-muted)",
             background:
               activeTab === "app"
                 ? "rgba(148,163,184,0.08)"
@@ -224,8 +224,8 @@ export default function ATCPanel({ icao, onClose }: ATCPanelProps) {
             <span
               className="ml-1.5 text-[11px] px-1.5 py-0.5 rounded-full"
               style={{
-                background: "rgba(148,163,184,0.15)",
-                color: "#cbd5e1",
+                background: "var(--border-strong)",
+                color: "var(--text-secondary)",
               }}
             >
               {approachData.approaches.length}
@@ -241,7 +241,7 @@ export default function ATCPanel({ icao, onClose }: ATCPanelProps) {
             <div
               className="w-12 h-12 mx-auto rounded-xl flex items-center justify-center mb-3"
               style={{
-                background: "rgba(148,163,184,0.06)",
+                background: "var(--border-subtle)",
                 border: "1px solid rgba(148,163,184,0.1)",
               }}
             >
@@ -331,7 +331,7 @@ export default function ATCPanel({ icao, onClose }: ATCPanelProps) {
                             height="12"
                             viewBox="0 0 24 24"
                             fill="none"
-                            stroke="#94a3b8"
+                            stroke="var(--text-tertiary)"
                             strokeWidth="2.5"
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -551,7 +551,7 @@ function DetailCell({
       </div>
       <div
         className="text-xs font-mono font-bold tabular-nums"
-        style={{ color: highlight ? "#cbd5e1" : "var(--text-primary)" }}
+        style={{ color: highlight ? "var(--text-secondary)" : "var(--text-primary)" }}
       >
         {value}
       </div>

@@ -50,12 +50,12 @@ function resolveRoute(
 
 /** Get color based on altitude band */
 function altitudeColor(altMeters: number | null): string {
-  if (altMeters === null) return "#64748b";
+  if (altMeters === null) return "var(--text-muted)";
   const altFt = altMeters * 3.28084;
-  if (altFt < 10000) return "#cbd5e1"; // slate-300 - low
-  if (altFt < 25000) return "#94a3b8"; // slate-400 - medium
-  if (altFt < 35000) return "#94a3b8"; // slate-400 - high
-  return "#94a3b8"; // slate-400 - very high
+  if (altFt < 10000) return "var(--text-secondary)"; // slate-300 - low
+  if (altFt < 25000) return "var(--text-tertiary)"; // slate-400 - medium
+  if (altFt < 35000) return "var(--text-tertiary)"; // slate-400 - high
+  return "var(--text-tertiary)"; // slate-400 - very high
 }
 
 export default function RouteOverlay({
@@ -140,7 +140,7 @@ export default function RouteOverlay({
       const completedLine = L.polyline(
         completedPoints as L.LatLngExpression[],
         {
-          color: "#94a3b8",
+          color: "var(--text-tertiary)",
           weight: 2,
           opacity: 0.7,
           dashArray: undefined,
@@ -155,7 +155,7 @@ export default function RouteOverlay({
       const remainingLine = L.polyline(
         remainingPoints as L.LatLngExpression[],
         {
-          color: "#94a3b8",
+          color: "var(--text-tertiary)",
           weight: 2,
           opacity: 0.4,
           dashArray: "8, 6",
@@ -168,7 +168,7 @@ export default function RouteOverlay({
     // Origin airport marker
     const originMarker = L.circleMarker([origin.lat, origin.lon], {
       radius: 5,
-      color: "#94a3b8",
+      color: "var(--text-tertiary)",
       fillColor: "#1c1c1c",
       fillOpacity: 0.9,
       weight: 1.5,
@@ -189,7 +189,7 @@ export default function RouteOverlay({
     // Destination airport marker
     const destMarker = L.circleMarker([destination.lat, destination.lon], {
       radius: 5,
-      color: "#94a3b8",
+      color: "var(--text-tertiary)",
       fillColor: "#1c1c1c",
       fillOpacity: 0.9,
       weight: 1.5,

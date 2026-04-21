@@ -34,12 +34,12 @@ interface Airport {
 }
 
 const TYPE_LABELS: Record<string, { label: string; color: string; icon: string }> = {
-  large: { label: "Large", color: "#cbd5e1", icon: "✈" },
-  medium: { label: "Medium", color: "#94a3b8", icon: "✈" },
-  small: { label: "Small", color: "#cbd5e1", icon: "🛩" },
-  heliport: { label: "Heliport", color: "#e2e8f0", icon: "🚁" },
-  seaplane: { label: "Seaplane", color: "#cbd5e1", icon: "🌊" },
-  balloon: { label: "Balloon", color: "#94a3b8", icon: "🎈" },
+  large: { label: "Large", color: "var(--text-secondary)", icon: "✈" },
+  medium: { label: "Medium", color: "var(--text-tertiary)", icon: "✈" },
+  small: { label: "Small", color: "var(--text-secondary)", icon: "🛩" },
+  heliport: { label: "Heliport", color: "var(--accent-primary)", icon: "🚁" },
+  seaplane: { label: "Seaplane", color: "var(--text-secondary)", icon: "🌊" },
+  balloon: { label: "Balloon", color: "var(--text-tertiary)", icon: "🎈" },
 };
 
 interface BearingLine {
@@ -102,10 +102,10 @@ function destinationPoint(
 function altitudeColor(altMeters: number | null): string {
   if (altMeters === null) return "#6b7280";
   const ft = altMeters * 3.28084;
-  if (ft < 10000) return "#cbd5e1"; // low
-  if (ft < 25000) return "#94a3b8"; // mid
-  if (ft < 40000) return "#cbd5e1"; // high
-  return "#94a3b8"; // very high
+  if (ft < 10000) return "var(--text-secondary)"; // low
+  if (ft < 25000) return "var(--text-tertiary)"; // mid
+  if (ft < 40000) return "var(--text-secondary)"; // high
+  return "var(--text-tertiary)"; // very high
 }
 
 function fuzzyMatch(airport: Airport, query: string): number {
@@ -328,7 +328,7 @@ function AirportMapInner({
 
       // ── Plane icon (rotated SVG) ──
       const isMilitary = (f.dbFlags ?? 0) & 1;
-      const planeColor = isMilitary ? "#94a3b8" : color;
+      const planeColor = isMilitary ? "var(--text-tertiary)" : color;
       const planeIcon = L.divIcon({
         className: "",
         html: `<div style="transform:rotate(${hdgDeg}deg);display:flex;align-items:center;justify-content:center;width:22px;height:22px;filter:drop-shadow(0 0 3px ${planeColor}80);">
@@ -379,7 +379,7 @@ function AirportMapInner({
 
     bearingLines.forEach((line) => {
       const polyline = L.polyline([line.from, line.to], {
-        color: "#94a3b8",
+        color: "var(--text-tertiary)",
         weight: 2,
         opacity: 0.9,
       }) as L.Polyline & { _bearingLine?: boolean };
@@ -770,7 +770,7 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
               border: "1px solid rgba(203,213,225,0.2)",
             }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2">
               <circle cx="12" cy="12" r="10" />
               <circle cx="12" cy="12" r="6" />
               <circle cx="12" cy="12" r="2" />
@@ -839,7 +839,7 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                     <span
                       className="data-value"
                       style={{
-                        color: TYPE_LABELS[apt.type || "large"]?.color || "#cbd5e1",
+                        color: TYPE_LABELS[apt.type || "large"]?.color || "var(--text-secondary)",
                         fontSize: "11px",
                         fontWeight: 700,
                       }}
@@ -882,7 +882,7 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                 border: "1px solid rgba(203,213,225,0.15)",
               }}
             >
-              <span className="data-value" style={{ color: "#cbd5e1", fontSize: "13px", fontWeight: 700 }}>
+              <span className="data-value" style={{ color: "var(--text-secondary)", fontSize: "13px", fontWeight: 700 }}>
                 {selectedAirport.icao}
               </span>
               {selectedAirport.iata && (
@@ -980,7 +980,7 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                           : "transparent",
                       color:
                         bearingMode === "latlon"
-                          ? "#cbd5e1"
+                          ? "var(--text-secondary)"
                           : "var(--text-muted)",
                     }}
                   >
@@ -998,7 +998,7 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                           : "transparent",
                       color:
                         bearingMode === "cardinal"
-                          ? "#cbd5e1"
+                          ? "var(--text-secondary)"
                           : "var(--text-muted)",
                       borderLeft: "1px solid var(--border-default)",
                     }}
@@ -1048,9 +1048,9 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                       onClick={drawLatLonLine}
                       className="w-full h-7 rounded-md transition-colors"
                       style={{
-                        background: "rgba(148,163,184,0.15)",
+                        background: "var(--border-strong)",
                         border: "1px solid rgba(148,163,184,0.3)",
-                        color: "#94a3b8",
+                        color: "var(--text-tertiary)",
                         fontSize: "11px",
                         fontWeight: 600,
                       }}
@@ -1085,7 +1085,7 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                               }`,
                               color:
                                 cardinalDir === dir
-                                  ? "#cbd5e1"
+                                  ? "var(--text-secondary)"
                                   : "var(--text-muted)",
                             }}
                           >
@@ -1118,9 +1118,9 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                       onClick={drawCardinalLine}
                       className="w-full h-7 rounded-md transition-colors"
                       style={{
-                        background: "rgba(148,163,184,0.15)",
+                        background: "var(--border-strong)",
                         border: "1px solid rgba(148,163,184,0.3)",
-                        color: "#94a3b8",
+                        color: "var(--text-tertiary)",
                         fontSize: "11px",
                         fontWeight: 600,
                       }}
@@ -1159,7 +1159,7 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                         }}
                       >
                         <div className="data-value" style={{ fontSize: "10px" }}>
-                          <span style={{ color: "#94a3b8" }}>
+                          <span style={{ color: "var(--text-tertiary)" }}>
                             {line.distanceNm.toFixed(1)} NM
                           </span>
                           <span style={{ color: "var(--text-muted)", margin: "0 4px" }}>
@@ -1189,10 +1189,10 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                   <span className="section-label">ALTITUDE LEGEND</span>
                   <div className="mt-2 space-y-1">
                     {[
-                      { color: "#cbd5e1", label: "< 10,000 ft" },
-                      { color: "#94a3b8", label: "10,000 - 25,000 ft" },
-                      { color: "#cbd5e1", label: "25,000 - 40,000 ft" },
-                      { color: "#94a3b8", label: "> 40,000 ft" },
+                      { color: "var(--text-secondary)", label: "< 10,000 ft" },
+                      { color: "var(--text-tertiary)", label: "10,000 - 25,000 ft" },
+                      { color: "var(--text-secondary)", label: "25,000 - 40,000 ft" },
+                      { color: "var(--text-tertiary)", label: "> 40,000 ft" },
                     ].map((item) => (
                       <div key={item.label} className="flex items-center gap-2">
                         <div
@@ -1233,7 +1233,7 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                     border: "1px solid rgba(203,213,225,0.12)",
                   }}
                 >
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5" opacity="0.7">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="1.5" opacity="0.7">
                     <circle cx="12" cy="12" r="10" />
                     <circle cx="12" cy="12" r="6" />
                     <circle cx="12" cy="12" r="2" />
@@ -1333,7 +1333,7 @@ function AirportRadarCore({ embedded = false }: { embedded?: boolean }) {
                 <div
                   className="w-1.5 h-1.5 rounded-full"
                   style={{
-                    background: flightCount > 0 ? "#cbd5e1" : "#64748b",
+                    background: flightCount > 0 ? "var(--text-secondary)" : "var(--text-muted)",
                     boxShadow: flightCount > 0 ? "0 0 6px rgba(148,163,184,0.4)" : "none",
                   }}
                 />

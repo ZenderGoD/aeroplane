@@ -151,7 +151,7 @@ export default function FlightDistanceTool({
       const line = L.polyline(
         [[a.latitude, a.longitude], [b.latitude, b.longitude]],
         {
-          color: "#94a3b8",
+          color: "var(--text-tertiary)",
           weight: 2,
           dashArray: "8, 6",
           opacity: 0.9,
@@ -173,7 +173,7 @@ export default function FlightDistanceTool({
         : closingKts < 0
           ? `Separating ${Math.round(Math.abs(closingKts))} kts`
           : "Parallel";
-      const closingColor = isClosing ? "#e2e8f0" : closingKts < 0 ? "#cbd5e1" : "#94a3b8";
+      const closingColor = isClosing ? "var(--accent-primary)" : closingKts < 0 ? "var(--text-secondary)" : "var(--text-tertiary)";
 
       const tcaLabel = tcaMin !== null ? `${tcaMin.toFixed(1)} min` : "—";
 
@@ -252,7 +252,7 @@ export default function FlightDistanceTool({
         setFlightA(flight);
         setPair(null);
         onSelectFlight(flight);
-        drawSelectionRing(flight, "#94a3b8");
+        drawSelectionRing(flight, "var(--text-tertiary)");
       } else {
         // Second flight selected
         if (flight.icao24 === flightA.icao24) return; // same flight
@@ -260,8 +260,8 @@ export default function FlightDistanceTool({
         const pairData = computeFlightPair(flightA, flight);
         if (pairData) {
           clearLayers();
-          drawSelectionRing(flightA, "#94a3b8");
-          drawSelectionRing(flight, "#cbd5e1");
+          drawSelectionRing(flightA, "var(--text-tertiary)");
+          drawSelectionRing(flight, "var(--text-secondary)");
           drawDistanceLine(pairData);
           setPair(pairData);
         }
@@ -291,8 +291,8 @@ export default function FlightDistanceTool({
       const newPair = computeFlightPair(updatedA, updatedB);
       if (newPair) {
         clearLayers();
-        drawSelectionRing(updatedA, "#94a3b8");
-        drawSelectionRing(updatedB, "#cbd5e1");
+        drawSelectionRing(updatedA, "var(--text-tertiary)");
+        drawSelectionRing(updatedB, "var(--text-secondary)");
         drawDistanceLine(newPair);
         setPair(newPair);
       }

@@ -85,10 +85,10 @@ const EVENT_ICONS: Record<string, string> = {
 };
 
 function getPressureColor(score: number): string {
-  if (score >= 80) return "#e2e8f0";
-  if (score >= 60) return "#cbd5e1";
-  if (score >= 40) return "#94a3b8";
-  if (score >= 20) return "#94a3b8";
+  if (score >= 80) return "var(--accent-primary)";
+  if (score >= 60) return "var(--text-secondary)";
+  if (score >= 40) return "var(--text-tertiary)";
+  if (score >= 20) return "var(--text-tertiary)";
   return "#6b7280";
 }
 
@@ -103,13 +103,13 @@ function getPressureLabel(score: number): string {
 function getCorridorStatusColor(status: string): string {
   switch (status) {
     case "disrupted":
-      return "#e2e8f0";
+      return "var(--accent-primary)";
     case "congested":
-      return "#cbd5e1";
+      return "var(--text-secondary)";
     case "compressed":
-      return "#94a3b8";
+      return "var(--text-tertiary)";
     default:
-      return "#94a3b8";
+      return "var(--text-tertiary)";
   }
 }
 
@@ -270,20 +270,20 @@ function PressureCard({ airport, baseline, events, turnarounds, corridors, onCli
 // ── Corridor Card ────────────────────────────────────────────────────────
 
 function getPredictabilityColor(score: number): string {
-  if (score >= 80) return "#94a3b8";
-  if (score >= 60) return "#94a3b8";
-  if (score >= 40) return "#cbd5e1";
-  return "#e2e8f0";
+  if (score >= 80) return "var(--text-tertiary)";
+  if (score >= 60) return "var(--text-tertiary)";
+  if (score >= 40) return "var(--text-secondary)";
+  return "var(--accent-primary)";
 }
 
 function getTrendConfig(label: string): { arrow: string; color: string } {
   switch (label) {
     case "improving":
-      return { arrow: "\u2191", color: "#94a3b8" };
+      return { arrow: "\u2191", color: "var(--text-tertiary)" };
     case "degrading":
-      return { arrow: "\u2193", color: "#e2e8f0" };
+      return { arrow: "\u2193", color: "var(--accent-primary)" };
     default:
-      return { arrow: "\u2192", color: "#94a3b8" };
+      return { arrow: "\u2192", color: "var(--text-tertiary)" };
   }
 }
 
@@ -449,11 +449,11 @@ function CorridorCard({
 // ── Turnaround Card ─────────────────────────────────────────────────────
 
 function getTurnaroundColor(minutes: number | null): string {
-  if (minutes === null) return "#94a3b8";
-  if (minutes < 30) return "#94a3b8";
-  if (minutes < 60) return "#94a3b8";
-  if (minutes < 120) return "#cbd5e1";
-  return "#e2e8f0";
+  if (minutes === null) return "var(--text-tertiary)";
+  if (minutes < 30) return "var(--text-tertiary)";
+  if (minutes < 60) return "var(--text-tertiary)";
+  if (minutes < 120) return "var(--text-secondary)";
+  return "var(--accent-primary)";
 }
 
 function formatDuration(ms: number): string {
@@ -531,9 +531,9 @@ function TurnaroundCard({ record, isActive }: { record: TurnaroundRow; isActive:
 function getDeviationColor(current: number, avg: number, stddev: number): string {
   if (stddev <= 0) return "#6b7280";
   const sigma = Math.abs(current - avg) / stddev;
-  if (sigma > 2) return "#e2e8f0";
-  if (sigma > 1) return "#94a3b8";
-  return "#94a3b8";
+  if (sigma > 2) return "var(--accent-primary)";
+  if (sigma > 1) return "var(--text-tertiary)";
+  return "var(--text-tertiary)";
 }
 
 function getDeviationLabel(current: number, avg: number, stddev: number): string {
@@ -1191,10 +1191,10 @@ export default function IntelligencePanel({ flightStats, riskyFlights, onSelectA
                     <div className="flex items-center gap-3 text-xs">
                       {(
                         [
-                          ["normal", "#94a3b8"],
-                          ["compressed", "#94a3b8"],
-                          ["congested", "#cbd5e1"],
-                          ["disrupted", "#e2e8f0"],
+                          ["normal", "var(--text-tertiary)"],
+                          ["compressed", "var(--text-tertiary)"],
+                          ["congested", "var(--text-secondary)"],
+                          ["disrupted", "var(--accent-primary)"],
                         ] as const
                       ).map(([status, color]) => {
                         const count = sortedCorridors.filter(

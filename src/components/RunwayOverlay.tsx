@@ -204,7 +204,7 @@ export default function RunwayOverlay({ visible }: RunwayOverlayProps) {
         const heLatLng: L.LatLngExpression = [runway.he.lat, runway.he.lon];
 
         // Main runway surface
-        const runwayColor = runway.closed ? "#64748b" : "#cbd5e1";
+        const runwayColor = runway.closed ? "var(--text-muted)" : "var(--text-secondary)";
         const runwayLine = L.polyline([leLatLng, heLatLng], {
           color: runwayColor,
           weight,
@@ -226,7 +226,7 @@ export default function RunwayOverlay({ visible }: RunwayOverlayProps) {
 
         // Center line (yellow dashed)
         const centerLine = L.polyline([leLatLng, heLatLng], {
-          color: "#94a3b8",
+          color: "var(--text-tertiary)",
           weight: centerWeight,
           opacity: 0.7,
           dashArray: "6, 8",

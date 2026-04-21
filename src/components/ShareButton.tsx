@@ -78,7 +78,7 @@ export default function ShareButton({ selectedFlightIcao }: ShareButtonProps) {
         backdropFilter: "blur(8px)",
         WebkitBackdropFilter: "blur(8px)",
         cursor: "pointer",
-        color: copied ? "#e2e8f0" : "#94a3b8",
+        color: copied ? "var(--accent-primary)" : "var(--text-tertiary)",
         transition: "all 0.2s ease",
         fontSize: 11,
         fontWeight: 500,

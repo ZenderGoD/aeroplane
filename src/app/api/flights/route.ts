@@ -216,41 +216,33 @@ function computeTiles(bbox: BoundingBox): [number, number, number][] {
     return [[centerLat, centerLon, neededRadius]];
   }
 
-  // Large area: lay out a grid that actually covers the whole bbox.
-  // Compute rows and columns needed, then distribute tiles evenly.
-  const tileSpacingNm = MAX_TILE_RADIUS * 1.6; // ~400nm spacing with overlap
-  const rowsNeeded = Math.max(1, Math.ceil(heightNm / tileSpacingNm));
-  const colsNeeded = Math.max(1, Math.ceil(widthNm / tileSpacingNm));
+  // Large area: lay out a grid with enough tiles that the CORNERS of
+  // each grid cell are still inside a tile's 250nm radius.  This was
+  // previously broken — our 3x3 grid had 580nm spacing but only 250nm
+  // radius, leaving 161nm gaps at cell corners (Bangalore sat in one
+  // of those gaps and showed 0 aircraft).
+  //
+  // Math: for a cell of size (cellLat × cellLon) with the tile at the
+  // center, the corner is at distance sqrt((cellLat/2)² + (cellLon/2)²)
+  // from the center.  For 250nm radius we need cellSize <= 350nm so
+  // corners are covered (350nm × sqrt(2)/2 ≈ 247nm from center).
+  const MAX_CELL_SIZE_NM = 350;
+  const rows = Math.max(1, Math.ceil(heightNm / MAX_CELL_SIZE_NM));
+  const cols = Math.max(1, Math.ceil(widthNm / MAX_CELL_SIZE_NM));
 
-  // Cap total tiles — parallel fetches still hit rate limits so we use
-  // max 9 tiles for continent-sized views (3x3 grid).
-  const MAX_TILES = 9;
-  const totalNeeded = rowsNeeded * colsNeeded;
-  const ratio = Math.sqrt(MAX_TILES / totalNeeded);
-  const rows = totalNeeded > MAX_TILES
-    ? Math.max(1, Math.floor(rowsNeeded * ratio))
-    : rowsNeeded;
-  const cols = totalNeeded > MAX_TILES
-    ? Math.max(1, Math.floor(colsNeeded * ratio))
-    : colsNeeded;
+  // Cap to stop pathological cases (don't fire 100s of tiles)
+  const safeRows = Math.min(rows, 6);
+  const safeCols = Math.min(cols, 6);
 
-  // Tile radius scales up if we need to cover more area per tile
-  const actualRowSpacing = heightNm / rows;
-  const actualColSpacing = widthNm / cols;
-  const tileRadius = Math.min(
-    MAX_TILE_RADIUS,
-    Math.ceil(Math.max(actualRowSpacing, actualColSpacing) / 1.4),
-  );
-
-  const latStep = (bbox.lamax - bbox.lamin) / rows;
-  const lonStep = (bbox.lomax - bbox.lomin) / cols;
+  const latStep = (bbox.lamax - bbox.lamin) / safeRows;
+  const lonStep = (bbox.lomax - bbox.lomin) / safeCols;
 
   const tiles: [number, number, number][] = [];
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
+  for (let r = 0; r < safeRows; r++) {
+    for (let c = 0; c < safeCols; c++) {
       const lat = bbox.lamin + latStep * (r + 0.5);
       const lon = bbox.lomin + lonStep * (c + 0.5);
-      tiles.push([lat, lon, tileRadius]);
+      tiles.push([lat, lon, MAX_TILE_RADIUS]);
     }
   }
 
@@ -318,9 +310,11 @@ async function fetchAirplanesLive(
       }
     }
 
-    // If MOST tiles rate-limited, set backoff for a short while
-    if (limitedCount >= tiles.length * 0.75) {
-      airplanesLiveRateLimitedUntil = Date.now() + 20_000;
+    // Only trigger global backoff if ALL tiles rate-limited — with a
+    // 25-tile grid, it's normal for some tiles to 429 while others
+    // succeed. Only block further requests if literally nothing worked.
+    if (limitedCount >= tiles.length && successCount === 0) {
+      airplanesLiveRateLimitedUntil = Date.now() + 15_000;
     }
 
     console.log(
@@ -350,41 +344,58 @@ async function fetchSecondarySources(
 ): Promise<Map<string, FlightState>> {
   if (!bbox) return new Map(); // skip for global requests
 
-  const centerLat = (bbox.lamin + bbox.lamax) / 2;
-  const centerLon = (bbox.lomin + bbox.lomax) / 2;
+  const tiles = computeTiles(bbox);
+  // Give each secondary source the 4 tiles surrounding the bbox center.
+  // Different feeder networks catch different aircraft, so each tile
+  // lookup on each network contributes unique aircraft.
+  // Secondary sources have their own rate limits (independent of
+  // airplanes.live), so we can fire these in parallel without conflict.
+  const centerIdx = Math.floor(tiles.length / 2);
+  const offsets = [0, 1, -1, 2].map((o) => centerIdx + o).filter((i) => i >= 0 && i < tiles.length);
+  const secondaryTiles = offsets.map((i) => tiles[i]).slice(0, 4);
 
   type Source = {
     name: "adsbfi" | "adsbone";
-    url: string;
+    urlFor: (lat: number, lon: number, radius: number) => string;
     responseKey: "aircraft" | "ac";
   };
 
   const sources: Source[] = [
     {
       name: "adsbfi",
-      url: `https://opendata.adsb.fi/api/v2/lat/${Math.round(centerLat)}/lon/${Math.round(centerLon)}/dist/250`,
+      urlFor: (lat, lon, radius) =>
+        `https://opendata.adsb.fi/api/v2/lat/${Math.round(lat)}/lon/${Math.round(lon)}/dist/${radius}`,
       responseKey: "aircraft",
     },
     {
       name: "adsbone",
-      url: `https://api.adsb.one/v2/point/${centerLat.toFixed(4)}/${centerLon.toFixed(4)}/250`,
+      urlFor: (lat, lon, radius) =>
+        `https://api.adsb.one/v2/point/${lat.toFixed(4)}/${lon.toFixed(4)}/${radius}`,
       responseKey: "ac",
     },
   ];
 
+  // Build a request matrix: each source × each tile
+  const allRequests = sources.flatMap((s) =>
+    secondaryTiles.map((tile) => ({ source: s, tile })),
+  );
+
   const results = await Promise.allSettled(
-    sources.map(async (s) => {
+    allRequests.map(async ({ source, tile }) => {
+      const [lat, lon, radius] = tile;
       try {
-        const res = await fetch(s.url, {
+        const res = await fetch(source.urlFor(lat, lon, radius), {
           cache: "no-store",
           signal: AbortSignal.timeout(6000),
         });
-        if (!res.ok) return { name: s.name, aircraft: [] };
+        if (!res.ok) return { name: source.name, aircraft: [] };
         const data = await res.json();
-        const ac = Array.isArray(data?.[s.responseKey]) ? data[s.responseKey] : [];
-        return { name: s.name, aircraft: ac };
+        const ac = Array.isArray(data?.[source.responseKey])
+          ? data[source.responseKey]
+          : [];
+        return { name: source.name, aircraft: ac };
       } catch {
-        return { name: s.name, aircraft: [] };
+        return { name: source.name, aircraft: [] };
       }
     }),
   );

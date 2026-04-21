@@ -26,30 +26,30 @@ function barPct(value: number, max: number): number {
 // ── Altitude bin colors (monochrome slate scale) ─────────────────
 
 const ALT_BIN_COLORS = [
-  "#cbd5e1", // 0-5k   green
-  "#cbd5e1", // 5-10k  light green
-  "#94a3b8", // 10-15k yellow
-  "#94a3b8", // 15-20k amber
-  "#cbd5e1", // 20-25k cyan
-  "#cbd5e1", // 25-30k light blue
-  "#94a3b8", // 30-35k indigo
-  "#94a3b8", // 35-40k purple
-  "#94a3b8", // 40k+   violet
+  "var(--text-secondary)", // 0-5k   green
+  "var(--text-secondary)", // 5-10k  light green
+  "var(--text-tertiary)", // 10-15k yellow
+  "var(--text-tertiary)", // 15-20k amber
+  "var(--text-secondary)", // 20-25k cyan
+  "var(--text-secondary)", // 25-30k light blue
+  "var(--text-tertiary)", // 30-35k indigo
+  "var(--text-tertiary)", // 35-40k purple
+  "var(--text-tertiary)", // 40k+   violet
 ];
 
 const SPD_BIN_COLORS = [
-  "#cbd5e1", // 0-100
-  "#cbd5e1", // 100-200
-  "#94a3b8", // 200-300
-  "#94a3b8", // 300-400
-  "#cbd5e1", // 400-500
-  "#94a3b8", // 500+
+  "var(--text-secondary)", // 0-100
+  "var(--text-secondary)", // 100-200
+  "var(--text-tertiary)", // 200-300
+  "var(--text-tertiary)", // 300-400
+  "var(--text-secondary)", // 400-500
+  "var(--text-tertiary)", // 500+
 ];
 
 const TYPE_COLORS = [
-  "#cbd5e1", "#cbd5e1", "#94a3b8", "#94a3b8", "#cbd5e1",
-  "#94a3b8", "#94a3b8", "#cbd5e1", "#e2e8f0", "#94a3b8",
-  "#cbd5e1", "#94a3b8", "#94a3b8", "#cbd5e1", "#e2e8f0",
+  "var(--text-secondary)", "var(--text-secondary)", "var(--text-tertiary)", "var(--text-tertiary)", "var(--text-secondary)",
+  "var(--text-tertiary)", "var(--text-tertiary)", "var(--text-secondary)", "var(--accent-primary)", "var(--text-tertiary)",
+  "var(--text-secondary)", "var(--text-tertiary)", "var(--text-tertiary)", "var(--text-secondary)", "var(--accent-primary)",
 ];
 
 // ── Types ───────────────────────────────────────────────────────────────────
@@ -586,7 +586,7 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
               <KpiCard
                 label="AVG ALTITUDE"
                 value={`${fmt(Math.round(stats.avgAltFt))} ft`}
-                color="#cbd5e1"
+                color="var(--text-secondary)"
               />
               <KpiCard
                 label="AVG SPEED"
@@ -735,10 +735,10 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
                     {stats.positionSources.map((src, i) => {
                       const srcColor =
                         src.source.toLowerCase().includes("adsb") || src.source.toLowerCase().includes("ads-b")
-                          ? "#cbd5e1"
+                          ? "var(--text-secondary)"
                           : src.source.toLowerCase().includes("mlat")
-                          ? "#94a3b8"
-                          : "#cbd5e1";
+                          ? "var(--text-tertiary)"
+                          : "var(--text-secondary)";
                       return (
                         <div key={src.source} className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
@@ -803,7 +803,7 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
                 <div className="space-y-1.5">
                   {stats.quadrants.map((q) => {
                     const qColor =
-                      q.label === "NE" ? "#cbd5e1" : q.label === "NW" ? "#cbd5e1" : q.label === "SE" ? "#94a3b8" : "#94a3b8";
+                      q.label === "NE" ? "var(--text-secondary)" : q.label === "NW" ? "var(--text-secondary)" : q.label === "SE" ? "var(--text-tertiary)" : "var(--text-tertiary)";
                     return (
                       <div key={q.label} className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -843,7 +843,7 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
                       label={f.callsign}
                       value={fmt(f.alt)}
                       unit="ft"
-                      color="#cbd5e1"
+                      color="var(--text-secondary)"
                     />
                   ))}
                   {stats.highestAlt.length === 0 && (
@@ -889,7 +889,7 @@ export default function StatsDashboardMode({ onExitMode }: Props) {
                       label={p.prefix}
                       value={fmt(p.count)}
                       unit="flights"
-                      color="#94a3b8"
+                      color="var(--text-tertiary)"
                     />
                   ))}
                   {stats.topPrefixes.length === 0 && (

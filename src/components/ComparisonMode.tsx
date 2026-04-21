@@ -26,7 +26,7 @@ const MAX_AIRCRAFT = 4;
 const POLL_INTERVAL = 30_000; // 30s — conservative to respect API limits
 const HISTORY_WINDOW = 300; // keep 5 min of history points
 
-const AIRCRAFT_COLORS = ["#cbd5e1", "#cbd5e1", "#94a3b8", "#e2e8f0"] as const;
+const AIRCRAFT_COLORS = ["var(--text-secondary)", "var(--text-secondary)", "var(--text-tertiary)", "var(--accent-primary)"] as const;
 
 /* ── Types ────────────────────────────────────────────────────────── */
 
@@ -519,7 +519,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
                   y1={PAD.t}
                   x2={xScale(t)}
                   y2={H - PAD.b}
-                  stroke="rgba(148,163,184,0.06)"
+                  stroke="var(--border-subtle)"
                   strokeWidth={0.5}
                 />
                 <text
@@ -599,8 +599,8 @@ export default function ComparisonMode({ onExitMode }: Props) {
           })}
 
           {/* Axes */}
-          <line x1={PAD.l} y1={PAD.t} x2={PAD.l} y2={H - PAD.b} stroke="rgba(148,163,184,0.15)" strokeWidth={0.5} />
-          <line x1={PAD.l} y1={H - PAD.b} x2={W - PAD.r} y2={H - PAD.b} stroke="rgba(148,163,184,0.15)" strokeWidth={0.5} />
+          <line x1={PAD.l} y1={PAD.t} x2={PAD.l} y2={H - PAD.b} stroke="var(--border-strong)" strokeWidth={0.5} />
+          <line x1={PAD.l} y1={H - PAD.b} x2={W - PAD.r} y2={H - PAD.b} stroke="var(--border-strong)" strokeWidth={0.5} />
         </svg>
       );
     },
@@ -1052,7 +1052,7 @@ export default function ComparisonMode({ onExitMode }: Props) {
                     className="rounded-xl p-4"
                     style={{
                       background: "var(--surface-1)",
-                      border: `1px solid ${isConverging ? "rgba(148,163,184,0.2)" : "var(--border-default)"}`,
+                      border: `1px solid ${isConverging ? "var(--border-accent)" : "var(--border-default)"}`,
                     }}
                   >
                     {/* Header */}

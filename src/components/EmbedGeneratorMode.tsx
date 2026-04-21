@@ -115,7 +115,7 @@ export default function EmbedGeneratorMode({ onExitMode }: Props) {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="2" y="3" width="20" height="14" rx="2" />
             <path d="M8 21h8M12 17v4" />
           </svg>
@@ -133,7 +133,7 @@ export default function EmbedGeneratorMode({ onExitMode }: Props) {
             style={{
               fontSize: 10,
               fontWeight: 600,
-              color: "#cbd5e1",
+              color: "var(--text-secondary)",
               background: "rgba(203,213,225,0.1)",
               border: "1px solid rgba(203,213,225,0.2)",
               borderRadius: 4,
@@ -243,7 +243,7 @@ export default function EmbedGeneratorMode({ onExitMode }: Props) {
                 max={15}
                 value={zoom}
                 onChange={(e) => setZoom(Number(e.target.value))}
-                style={{ flex: 1, accentColor: "#cbd5e1" }}
+                style={{ flex: 1, accentColor: "var(--text-secondary)" }}
               />
               <span style={{ fontFamily: "monospace", fontSize: 12, color: "var(--text-primary, #f1f5f9)", minWidth: 24, textAlign: "right" }}>
                 {zoom}
@@ -261,7 +261,7 @@ export default function EmbedGeneratorMode({ onExitMode }: Props) {
                 step={25}
                 value={radius}
                 onChange={(e) => setRadius(Number(e.target.value))}
-                style={{ flex: 1, accentColor: "#cbd5e1" }}
+                style={{ flex: 1, accentColor: "var(--text-secondary)" }}
               />
               <span style={{ fontFamily: "monospace", fontSize: 12, color: "var(--text-primary, #f1f5f9)", minWidth: 36, textAlign: "right" }}>
                 {radius}
@@ -549,7 +549,7 @@ function ToggleButton({
           ? "rgba(203,213,225,0.1)"
           : "var(--surface-0, #06080d)",
         color: active
-          ? "#94a3b8"
+          ? "var(--text-tertiary)"
           : "var(--text-secondary, #cbd5e1)",
         fontSize: 11,
         fontWeight: active ? 600 : 500,
@@ -623,7 +623,7 @@ function CodeBlock({
             background: copied
               ? "rgba(203,213,225,0.1)"
               : "var(--surface-2, #141414)",
-            color: copied ? "#cbd5e1" : "var(--text-secondary, #cbd5e1)",
+            color: copied ? "var(--text-secondary)" : "var(--text-secondary, #cbd5e1)",
             fontSize: 11,
             fontWeight: 500,
             cursor: "pointer",

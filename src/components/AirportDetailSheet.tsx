@@ -26,10 +26,10 @@ import type { AirportBaseline } from "@/types/baseline";
 // ── Helpers ─────────────────────────────────────────────────────────────
 
 function getPressureColor(score: number): string {
-  if (score >= 80) return "#e2e8f0";
-  if (score >= 60) return "#94a3b8";
-  if (score >= 40) return "#94a3b8";
-  if (score >= 20) return "#cbd5e1";
+  if (score >= 80) return "var(--accent-primary)";
+  if (score >= 60) return "var(--text-tertiary)";
+  if (score >= 40) return "var(--text-tertiary)";
+  if (score >= 20) return "var(--text-secondary)";
   return "#6b7280";
 }
 
@@ -43,10 +43,10 @@ function getPressureLabel(score: number): string {
 
 function getStatusColor(status: string): string {
   switch (status) {
-    case "disrupted": return "#e2e8f0";
-    case "congested": return "#94a3b8";
-    case "compressed": return "#94a3b8";
-    default: return "#cbd5e1";
+    case "disrupted": return "var(--accent-primary)";
+    case "congested": return "var(--text-tertiary)";
+    case "compressed": return "var(--text-tertiary)";
+    default: return "var(--text-secondary)";
   }
 }
 
@@ -203,10 +203,10 @@ export default function AirportDetailSheet({
                   <div className="space-y-1">
                     {freqData.frequencies.map((f, i) => {
                       const typeColors: Record<string, string> = {
-                        ATIS: "#94a3b8", GND: "#cbd5e1", TWR: "#94a3b8",
-                        DEP: "#94a3b8", APP: "#94a3b8", CTR: "#e2e8f0", UNICOM: "#94a3b8",
+                        ATIS: "var(--text-tertiary)", GND: "var(--text-secondary)", TWR: "var(--text-tertiary)",
+                        DEP: "var(--text-tertiary)", APP: "var(--text-tertiary)", CTR: "var(--accent-primary)", UNICOM: "var(--text-tertiary)",
                       };
-                      const color = typeColors[f.type] || "#94a3b8";
+                      const color = typeColors[f.type] || "var(--text-tertiary)";
                       return (
                         <div key={`${f.type}-${i}`} className="flex items-center justify-between rounded-lg px-3 py-1.5" style={{ background: "var(--surface-2)" }}>
                           <div className="flex items-center gap-2">
@@ -230,10 +230,10 @@ export default function AirportDetailSheet({
                   <div className="space-y-1">
                     {approachData.approaches.map((app) => {
                       const typeColors: Record<string, string> = {
-                        ILS: "#cbd5e1", RNAV: "#94a3b8", VOR: "#94a3b8",
-                        NDB: "#94a3b8", VISUAL: "#94a3b8", LOC: "#94a3b8",
+                        ILS: "var(--text-secondary)", RNAV: "var(--text-tertiary)", VOR: "var(--text-tertiary)",
+                        NDB: "var(--text-tertiary)", VISUAL: "var(--text-tertiary)", LOC: "var(--text-tertiary)",
                       };
-                      const color = typeColors[app.type] || "#94a3b8";
+                      const color = typeColors[app.type] || "var(--text-tertiary)";
                       return (
                         <div key={app.name} className="rounded-lg px-3 py-2" style={{ background: "var(--surface-2)" }}>
                           <div className="flex items-center justify-between">

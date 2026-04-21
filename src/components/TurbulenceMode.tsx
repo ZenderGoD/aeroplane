@@ -293,11 +293,11 @@ function TurbulenceMapInner({
       const altFt = f.baroAltitude !== null ? metersToFeet(f.baroAltitude) : 0;
 
       // Color by altitude
-      let color = "#64748b";
-      if (altFt < 10000) color = "#cbd5e1";
-      else if (altFt < 25000) color = "#94a3b8";
-      else if (altFt < 40000) color = "#cbd5e1";
-      else color = "#94a3b8";
+      let color = "var(--text-muted)";
+      if (altFt < 10000) color = "var(--text-secondary)";
+      else if (altFt < 25000) color = "var(--text-tertiary)";
+      else if (altFt < 40000) color = "var(--text-secondary)";
+      else color = "var(--text-tertiary)";
 
       // Turbulent aircraft get a red outline glow
       const glowFilter = isTurbulent
@@ -483,7 +483,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
                 className="w-8 h-8 rounded-lg flex items-center justify-center"
                 style={{ background: "rgba(226,232,240,0.15)", border: "1px solid rgba(226,232,240,0.25)" }}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e2e8f0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M4 14h4l3-8 4 16 3-8h4" />
                 </svg>
               </div>
@@ -561,7 +561,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
               className="text-xs font-semibold px-2 py-1.5 rounded-md transition-all"
               style={{
                 background: altitudeFilter === "all" ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.04)",
-                color: altitudeFilter === "all" ? "#cbd5e1" : "var(--text-muted)",
+                color: altitudeFilter === "all" ? "var(--text-secondary)" : "var(--text-muted)",
                 border: `1px solid ${altitudeFilter === "all" ? "rgba(56,189,248,0.3)" : "transparent"}`,
               }}
             >
@@ -577,7 +577,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
                     altitudeFilter === band.label
                       ? "rgba(56,189,248,0.2)"
                       : "rgba(255,255,255,0.04)",
-                  color: altitudeFilter === band.label ? "#cbd5e1" : "var(--text-muted)",
+                  color: altitudeFilter === band.label ? "var(--text-secondary)" : "var(--text-muted)",
                   border: `1px solid ${altitudeFilter === band.label ? "rgba(56,189,248,0.3)" : "transparent"}`,
                 }}
               >
@@ -610,7 +610,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
                 className="absolute top-0.5 w-3 h-3 rounded-full transition-all"
                 style={{
                   left: showAllAircraft ? "calc(100% - 14px)" : "2px",
-                  background: showAllAircraft ? "#cbd5e1" : "#64748b",
+                  background: showAllAircraft ? "var(--text-secondary)" : "var(--text-muted)",
                 }}
               />
             </div>
@@ -699,7 +699,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
           <div
             className="w-1.5 h-1.5 rounded-full"
             style={{
-              background: totalReports > 0 ? "#e2e8f0" : "#cbd5e1",
+              background: totalReports > 0 ? "var(--accent-primary)" : "var(--text-secondary)",
               boxShadow: totalReports > 0 ? "0 0 6px #e2e8f060" : "0 0 6px #cbd5e160",
             }}
           />
@@ -736,7 +736,7 @@ export default function TurbulenceMode({ onExitMode }: TurbulenceModeProps) {
           <span
             className="text-xs font-bold data-value px-1.5 py-0.5 rounded"
             style={{
-              color: "#cbd5e1",
+              color: "var(--text-secondary)",
               background: "rgba(56,189,248,0.1)",
               border: "1px solid rgba(56,189,248,0.2)",
             }}

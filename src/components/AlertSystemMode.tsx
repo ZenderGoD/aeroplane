@@ -94,21 +94,21 @@ const ALERT_TYPE_ICONS: Record<AlertType, string> = {
 const SEVERITY_COLORS: Record<Severity, { bg: string; text: string; border: string; dot: string }> = {
   critical: {
     bg: "rgba(226,232,240,0.08)",
-    text: "#e2e8f0",
+    text: "var(--accent-primary)",
     border: "rgba(226,232,240,0.25)",
-    dot: "#e2e8f0",
+    dot: "var(--accent-primary)",
   },
   warning: {
     bg: "rgba(148,163,184,0.08)",
-    text: "#94a3b8",
-    border: "rgba(148,163,184,0.25)",
-    dot: "#94a3b8",
+    text: "var(--text-tertiary)",
+    border: "var(--border-accent)",
+    dot: "var(--text-tertiary)",
   },
   info: {
     bg: "rgba(56,189,248,0.08)",
-    text: "#cbd5e1",
+    text: "var(--text-secondary)",
     border: "rgba(56,189,248,0.25)",
-    dot: "#cbd5e1",
+    dot: "var(--text-secondary)",
   },
 };
 
@@ -656,13 +656,13 @@ export default function AlertSystemMode({ onExitMode }: Props) {
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path
                 d="M8 1.5L1.5 14h13L8 1.5z"
-                stroke="#e2e8f0"
+                stroke="var(--accent-primary)"
                 strokeWidth="1.5"
                 strokeLinejoin="round"
                 fill="none"
               />
-              <path d="M8 6v3.5" stroke="#e2e8f0" strokeWidth="1.5" strokeLinecap="round" />
-              <circle cx="8" cy="11.5" r="0.75" fill="#e2e8f0" />
+              <path d="M8 6v3.5" stroke="var(--accent-primary)" strokeWidth="1.5" strokeLinecap="round" />
+              <circle cx="8" cy="11.5" r="0.75" fill="var(--accent-primary)" />
             </svg>
           </div>
           <div>
@@ -757,9 +757,9 @@ export default function AlertSystemMode({ onExitMode }: Props) {
               <p className="section-label mb-2">Quick Templates</p>
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { key: "emergency" as const, label: "Emergency\nSquawks", icon: "\u26A0", color: "#e2e8f0" },
-                  { key: "military" as const, label: "Military\nActivity", icon: "\u2B50", color: "#94a3b8" },
-                  { key: "low_altitude" as const, label: "Low\nAltitude", icon: "\u2195", color: "#cbd5e1" },
+                  { key: "emergency" as const, label: "Emergency\nSquawks", icon: "\u26A0", color: "var(--accent-primary)" },
+                  { key: "military" as const, label: "Military\nActivity", icon: "\u2B50", color: "var(--text-tertiary)" },
+                  { key: "low_altitude" as const, label: "Low\nAltitude", icon: "\u2195", color: "var(--text-secondary)" },
                 ].map((tmpl) => (
                   <button
                     key={tmpl.key}
@@ -1201,9 +1201,9 @@ export default function AlertSystemMode({ onExitMode }: Props) {
                   </label>
                   <div className="space-y-2">
                     {[
-                      { code: "7500", label: "Hijack", color: "#e2e8f0" },
-                      { code: "7600", label: "Comms Failure", color: "#94a3b8" },
-                      { code: "7700", label: "Emergency", color: "#94a3b8" },
+                      { code: "7500", label: "Hijack", color: "var(--accent-primary)" },
+                      { code: "7600", label: "Comms Failure", color: "var(--text-tertiary)" },
+                      { code: "7700", label: "Emergency", color: "var(--text-tertiary)" },
                     ].map((sq) => (
                       <label
                         key={sq.code}

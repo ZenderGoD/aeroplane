@@ -38,10 +38,10 @@ const FLIGHT_LEVELS = [
 const DEFAULT_ALTITUDE = 30_000;
 
 const SPEED_COLORS = {
-  light: "#cbd5e1",
-  moderate: "#94a3b8",
-  strong: "#94a3b8",
-  severe: "#e2e8f0",
+  light: "var(--text-secondary)",
+  moderate: "var(--text-tertiary)",
+  strong: "var(--text-tertiary)",
+  severe: "var(--accent-primary)",
 } as const;
 
 function getSpeedColor(speed: number): string {
@@ -276,7 +276,7 @@ export default function WindAloftOverlay({ visible }: Props) {
 
       for (let i = 0; i < path.length - 1; i++) {
         const avg = (path[i].speed + path[i + 1].speed) / 2;
-        const c = avg >= 100 ? "#e2e8f0" : avg >= 80 ? "#94a3b8" : "#94a3b8";
+        const c = avg >= 100 ? "var(--accent-primary)" : avg >= 80 ? "var(--text-tertiary)" : "var(--text-tertiary)";
         const coords: L.LatLngExpression[] = [
           [path[i].lat, path[i].lon],
           [path[i + 1].lat, path[i + 1].lon],
@@ -370,7 +370,7 @@ export default function WindAloftOverlay({ visible }: Props) {
             }}
             onMouseEnter={(e) => {
               if (selectedAltitude !== fl.altitude) {
-                (e.target as HTMLButtonElement).style.background = "rgba(148,163,184,0.1)";
+                (e.target as HTMLButtonElement).style.background = "var(--border-default)";
                 (e.target as HTMLButtonElement).style.color = "var(--text-secondary,#cbd5e1)";
               }
             }}
@@ -432,7 +432,7 @@ export default function WindAloftOverlay({ visible }: Props) {
       {/* Loading state */}
       {loading && (
         <div className="absolute top-16 left-1/2 -translate-x-1/2 z-[1000] px-4 py-2 rounded-lg"
-          style={{ background: "rgba(6,8,13,0.9)", backdropFilter: "blur(8px)", border: "1px solid var(--border-default)", color: "#cbd5e1", fontSize: "12px", fontFamily: "ui-monospace,monospace" }}>
+          style={{ background: "rgba(6,8,13,0.9)", backdropFilter: "blur(8px)", border: "1px solid var(--border-default)", color: "var(--text-secondary)", fontSize: "12px", fontFamily: "ui-monospace,monospace" }}>
           Loading wind aloft data...
         </div>
       )}
@@ -440,7 +440,7 @@ export default function WindAloftOverlay({ visible }: Props) {
       {/* Error state */}
       {error && (
         <div className="absolute top-16 left-1/2 -translate-x-1/2 z-[1000] px-4 py-2 rounded-lg"
-          style={{ background: "rgba(28,28,28,0.8)", backdropFilter: "blur(8px)", border: "1px solid rgba(148,163,184,0.3)", color: "#e2e8f0", fontSize: "12px", fontFamily: "ui-monospace,monospace" }}>
+          style={{ background: "rgba(28,28,28,0.8)", backdropFilter: "blur(8px)", border: "1px solid rgba(148,163,184,0.3)", color: "var(--accent-primary)", fontSize: "12px", fontFamily: "ui-monospace,monospace" }}>
           Wind data error: {error}
         </div>
       )}

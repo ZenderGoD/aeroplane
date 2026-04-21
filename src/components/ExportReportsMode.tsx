@@ -849,10 +849,10 @@ export default function ExportReportsMode({ onExitMode }: Props) {
             border: "1px solid rgba(148, 163, 184, 0.2)",
           }}
         >
-          <span style={{ color: "#cbd5e1" }}>
+          <span style={{ color: "var(--text-secondary)" }}>
             <IconCheck />
           </span>
-          <span className="text-xs font-medium" style={{ color: "#cbd5e1" }}>
+          <span className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
             {exportDone} &mdash; File downloaded successfully
           </span>
         </div>
@@ -886,7 +886,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
               <div className="flex items-center gap-3 mb-4">
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                  style={{ background: "rgba(203,213,225,0.1)", color: "#cbd5e1" }}
+                  style={{ background: "rgba(203,213,225,0.1)", color: "var(--text-secondary)" }}
                 >
                   <IconCSV />
                 </div>
@@ -931,7 +931,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
               <div className="flex items-center gap-3 mb-4">
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                  style={{ background: "rgba(148,163,184,0.1)", color: "#94a3b8" }}
+                  style={{ background: "var(--border-default)", color: "var(--text-tertiary)" }}
                 >
                   <IconJSON />
                 </div>
@@ -952,7 +952,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                     Total objects
                   </span>
-                  <span className="text-xs font-bold font-mono tabular-nums" style={{ color: "#94a3b8" }}>
+                  <span className="text-xs font-bold font-mono tabular-nums" style={{ color: "var(--text-tertiary)" }}>
                     {flights.length.toLocaleString()}
                   </span>
                 </div>
@@ -979,7 +979,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
               <div className="flex items-center gap-3 mb-4">
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                  style={{ background: "rgba(148,163,184,0.1)", color: "#94a3b8" }}
+                  style={{ background: "var(--border-default)", color: "var(--text-tertiary)" }}
                 >
                   <IconFilter />
                 </div>
@@ -1081,8 +1081,8 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                       }
                       className="px-2.5 py-1 rounded-md text-xs font-semibold transition-colors duration-150 cursor-pointer"
                       style={{
-                        background: filters[opt.key] ? "rgba(148,163,184,0.15)" : "var(--surface-2)",
-                        color: filters[opt.key] ? "#94a3b8" : "var(--text-muted)",
+                        background: filters[opt.key] ? "var(--border-strong)" : "var(--surface-2)",
+                        color: filters[opt.key] ? "var(--text-tertiary)" : "var(--text-muted)",
                         border: `1px solid ${filters[opt.key] ? "rgba(148,163,184,0.3)" : "var(--border-default)"}`,
                       }}
                     >
@@ -1101,7 +1101,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   </span>
                   <span
                     className="text-xs font-bold font-mono tabular-nums"
-                    style={{ color: hasActiveFilters ? "#94a3b8" : "var(--text-secondary)" }}
+                    style={{ color: hasActiveFilters ? "var(--text-tertiary)" : "var(--text-secondary)" }}
                   >
                     {filteredFlights.length.toLocaleString()} / {flights.length.toLocaleString()}
                   </span>
@@ -1156,7 +1156,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
               <div className="flex items-center gap-3 mb-4">
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                  style={{ background: "rgba(203,213,225,0.1)", color: "#cbd5e1" }}
+                  style={{ background: "rgba(203,213,225,0.1)", color: "var(--text-secondary)" }}
                 >
                   <IconReport />
                 </div>
@@ -1177,7 +1177,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   {["Summary & totals", "Aircraft type table", "Altitude distribution bars", "Top airlines table", "Data quality audit"].map(
                     (item) => (
                       <div key={item} className="flex items-center gap-2">
-                        <div className="w-1 h-1 rounded-full" style={{ background: "#cbd5e1" }} />
+                        <div className="w-1 h-1 rounded-full" style={{ background: "var(--text-secondary)" }} />
                         <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                           {item}
                         </span>
@@ -1202,7 +1202,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
               <div className="flex items-center gap-3 mb-4">
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                  style={{ background: "rgba(148,163,184,0.1)", color: "#94a3b8" }}
+                  style={{ background: "var(--border-default)", color: "var(--text-tertiary)" }}
                 >
                   <IconCompare />
                 </div>
@@ -1260,10 +1260,10 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   {/* New flights */}
                   <div className="rounded-lg p-3" style={{ background: "var(--surface-2)" }}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#cbd5e1" }}>
+                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>
                         New Flights
                       </span>
-                      <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "#cbd5e1" }}>
+                      <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "var(--text-secondary)" }}>
                         +{comparisonData.newFlights.length}
                       </span>
                     </div>
@@ -1284,10 +1284,10 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   {/* Departed flights */}
                   <div className="rounded-lg p-3" style={{ background: "var(--surface-2)" }}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#e2e8f0" }}>
+                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--accent-primary)" }}>
                         Departed
                       </span>
-                      <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "#e2e8f0" }}>
+                      <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "var(--accent-primary)" }}>
                         -{comparisonData.departedFlights.length}
                       </span>
                     </div>
@@ -1308,10 +1308,10 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   {/* Altitude changes */}
                   <div className="rounded-lg p-3" style={{ background: "var(--surface-2)" }}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#cbd5e1" }}>
+                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>
                         Alt Changes
                       </span>
-                      <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "#cbd5e1" }}>
+                      <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "var(--text-secondary)" }}>
                         {comparisonData.altitudeChanges.length}
                       </span>
                     </div>
@@ -1319,7 +1319,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                       {comparisonData.altitudeChanges.slice(0, 6).map((c) => (
                         <div key={c.icao24} className="text-xs font-mono flex justify-between gap-1" style={{ color: "var(--text-muted)" }}>
                           <span className="truncate">{c.callsign}</span>
-                          <span style={{ color: c.delta > 0 ? "#cbd5e1" : "#e2e8f0" }}>
+                          <span style={{ color: c.delta > 0 ? "var(--text-secondary)" : "var(--accent-primary)" }}>
                             {c.delta > 0 ? "+" : ""}
                             {c.delta.toLocaleString()} ft
                           </span>
@@ -1331,10 +1331,10 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                   {/* Speed changes */}
                   <div className="rounded-lg p-3" style={{ background: "var(--surface-2)" }}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#94a3b8" }}>
+                      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>
                         Speed Changes
                       </span>
-                      <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "#94a3b8" }}>
+                      <span className="text-lg font-bold font-mono tabular-nums" style={{ color: "var(--text-tertiary)" }}>
                         {comparisonData.speedChanges.length}
                       </span>
                     </div>
@@ -1342,7 +1342,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                       {comparisonData.speedChanges.slice(0, 6).map((c) => (
                         <div key={c.icao24} className="text-xs font-mono flex justify-between gap-1" style={{ color: "var(--text-muted)" }}>
                           <span className="truncate">{c.callsign}</span>
-                          <span style={{ color: c.delta > 0 ? "#cbd5e1" : "#e2e8f0" }}>
+                          <span style={{ color: c.delta > 0 ? "var(--text-secondary)" : "var(--accent-primary)" }}>
                             {c.delta > 0 ? "+" : ""}
                             {c.delta} kts
                           </span>
@@ -1359,7 +1359,7 @@ export default function ExportReportsMode({ onExitMode }: Props) {
               <div className="flex items-center gap-3 mb-4">
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                  style={{ background: "rgba(226,232,240,0.1)", color: "#e2e8f0" }}
+                  style={{ background: "rgba(226,232,240,0.1)", color: "var(--accent-primary)" }}
                 >
                   <IconSchedule />
                 </div>
@@ -1426,8 +1426,8 @@ export default function ExportReportsMode({ onExitMode }: Props) {
                     className="rounded-lg px-3 py-2 flex items-center gap-2"
                     style={{ background: "rgba(226,232,240,0.06)", border: "1px solid rgba(226,232,240,0.15)" }}
                   >
-                    <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: "#e2e8f0" }} />
-                    <span className="text-xs" style={{ color: "#e2e8f0" }}>
+                    <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: "var(--accent-primary)" }} />
+                    <span className="text-xs" style={{ color: "var(--accent-primary)" }}>
                       Scheduled: {scheduleFormat.toUpperCase()} every {scheduleFreq} min
                     </span>
                   </div>

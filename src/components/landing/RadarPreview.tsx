@@ -51,19 +51,19 @@ export default function RadarPreview() {
         </defs>
 
         {/* Aircraft dots */}
-        <circle cx="130" cy="60" r="3" fill="#cbd5e1">
+        <circle cx="130" cy="60" r="3" fill="var(--text-secondary)">
           <animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite" />
         </circle>
-        <circle cx="70" cy="80" r="2.5" fill="#cbd5e1">
+        <circle cx="70" cy="80" r="2.5" fill="var(--text-secondary)">
           <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite" />
         </circle>
-        <circle cx="140" cy="130" r="2" fill="#cbd5e1">
+        <circle cx="140" cy="130" r="2" fill="var(--text-secondary)">
           <animate attributeName="opacity" values="0.3;0.9;0.3" dur="3s" repeatCount="indefinite" />
         </circle>
-        <circle cx="55" cy="140" r="2.5" fill="#94a3b8">
+        <circle cx="55" cy="140" r="2.5" fill="var(--text-tertiary)">
           <animate attributeName="opacity" values="0.5;1;0.5" dur="1.8s" repeatCount="indefinite" />
         </circle>
-        <circle cx="110" cy="95" r="2" fill="#cbd5e1">
+        <circle cx="110" cy="95" r="2" fill="var(--text-secondary)">
           <animate attributeName="opacity" values="0.6;1;0.6" dur="2.2s" repeatCount="indefinite" />
         </circle>
 

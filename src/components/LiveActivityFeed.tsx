@@ -71,14 +71,14 @@ function soundForKind(kind: EventKind): "emergency" | "military" | "alert" | "in
   }
 }
 const BORDER_COLORS: Record<string, string> = {
-  emergency: "#e2e8f0",
-  military: "#94a3b8",
-  entered: "#cbd5e1",
-  departed: "#94a3b8",
-  rapid_descent: "#cbd5e1",
-  rapid_climb: "#cbd5e1",
-  landed: "#cbd5e1",
-  takeoff: "#cbd5e1",
+  emergency: "var(--accent-primary)",
+  military: "var(--text-tertiary)",
+  entered: "var(--text-secondary)",
+  departed: "var(--text-tertiary)",
+  rapid_descent: "var(--text-secondary)",
+  rapid_climb: "var(--text-secondary)",
+  landed: "var(--text-secondary)",
+  takeoff: "var(--text-secondary)",
 };
 
 /* ------------------------------------------------------------------ */
@@ -136,7 +136,7 @@ function LiveActivityFeed({ flights }: Props) {
         icao24,
         text,
         icon,
-        color: BORDER_COLORS[kind] ?? "#64748b",
+        color: BORDER_COLORS[kind] ?? "var(--text-muted)",
         ts: now,
       };
 
@@ -241,7 +241,7 @@ function LiveActivityFeed({ flights }: Props) {
           aria-label="Expand live feed"
         >
           <span style={styles.pulsingDot} />
-          <span style={{ fontFamily: "monospace", fontSize: 11, color: "#e2e8f0" }}>
+          <span style={{ fontFamily: "monospace", fontSize: 11, color: "var(--accent-primary)" }}>
             {eventCount} event{eventCount !== 1 ? "s" : ""}
           </span>
         </button>
@@ -380,14 +380,14 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 10,
     fontWeight: 700,
     letterSpacing: "0.08em",
-    color: "#94a3b8",
+    color: "var(--text-tertiary)",
     fontFamily: "monospace",
   },
   badge: {
     fontSize: 10,
     fontWeight: 600,
-    color: "#94a3b8",
-    background: "rgba(148, 163, 184, 0.12)",
+    color: "var(--text-tertiary)",
+    background: "var(--border-default)",
     borderRadius: 8,
     padding: "1px 6px",
     fontFamily: "monospace",
@@ -395,7 +395,7 @@ const styles: Record<string, React.CSSProperties> = {
   collapseBtn: {
     background: "none",
     border: "none",
-    color: "#64748b",
+    color: "var(--text-muted)",
     fontSize: 14,
     cursor: "pointer",
     padding: "2px 4px",
@@ -407,7 +407,7 @@ const styles: Record<string, React.CSSProperties> = {
     width: 6,
     height: 6,
     borderRadius: "50%",
-    background: "#e2e8f0",
+    background: "var(--accent-primary)",
     display: "inline-block",
     animation: "livefeed-pulse 1.8s ease-in-out infinite",
     flexShrink: 0,
@@ -426,7 +426,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   empty: {
     fontSize: 11,
-    color: "#64748b",
+    color: "var(--text-muted)",
     textAlign: "center",
     padding: "14px 12px",
     fontStyle: "italic",
@@ -456,14 +456,14 @@ const styles: Record<string, React.CSSProperties> = {
   },
   eventText: {
     fontSize: 12,
-    color: "#e2e8f0",
+    color: "var(--accent-primary)",
     fontFamily: "system-ui, -apple-system, sans-serif",
     lineHeight: 1.35,
     wordBreak: "break-word",
   },
   eventTime: {
     fontSize: 10,
-    color: "#64748b",
+    color: "var(--text-muted)",
     fontFamily: "monospace",
   },
 };

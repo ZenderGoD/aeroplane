@@ -39,10 +39,10 @@ interface Props {
 }
 
 const FLIGHT_CAT_COLORS: Record<string, string> = {
-  VFR: "#cbd5e1",
-  MVFR: "#94a3b8",
-  IFR: "#e2e8f0",
-  LIFR: "#94a3b8",
+  VFR: "var(--text-secondary)",
+  MVFR: "var(--text-tertiary)",
+  IFR: "var(--accent-primary)",
+  LIFR: "var(--text-tertiary)",
 };
 
 export default function FlightSidebar({ flight, onClose, anomalies = [], instability, onOpen3D, flightHistory }: Props) {
@@ -197,8 +197,8 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                       <span
                         className="inline-block px-1.5 py-0.5 rounded text-xs font-bold uppercase"
                         style={{
-                          color: flight.positionSource === "adsb_icao" ? "#cbd5e1"
-                            : flight.positionSource === "mlat" ? "#94a3b8"
+                          color: flight.positionSource === "adsb_icao" ? "var(--text-secondary)"
+                            : flight.positionSource === "mlat" ? "var(--text-tertiary)"
                             : "#9ca3af",
                           border: `1px solid ${
                             flight.positionSource === "adsb_icao" ? "#cbd5e130"
@@ -379,7 +379,7 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                           className="w-4 h-4"
                           viewBox="0 0 24 24"
                           fill="none"
-                          stroke="#94a3b8"
+                          stroke="var(--text-tertiary)"
                           strokeWidth={2}
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -437,12 +437,12 @@ export default function FlightSidebar({ flight, onClose, anomalies = [], instabi
                 <div className="flex flex-wrap gap-1.5">
                   {flight.navModes.map((mode) => {
                     const modeColors: Record<string, string> = {
-                      autopilot: "#cbd5e1",
-                      vnav: "#94a3b8",
-                      lnav: "#94a3b8",
-                      althold: "#cbd5e1",
-                      approach: "#94a3b8",
-                      tcas: "#e2e8f0",
+                      autopilot: "var(--text-secondary)",
+                      vnav: "var(--text-tertiary)",
+                      lnav: "var(--text-tertiary)",
+                      althold: "var(--text-secondary)",
+                      approach: "var(--text-tertiary)",
+                      tcas: "var(--accent-primary)",
                     };
                     const modeLabels: Record<string, string> = {
                       autopilot: "AP",
@@ -648,10 +648,10 @@ function GPSIntegrityIndicator({ result }: { result: GPSIntegrityResult | null }
   // Colour scheme per severity
   const config =
     severity === "compromised"
-      ? { color: "#e2e8f0", bg: "#e2e8f015", border: "#e2e8f030", label: "GPS Compromised", icon: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" }
+      ? { color: "var(--accent-primary)", bg: "#e2e8f015", border: "#e2e8f030", label: "GPS Compromised", icon: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" }
       : severity === "degraded"
-        ? { color: "#94a3b8", bg: "#94a3b815", border: "#94a3b830", label: "GPS Degraded", icon: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" }
-        : { color: "#cbd5e1", bg: "#cbd5e115", border: "#cbd5e130", label: "GPS OK", icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" };
+        ? { color: "var(--text-tertiary)", bg: "#94a3b815", border: "#94a3b830", label: "GPS Degraded", icon: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" }
+        : { color: "var(--text-secondary)", bg: "#cbd5e115", border: "#cbd5e130", label: "GPS OK", icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" };
 
   // Always show a compact badge; expand when there are issues
   return (
@@ -1031,7 +1031,7 @@ function EmissionsSection({
             <div
               className="w-8 h-8 rounded-lg flex items-center justify-center"
               style={{
-                background: "rgba(148, 163, 184, 0.1)",
+                background: "var(--border-default)",
                 border: "1px solid rgba(148, 163, 184, 0.2)",
               }}
             >
@@ -1067,7 +1067,7 @@ function EmissionsSection({
               <span
                 className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider"
                 style={{
-                  background: "rgba(148, 163, 184, 0.1)",
+                  background: "var(--border-default)",
                   color: "var(--text-secondary)",
                   border: "1px solid rgba(148, 163, 184, 0.2)",
                 }}
@@ -1089,7 +1089,7 @@ function EmissionsSection({
         <div
           className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs"
           style={{
-            background: "rgba(148, 163, 184, 0.06)",
+            background: "var(--border-subtle)",
             border: "1px solid rgba(148, 163, 184, 0.12)",
             color: "var(--text-tertiary)",
           }}

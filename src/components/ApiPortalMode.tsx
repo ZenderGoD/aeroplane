@@ -345,9 +345,9 @@ function CopyButton({ text }: { text: string }) {
       onClick={handleCopy}
       className="flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md transition-all duration-200"
       style={{
-        background: copied ? "rgba(148, 163, 184, 0.15)" : "rgba(148, 163, 184, 0.08)",
+        background: copied ? "var(--border-strong)" : "rgba(148, 163, 184, 0.08)",
         color: copied ? "var(--status-nominal)" : "var(--text-tertiary)",
-        border: `1px solid ${copied ? "rgba(148, 163, 184, 0.2)" : "var(--border-subtle)"}`,
+        border: `1px solid ${copied ? "var(--border-accent)" : "var(--border-subtle)"}`,
       }}
     >
       {copied ? (
@@ -803,10 +803,10 @@ function PlaygroundTab({ apiKey }: { apiKey: string | null }) {
                 style={{
                   background:
                     response.status >= 200 && response.status < 300
-                      ? "rgba(148, 163, 184, 0.12)"
+                      ? "var(--border-default)"
                       : response.status >= 400
-                      ? "rgba(148, 163, 184, 0.12)"
-                      : "rgba(148, 163, 184, 0.12)",
+                      ? "var(--border-default)"
+                      : "var(--border-default)",
                   color:
                     response.status >= 200 && response.status < 300
                       ? "var(--status-nominal)"
@@ -1404,7 +1404,7 @@ export default function ApiPortalMode({ onExitMode }: ApiPortalModeProps) {
           <div className="flex items-center gap-2.5">
             <div
               className="flex items-center justify-center w-8 h-8 rounded-lg"
-              style={{ background: "rgba(148, 163, 184, 0.1)", border: "1px solid var(--border-accent)" }}
+              style={{ background: "var(--border-default)", border: "1px solid var(--border-accent)" }}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="16 18 22 12 16 6" />
@@ -1426,7 +1426,7 @@ export default function ApiPortalMode({ onExitMode }: ApiPortalModeProps) {
           <span
             className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full"
             style={{
-              background: "rgba(148, 163, 184, 0.1)",
+              background: "var(--border-default)",
               color: "var(--status-nominal)",
               border: "1px solid rgba(148, 163, 184, 0.15)",
             }}
@@ -1437,9 +1437,9 @@ export default function ApiPortalMode({ onExitMode }: ApiPortalModeProps) {
           <span
             className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full"
             style={{
-              background: apiKey ? "rgba(148, 163, 184, 0.08)" : "rgba(148, 163, 184, 0.06)",
+              background: apiKey ? "rgba(148, 163, 184, 0.08)" : "var(--border-subtle)",
               color: apiKey ? "var(--status-nominal)" : "var(--text-muted)",
-              border: `1px solid ${apiKey ? "rgba(148, 163, 184, 0.12)" : "var(--border-subtle)"}`,
+              border: `1px solid ${apiKey ? "var(--border-default)" : "var(--border-subtle)"}`,
             }}
           >
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

@@ -29,8 +29,8 @@ export default function MeasureTool({ active, onDeactivate }: MeasureToolProps) 
     (latlng: L.LatLng): L.CircleMarker => {
       return L.circleMarker(latlng, {
         radius: 6,
-        color: "#94a3b8",
-        fillColor: "#94a3b8",
+        color: "var(--text-tertiary)",
+        fillColor: "var(--text-tertiary)",
         fillOpacity: 0.8,
         weight: 2,
       });
@@ -42,7 +42,7 @@ export default function MeasureTool({ active, onDeactivate }: MeasureToolProps) 
   const createMeasureLine = useCallback(
     (a: L.LatLng, b: L.LatLng): L.Polyline => {
       return L.polyline([a, b], {
-        color: "#94a3b8",
+        color: "var(--text-tertiary)",
         weight: 2,
         dashArray: "8, 6",
         opacity: 0.9,

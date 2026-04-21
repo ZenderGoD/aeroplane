@@ -49,22 +49,22 @@ interface PIREP {
 // ── Constants ───────────────────────────────────────────────────────
 
 const TURB_COLORS: Record<string, string> = {
-  NEG: "#cbd5e1",
-  "SMTH-LGT": "#cbd5e1",
-  LGT: "#94a3b8",
-  "LGT-MOD": "#94a3b8",
-  MOD: "#94a3b8",
-  "MOD-SEV": "#94a3b8",
-  SEV: "#94a3b8",
-  EXTRM: "#e2e8f0",
+  NEG: "var(--text-secondary)",
+  "SMTH-LGT": "var(--text-secondary)",
+  LGT: "var(--text-tertiary)",
+  "LGT-MOD": "var(--text-tertiary)",
+  MOD: "var(--text-tertiary)",
+  "MOD-SEV": "var(--text-tertiary)",
+  SEV: "var(--text-tertiary)",
+  EXTRM: "var(--accent-primary)",
 };
 
 const ICING_COLORS: Record<string, string> = {
-  NEG: "#cbd5e1",
-  TRC: "#cbd5e1",
-  LGT: "#94a3b8",
-  MOD: "#94a3b8",
-  SEV: "#e2e8f0",
+  NEG: "var(--text-secondary)",
+  TRC: "var(--text-secondary)",
+  LGT: "var(--text-tertiary)",
+  MOD: "var(--text-tertiary)",
+  SEV: "var(--accent-primary)",
 };
 
 const TURB_SEVERITY_ORDER: Record<string, number> = {
@@ -168,13 +168,13 @@ function icingMarkerSvg(
 
 function pirepPopupHtml(p: PIREP): string {
   const isUrgent = p.reportType === "UUA";
-  const badgeColor = isUrgent ? "#e2e8f0" : "#94a3b8";
+  const badgeColor = isUrgent ? "var(--accent-primary)" : "var(--text-tertiary)";
   const badgeLabel = isUrgent ? "URGENT" : "ROUTINE";
 
   let detailsHtml = "";
 
   if (p.turbulence) {
-    const tc = TURB_COLORS[p.turbulence.intensity] ?? "#94a3b8";
+    const tc = TURB_COLORS[p.turbulence.intensity] ?? "var(--text-tertiary)";
     detailsHtml += `
       <div style="margin-top:8px;padding:6px 8px;background:rgba(0,0,0,0.3);border-radius:4px;border-left:3px solid ${tc}">
         <div style="font-size:10px;color:#94a3b8;margin-bottom:2px">TURBULENCE</div>
@@ -186,7 +186,7 @@ function pirepPopupHtml(p: PIREP): string {
   }
 
   if (p.icing) {
-    const ic = ICING_COLORS[p.icing.intensity] ?? "#94a3b8";
+    const ic = ICING_COLORS[p.icing.intensity] ?? "var(--text-tertiary)";
     detailsHtml += `
       <div style="margin-top:8px;padding:6px 8px;background:rgba(0,0,0,0.3);border-radius:4px;border-left:3px solid ${ic}">
         <div style="font-size:10px;color:#94a3b8;margin-bottom:2px">ICING</div>
@@ -266,9 +266,9 @@ function pirepSeverityOrder(p: PIREP): number {
 }
 
 function pirepColor(p: PIREP): string {
-  if (p.turbulence) return TURB_COLORS[p.turbulence.intensity] ?? "#94a3b8";
-  if (p.icing) return ICING_COLORS[p.icing.intensity] ?? "#94a3b8";
-  return "#94a3b8";
+  if (p.turbulence) return TURB_COLORS[p.turbulence.intensity] ?? "var(--text-tertiary)";
+  if (p.icing) return ICING_COLORS[p.icing.intensity] ?? "var(--text-tertiary)";
+  return "var(--text-tertiary)";
 }
 
 function timeAgo(ts: number): string {
@@ -334,14 +334,14 @@ function clusterPireps(pireps: PIREP[], radiusKm: number): Cluster[] {
 
     // Determine color from worst severity
     const sevColors = [
-      "#cbd5e1", // 0 - NEG
-      "#cbd5e1", // 1 - SMTH-LGT / TRC
-      "#94a3b8", // 2 - LGT
-      "#94a3b8", // 3 - LGT-MOD
-      "#94a3b8", // 4 - MOD
-      "#94a3b8", // 5 - MOD-SEV
-      "#94a3b8", // 6 - SEV
-      "#e2e8f0", // 7 - EXTRM
+      "var(--text-secondary)", // 0 - NEG
+      "var(--text-secondary)", // 1 - SMTH-LGT / TRC
+      "var(--text-tertiary)", // 2 - LGT
+      "var(--text-tertiary)", // 3 - LGT-MOD
+      "var(--text-tertiary)", // 4 - MOD
+      "var(--text-tertiary)", // 5 - MOD-SEV
+      "var(--text-tertiary)", // 6 - SEV
+      "var(--accent-primary)", // 7 - EXTRM
     ];
 
     clusters.push({
@@ -349,7 +349,7 @@ function clusterPireps(pireps: PIREP[], radiusKm: number): Cluster[] {
       lon: avgLon,
       pireps: group,
       worstSeverity: worstSev,
-      color: sevColors[worstSev] ?? "#94a3b8",
+      color: sevColors[worstSev] ?? "var(--text-tertiary)",
     });
   }
 
@@ -628,7 +628,7 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
             style={{
               fontSize: "9px",
               fontWeight: 600,
-              color: "#64748b",
+              color: "var(--text-muted)",
               textTransform: "uppercase",
               letterSpacing: "0.08em",
               marginBottom: "4px",
@@ -652,10 +652,10 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
                   fontFamily: "ui-monospace, monospace",
                   background:
                     altFilter === f.key
-                      ? "rgba(148, 163, 184, 0.2)"
+                      ? "var(--border-accent)"
                       : "transparent",
                   color:
-                    altFilter === f.key ? "#cbd5e1" : "#94a3b8",
+                    altFilter === f.key ? "var(--text-secondary)" : "var(--text-tertiary)",
                   transition: "all 0.15s ease",
                 }}
               >
@@ -679,7 +679,7 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
             style={{
               fontSize: "9px",
               fontWeight: 600,
-              color: "#64748b",
+              color: "var(--text-muted)",
               textTransform: "uppercase",
               letterSpacing: "0.08em",
               marginBottom: "4px",
@@ -703,10 +703,10 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
                   fontFamily: "ui-monospace, monospace",
                   background:
                     typeFilter === f.key
-                      ? "rgba(148, 163, 184, 0.2)"
+                      ? "var(--border-accent)"
                       : "transparent",
                   color:
-                    typeFilter === f.key ? "#cbd5e1" : "#94a3b8",
+                    typeFilter === f.key ? "var(--text-secondary)" : "var(--text-tertiary)",
                   transition: "all 0.15s ease",
                 }}
               >
@@ -735,7 +735,7 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
           style={{
             fontSize: "10px",
             fontWeight: 700,
-            color: "#e2e8f0",
+            color: "var(--accent-primary)",
             marginBottom: "8px",
             display: "flex",
             alignItems: "center",
@@ -747,12 +747,12 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
               width: "6px",
               height: "6px",
               borderRadius: "50%",
-              background: pireps.length > 0 ? "#cbd5e1" : "#64748b",
+              background: pireps.length > 0 ? "var(--text-secondary)" : "var(--text-muted)",
               display: "inline-block",
             }}
           />
           PIREPs
-          <span style={{ fontSize: "9px", color: "#64748b", marginLeft: "auto" }}>
+          <span style={{ fontSize: "9px", color: "var(--text-muted)", marginLeft: "auto" }}>
             {summary.total} total
           </span>
         </div>
@@ -766,27 +766,27 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
           }}
         >
           {summary.neg > 0 && (
-            <div style={{ color: "#cbd5e1" }}>
+            <div style={{ color: "var(--text-secondary)" }}>
               NEG/LGT: {summary.neg}
             </div>
           )}
           {summary.light > 0 && (
-            <div style={{ color: "#94a3b8" }}>
+            <div style={{ color: "var(--text-tertiary)" }}>
               LIGHT: {summary.light}
             </div>
           )}
           {summary.moderate > 0 && (
-            <div style={{ color: "#94a3b8" }}>
+            <div style={{ color: "var(--text-tertiary)" }}>
               MOD: {summary.moderate}
             </div>
           )}
           {summary.severe > 0 && (
-            <div style={{ color: "#94a3b8" }}>
+            <div style={{ color: "var(--text-tertiary)" }}>
               SEV: {summary.severe}
             </div>
           )}
           {summary.extreme > 0 && (
-            <div style={{ color: "#e2e8f0" }}>
+            <div style={{ color: "var(--accent-primary)" }}>
               EXTRM: {summary.extreme}
             </div>
           )}
@@ -799,7 +799,7 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
               paddingTop: "6px",
               borderTop: "1px solid rgba(148, 163, 184, 0.1)",
               fontSize: "9px",
-              color: "#64748b",
+              color: "var(--text-muted)",
             }}
           >
             Latest:{" "}
@@ -812,7 +812,7 @@ export default function PirepOverlay({ visible }: PirepOverlayProps) {
         )}
 
         {lastFetch > 0 && (
-          <div style={{ fontSize: "8px", color: "#475569", marginTop: "2px" }}>
+          <div style={{ fontSize: "8px", color: "var(--text-faint)", marginTop: "2px" }}>
             Updated {timeAgo(lastFetch)}
           </div>
         )}

@@ -110,9 +110,9 @@ export default function GlobeView({
             ? Math.max((f.baroAltitude * 0.3048) / 6_371_000, 0.0005) * ALTITUDE_SCALE
             : 0.001,
           color: isSelected
-            ? "#e2e8f0"
+            ? "var(--accent-primary)"
             : isAnomaly
-              ? "#e2e8f0"
+              ? "var(--accent-primary)"
               : getCategoryColor(f.category),
           size: isSelected ? 0.6 : isAnomaly ? 0.35 : 0.2,
           flight: f,
@@ -165,7 +165,7 @@ export default function GlobeView({
         ref={globeRef}
         globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
         backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
-        atmosphereColor="#94a3b8"
+        atmosphereColor="var(--text-tertiary)"
         atmosphereAltitude={0.15}
         showGraticules={true}
         width={dimensions.width}

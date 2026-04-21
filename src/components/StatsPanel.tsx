@@ -306,19 +306,19 @@ export default function StatsPanel({ flights }: Props) {
   // ── colour palettes for charts ──────────────────────────────────────
 
   const COUNTRY_COLORS = [
-    "#cbd5e1", "#94a3b8", "#e2e8f0", "#94a3b8",
-    "#cbd5e1", "#e2e8f0", "#94a3b8", "#e2e8f0",
-    "#cbd5e1", "#94a3b8",
+    "var(--text-secondary)", "var(--text-tertiary)", "var(--accent-primary)", "var(--text-tertiary)",
+    "var(--text-secondary)", "var(--accent-primary)", "var(--text-tertiary)", "var(--accent-primary)",
+    "var(--text-secondary)", "var(--text-tertiary)",
   ];
 
   const AIRLINE_COLORS = [
-    "#cbd5e1", "#94a3b8", "#94a3b8", "#94a3b8",
-    "#cbd5e1", "#e2e8f0", "#94a3b8", "#e2e8f0",
-    "#cbd5e1", "#94a3b8",
+    "var(--text-secondary)", "var(--text-tertiary)", "var(--text-tertiary)", "var(--text-tertiary)",
+    "var(--text-secondary)", "var(--accent-primary)", "var(--text-tertiary)", "var(--accent-primary)",
+    "var(--text-secondary)", "var(--text-tertiary)",
   ];
 
-  const ALT_COLORS = ["#cbd5e1", "#94a3b8", "#cbd5e1", "#94a3b8", "#e2e8f0"];
-  const SPD_COLORS = ["#94a3b8", "#cbd5e1", "#e2e8f0"];
+  const ALT_COLORS = ["var(--text-secondary)", "var(--text-tertiary)", "var(--text-secondary)", "var(--text-tertiary)", "var(--accent-primary)"];
+  const SPD_COLORS = ["var(--text-tertiary)", "var(--text-secondary)", "var(--accent-primary)"];
 
   // ── render ──────────────────────────────────────────────────────────
 

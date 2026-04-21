@@ -14,14 +14,14 @@ import { getMapStyle, getSavedMapStyleId } from "@/lib/mapStyles";
 /*  Altitude → colour (same palette the main tracker uses)            */
 /* ------------------------------------------------------------------ */
 function altitudeColor(altMeters: number | null): string {
-  if (altMeters === null || altMeters <= 0) return "#cbd5e1"; // ground / unknown → slate
+  if (altMeters === null || altMeters <= 0) return "var(--text-secondary)"; // ground / unknown → slate
   const ft = altMeters * 3.28084;
-  if (ft < 5_000) return "#cbd5e1";
-  if (ft < 10_000) return "#94a3b8";
-  if (ft < 20_000) return "#94a3b8";
-  if (ft < 30_000) return "#94a3b8";
-  if (ft < 40_000) return "#e2e8f0";
-  return "#94a3b8";
+  if (ft < 5_000) return "var(--text-secondary)";
+  if (ft < 10_000) return "var(--text-tertiary)";
+  if (ft < 20_000) return "var(--text-tertiary)";
+  if (ft < 30_000) return "var(--text-tertiary)";
+  if (ft < 40_000) return "var(--accent-primary)";
+  return "var(--text-tertiary)";
 }
 
 /* ------------------------------------------------------------------ */
@@ -48,7 +48,7 @@ function drawRangeRings(
     const meters = nm * 1852;
     L.circle([lat, lon], {
       radius: meters,
-      color: "rgba(148,163,184,0.25)",
+      color: "var(--border-accent)",
       weight: 1,
       fill: false,
       dashArray: "4 6",
@@ -296,12 +296,12 @@ function EmbedMapInner() {
           gap: 6,
           background: isDark ? "rgba(6,8,13,0.85)" : "rgba(255,255,255,0.9)",
           backdropFilter: "blur(12px)",
-          border: `1px solid ${isDark ? "rgba(148,163,184,0.1)" : "rgba(0,0,0,0.1)"}`,
+          border: `1px solid ${isDark ? "var(--border-default)" : "rgba(0,0,0,0.1)"}`,
           borderRadius: 8,
           padding: "4px 10px",
           fontFamily: "'Geist Mono', monospace",
           fontSize: 11,
-          color: isDark ? "#94a3b8" : "#475569",
+          color: isDark ? "var(--text-tertiary)" : "var(--text-faint)",
         }}
       >
         <span
@@ -309,17 +309,17 @@ function EmbedMapInner() {
             width: 6,
             height: 6,
             borderRadius: "50%",
-            background: "#94a3b8",
+            background: "var(--text-tertiary)",
             boxShadow: "0 0 6px rgba(148,163,184,0.5)",
             animation: "embed-pulse 2s ease-in-out infinite",
           }}
         />
-        <span style={{ fontWeight: 600, color: isDark ? "#f1f5f9" : "#0f172a" }}>
+        <span style={{ fontWeight: 600, color: isDark ? "var(--text-primary)" : "#0f172a" }}>
           {count}
         </span>
         aircraft
         {trackCallsign && (
-          <span style={{ color: "#94a3b8", marginLeft: 4 }}>
+          <span style={{ color: "var(--text-tertiary)", marginLeft: 4 }}>
             tracking {trackCallsign.toUpperCase()}
           </span>
         )}
@@ -353,18 +353,18 @@ function EmbedMapInner() {
         .embed-popup .leaflet-popup-content-wrapper {
           background: ${isDark ? "rgba(10,10,10,0.95)" : "rgba(255,255,255,0.95)"};
           backdrop-filter: blur(16px);
-          border: 1px solid ${isDark ? "rgba(148,163,184,0.1)" : "rgba(0,0,0,0.1)"};
+          border: 1px solid ${isDark ? "var(--border-default)" : "rgba(0,0,0,0.1)"};
           border-radius: 10px;
           box-shadow: 0 4px 16px rgba(0,0,0,0.3);
           padding: 0;
         }
         .embed-popup .leaflet-popup-content {
           margin: 0;
-          color: ${isDark ? "#e2e8f0" : "#1e293b"};
+          color: ${isDark ? "var(--accent-primary)" : "#1e293b"};
         }
         .embed-popup .leaflet-popup-tip {
           background: ${isDark ? "rgba(10,10,10,0.95)" : "rgba(255,255,255,0.95)"};
-          border: 1px solid ${isDark ? "rgba(148,163,184,0.1)" : "rgba(0,0,0,0.1)"};
+          border: 1px solid ${isDark ? "var(--border-default)" : "rgba(0,0,0,0.1)"};
         }
         .leaflet-div-icon { background: transparent !important; border: none !important; }
       `}</style>
@@ -387,7 +387,7 @@ export default function EmbedPage() {
             alignItems: "center",
             justifyContent: "center",
             background: "#06080d",
-            color: "#64748b",
+            color: "var(--text-muted)",
             fontFamily: "monospace",
             fontSize: 12,
           }}

@@ -6,15 +6,15 @@ import { NOTAMS, type Notam } from "@/data/notams";
 
 // ── Severity palette ────────────────────────────────────────────────
 const SEVERITY_COLORS: Record<Notam["severity"], string> = {
-  critical: "#e2e8f0",
-  warning: "#94a3b8",
-  info: "#94a3b8",
+  critical: "var(--accent-primary)",
+  warning: "var(--text-tertiary)",
+  info: "var(--text-tertiary)",
 };
 
 const SEVERITY_BG: Record<Notam["severity"], string> = {
   critical: "rgba(226,232,240,0.15)",
-  warning: "rgba(148,163,184,0.12)",
-  info: "rgba(148,163,184,0.10)",
+  warning: "var(--border-default)",
+  info: "var(--border-default)",
 };
 
 // ── Helpers ─────────────────────────────────────────────────────────

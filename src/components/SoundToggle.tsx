@@ -85,7 +85,7 @@ export default function SoundToggle() {
         backdropFilter: "blur(8px)",
         WebkitBackdropFilter: "blur(8px)",
         cursor: "pointer",
-        color: enabled ? "#cbd5e1" : "#64748b",
+        color: enabled ? "var(--text-secondary)" : "var(--text-muted)",
         transition: "all 0.2s ease",
       }}
     >

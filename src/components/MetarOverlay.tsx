@@ -37,10 +37,10 @@ interface MetarOverlayProps {
 // ── Flight Category Colors ───────────────────────────────────────────
 
 const FLTCAT_COLORS: Record<string, string> = {
-  VFR: "#cbd5e1",
-  MVFR: "#94a3b8",
-  IFR: "#e2e8f0",
-  LIFR: "#94a3b8",
+  VFR: "var(--text-secondary)",
+  MVFR: "var(--text-tertiary)",
+  IFR: "var(--accent-primary)",
+  LIFR: "var(--text-tertiary)",
 };
 
 const FLTCAT_LABELS: Record<string, string> = {
@@ -51,7 +51,7 @@ const FLTCAT_LABELS: Record<string, string> = {
 };
 
 function getFltCatColor(cat: string | null): string {
-  return FLTCAT_COLORS[cat ?? ""] ?? "#94a3b8";
+  return FLTCAT_COLORS[cat ?? ""] ?? "var(--text-tertiary)";
 }
 
 // ── Wind Barb SVG Generator ─────────────────────────────────────────

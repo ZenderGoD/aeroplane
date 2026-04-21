@@ -189,7 +189,7 @@ const pulsingDotStyle: React.CSSProperties = {
   width: 7,
   height: 7,
   borderRadius: "50%",
-  backgroundColor: "#cbd5e1",
+  backgroundColor: "var(--text-secondary)",
   boxShadow: "0 0 8px rgba(203,213,225,0.5)",
   animation: "hud-pulse 2s ease-in-out infinite",
   flexShrink: 0,
@@ -241,7 +241,7 @@ const spinnerStyle: React.CSSProperties = {
   width: 10,
   height: 10,
   border: "1.5px solid rgba(255,255,255,0.15)",
-  borderTopColor: "#cbd5e1",
+  borderTopColor: "var(--text-secondary)",
   borderRadius: "50%",
   animation: "hud-spin 0.8s linear infinite",
   flexShrink: 0,
@@ -267,14 +267,14 @@ const badgeBase: React.CSSProperties = {
 const sourceBadge: React.CSSProperties = {
   ...badgeBase,
   background: "rgba(203, 213, 225, 0.12)",
-  color: "#cbd5e1",
+  color: "var(--text-secondary)",
   border: "1px solid rgba(203, 213, 225, 0.2)",
 };
 
 const adsbBadge: React.CSSProperties = {
   ...badgeBase,
-  background: "rgba(148, 163, 184, 0.12)",
-  color: "#94a3b8",
+  background: "var(--border-default)",
+  color: "var(--text-tertiary)",
   border: "1px solid rgba(148, 163, 184, 0.2)",
 };
 

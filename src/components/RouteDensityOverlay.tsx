@@ -239,7 +239,7 @@ export default function RouteDensityOverlay({
       WebkitBackdropFilter: "blur(12px)",
       borderRadius: "10px",
       border: "1px solid rgba(148, 163, 184, 0.2)",
-      color: "#e2e8f0",
+      color: "var(--accent-primary)",
       fontSize: "11px",
       fontFamily:
         '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -254,7 +254,7 @@ export default function RouteDensityOverlay({
       fontWeight: "600",
       fontSize: "12px",
       marginBottom: "6px",
-      color: "#f1f5f9",
+      color: "var(--text-primary)",
     });
     legend.appendChild(title);
 

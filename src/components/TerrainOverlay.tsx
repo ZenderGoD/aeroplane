@@ -213,7 +213,7 @@ export default function TerrainOverlay({ visible }: TerrainOverlayProps) {
         popup.setContent(
           `<div style="font-family:ui-monospace,monospace;font-size:11px;color:#e2e8f0;padding:2px 0;line-height:1.6">
             <div style="font-weight:700;font-size:12px;color:#f1f5f9;margin-bottom:2px">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px"><path d="M8 3l4 4 4-4"/><path d="M4 11l4-4 4 4 4-4 4 4"/><path d="M2 19l4-4 4 4 4-4 4 4 4-4"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px"><path d="M8 3l4 4 4-4"/><path d="M4 11l4-4 4 4 4-4 4 4"/><path d="M2 19l4-4 4 4 4-4 4 4 4-4"/></svg>
               Elevation
             </div>
             <div style="display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:10.5px">

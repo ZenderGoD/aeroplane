@@ -24,10 +24,10 @@ import type { FlightEvent } from "@/types/events";
 
 function getStatusColor(status: string): string {
   switch (status) {
-    case "disrupted": return "#e2e8f0";
-    case "congested": return "#94a3b8";
-    case "compressed": return "#94a3b8";
-    default: return "#cbd5e1";
+    case "disrupted": return "var(--accent-primary)";
+    case "congested": return "var(--text-tertiary)";
+    case "compressed": return "var(--text-tertiary)";
+    default: return "var(--text-secondary)";
   }
 }
 
@@ -41,18 +41,18 @@ function getStatusLabel(status: string): string {
 }
 
 function getPressureColor(score: number): string {
-  if (score >= 80) return "#e2e8f0";
-  if (score >= 60) return "#94a3b8";
-  if (score >= 40) return "#94a3b8";
-  if (score >= 20) return "#cbd5e1";
+  if (score >= 80) return "var(--accent-primary)";
+  if (score >= 60) return "var(--text-tertiary)";
+  if (score >= 40) return "var(--text-tertiary)";
+  if (score >= 20) return "var(--text-secondary)";
   return "#6b7280";
 }
 
 function getTrendColor(label: string): string {
   switch (label) {
-    case "improving": return "#cbd5e1";
-    case "degrading": return "#e2e8f0";
-    default: return "#94a3b8";
+    case "improving": return "var(--text-secondary)";
+    case "degrading": return "var(--accent-primary)";
+    default: return "var(--text-tertiary)";
   }
 }
 

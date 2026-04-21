@@ -85,12 +85,12 @@ const CARDINAL_BEARINGS: Record<string, number> = {
 };
 
 const TYPE_LABELS: Record<string, { label: string; color: string; icon: string }> = {
-  large: { label: "Large", color: "#cbd5e1", icon: "\u2708" },
-  medium: { label: "Medium", color: "#cbd5e1", icon: "\u2708" },
-  small: { label: "Small", color: "#cbd5e1", icon: "\ud83d\udee9" },
-  heliport: { label: "Heliport", color: "#e2e8f0", icon: "\ud83d\ude81" },
-  seaplane: { label: "Seaplane", color: "#cbd5e1", icon: "\ud83c\udf0a" },
-  balloon: { label: "Balloon", color: "#94a3b8", icon: "\ud83c\udf88" },
+  large: { label: "Large", color: "var(--text-secondary)", icon: "\u2708" },
+  medium: { label: "Medium", color: "var(--text-secondary)", icon: "\u2708" },
+  small: { label: "Small", color: "var(--text-secondary)", icon: "\ud83d\udee9" },
+  heliport: { label: "Heliport", color: "var(--accent-primary)", icon: "\ud83d\ude81" },
+  seaplane: { label: "Seaplane", color: "var(--text-secondary)", icon: "\ud83c\udf0a" },
+  balloon: { label: "Balloon", color: "var(--text-tertiary)", icon: "\ud83c\udf88" },
 };
 
 const WEATHER_URLS: Record<string, string> = {
@@ -103,11 +103,11 @@ const WEATHER_URLS: Record<string, string> = {
 const SATELLITE_URL = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 
 const CATEGORY_COLORS: Record<FlightCategory, string> = {
-  VFR: "#94a3b8",
-  MVFR: "#cbd5e1",
-  IFR: "#64748b",
-  LIFR: "#475569",
-  UNKNOWN: "#64748b",
+  VFR: "var(--text-tertiary)",
+  MVFR: "var(--text-secondary)",
+  IFR: "var(--text-muted)",
+  LIFR: "var(--text-faint)",
+  UNKNOWN: "var(--text-muted)",
 };
 
 const airports = airportsData as Airport[];
@@ -132,9 +132,9 @@ function destinationPoint(
 }
 
 function altitudeColor(alt: number | null): string {
-  if (alt === null) return "#64748b";       // unknown — gray
+  if (alt === null) return "var(--text-muted)";       // unknown — gray
   const ft = alt * 3.28084;
-  if (ft < 0) return "#64748b";             // below sea level
+  if (ft < 0) return "var(--text-muted)";             // below sea level
   if (ft < 2000) return "#22c55e";          // ground / low — green
   if (ft < 5000) return "#3b82f6";          // departure/approach — blue
   if (ft < 10000) return "#38bdf8";         // transition — cyan
@@ -196,9 +196,9 @@ function PillButton({
         fontSize: "10px",
         fontWeight: 600,
         letterSpacing: "0.03em",
-        background: active ? "rgba(203,213,225,0.12)" : "rgba(148,163,184,0.06)",
-        border: `1px solid ${active ? "rgba(203,213,225,0.3)" : "rgba(148,163,184,0.15)"}`,
-        color: active ? "#cbd5e1" : "#64748b",
+        background: active ? "rgba(203,213,225,0.12)" : "var(--border-subtle)",
+        border: `1px solid ${active ? "rgba(203,213,225,0.3)" : "var(--border-strong)"}`,
+        color: active ? "var(--text-secondary)" : "var(--text-muted)",
         cursor: "pointer",
       }}
     >
@@ -215,7 +215,7 @@ function SectionHeader({ label, collapsed, onToggle }: { label: string; collapse
     <button
       onClick={onToggle}
       className="flex items-center justify-between w-full py-1.5 transition-colors hover:opacity-80"
-      style={{ color: "#94a3b8" }}
+      style={{ color: "var(--text-tertiary)" }}
     >
       <span className="section-label" style={{ letterSpacing: "0.06em", fontSize: "9px", fontWeight: 700 }}>{label}</span>
       <svg
@@ -400,11 +400,11 @@ function AirportMapInner({
         const rwyStart: L.LatLngExpression = [airport.lat - runwayHalfLenDeg, airport.lon];
         const rwyEnd: L.LatLngExpression = [airport.lat + runwayHalfLenDeg, airport.lon];
         runwayLayerRef.current.addLayer(
-          L.polyline([rwyStart, rwyEnd], { color: "#94a3b8", weight: 6, opacity: 0.7 })
+          L.polyline([rwyStart, rwyEnd], { color: "var(--text-tertiary)", weight: 6, opacity: 0.7 })
         );
         // Runway center line
         runwayLayerRef.current.addLayer(
-          L.polyline([rwyStart, rwyEnd], { color: "#cbd5e1", weight: 1, opacity: 0.5, dashArray: "8 6" })
+          L.polyline([rwyStart, rwyEnd], { color: "var(--text-secondary)", weight: 1, opacity: 0.5, dashArray: "8 6" })
         );
         // Threshold markers
         [rwyStart, rwyEnd].forEach((pt) => {
@@ -475,7 +475,7 @@ function AirportMapInner({
     if (flightA.latitude !== null && flightA.longitude !== null) {
       separationLayerRef.current.addLayer(
         L.circleMarker([flightA.latitude, flightA.longitude], {
-          radius: 18, color: "#cbd5e1", weight: 2, opacity: 0.8, fill: false, dashArray: "4 3",
+          radius: 18, color: "var(--text-secondary)", weight: 2, opacity: 0.8, fill: false, dashArray: "4 3",
         })
       );
     }
@@ -484,7 +484,7 @@ function AirportMapInner({
       // Ring on B
       separationLayerRef.current.addLayer(
         L.circleMarker([flightB.latitude, flightB.longitude], {
-          radius: 18, color: "#cbd5e1", weight: 2, opacity: 0.8, fill: false, dashArray: "4 3",
+          radius: 18, color: "var(--text-secondary)", weight: 2, opacity: 0.8, fill: false, dashArray: "4 3",
         })
       );
 
@@ -505,7 +505,7 @@ function AirportMapInner({
         separationLayerRef.current.addLayer(
           L.polyline(
             [[flightA.latitude, flightA.longitude], [flightB.latitude, flightB.longitude]],
-            { color: "#94a3b8", weight: 1.5, opacity: 0.7, dashArray: "6 4" }
+            { color: "var(--text-tertiary)", weight: 1.5, opacity: 0.7, dashArray: "6 4" }
           )
         );
 
@@ -577,7 +577,7 @@ function AirportMapInner({
       }
 
       const isMilitary = (f.dbFlags ?? 0) & 1;
-      const planeColor = isMilitary ? "#94a3b8" : color;
+      const planeColor = isMilitary ? "var(--text-tertiary)" : color;
       const planeIcon = L.divIcon({
         className: "",
         html: `<div style="transform:rotate(${hdgDeg}deg);display:flex;align-items:center;justify-content:center;width:22px;height:22px;filter:drop-shadow(0 0 3px ${planeColor}80);">
@@ -622,7 +622,7 @@ function AirportMapInner({
     });
     bearingLines.forEach((line) => {
       const polyline = L.polyline([line.from, line.to], {
-        color: "#94a3b8", weight: 2, opacity: 0.9,
+        color: "var(--text-tertiary)", weight: 2, opacity: 0.9,
       }) as L.Polyline & { _bearingLine?: boolean };
       polyline._bearingLine = true;
       polyline.bindTooltip(
@@ -675,7 +675,7 @@ function FlightDetailPanel({
     <div className="absolute bottom-16 right-4 z-[1000] w-56 rounded-xl overflow-hidden"
       style={{ background: "rgba(6,8,13,0.95)", border: "1px solid var(--border-default)", backdropFilter: "blur(12px)" }}>
       <div className="flex items-center justify-between px-3 py-2" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
-        <span style={{ color: "#cbd5e1", fontWeight: 700, fontSize: "13px", fontFamily: "monospace" }}>{cs}</span>
+        <span style={{ color: "var(--text-secondary)", fontWeight: 700, fontSize: "13px", fontFamily: "monospace" }}>{cs}</span>
         <button onClick={onClose} className="w-5 h-5 flex items-center justify-center rounded hover:bg-white/10" style={{ color: "var(--text-muted)" }}>x</button>
       </div>
       <div className="px-3 py-2 space-y-1" style={{ fontSize: "11px", fontFamily: "monospace" }}>
@@ -1004,7 +1004,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg flex items-center justify-center"
             style={{ background: "rgba(203,213,225,0.1)", border: "1px solid rgba(203,213,225,0.2)" }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2">
               <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
               <line x1="12" y1="2" x2="12" y2="12" />
             </svg>
@@ -1033,7 +1033,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
                   className="w-full text-left px-3 py-2 hover:bg-white/5 transition-colors flex items-center gap-3"
                   style={{ borderBottom: "1px solid var(--border-subtle)" }}>
                   <div className="flex-shrink-0 text-center" style={{ minWidth: "40px" }}>
-                    <span className="data-value" style={{ color: TYPE_LABELS[apt.type || "large"]?.color || "#cbd5e1", fontSize: "11px", fontWeight: 700 }}>{apt.icao}</span>
+                    <span className="data-value" style={{ color: TYPE_LABELS[apt.type || "large"]?.color || "var(--text-secondary)", fontSize: "11px", fontWeight: 700 }}>{apt.icao}</span>
                     {apt.type && apt.type !== "large" && apt.type !== "medium" && (
                       <div style={{ fontSize: "9px", color: TYPE_LABELS[apt.type]?.color || "#888", marginTop: "1px" }}>
                         {TYPE_LABELS[apt.type]?.icon} {TYPE_LABELS[apt.type]?.label}
@@ -1057,7 +1057,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
           <div className="flex items-center gap-2 ml-3">
             <div className="flex items-center gap-2 px-3 py-1 rounded-lg"
               style={{ background: "rgba(203,213,225,0.08)", border: "1px solid rgba(203,213,225,0.15)" }}>
-              <span className="data-value" style={{ color: "#cbd5e1", fontSize: "12px", fontWeight: 700 }}>{selectedAirport.icao}</span>
+              <span className="data-value" style={{ color: "var(--text-secondary)", fontSize: "12px", fontWeight: 700 }}>{selectedAirport.icao}</span>
               {selectedAirport.iata && (
                 <><span style={{ color: "var(--text-muted)", fontSize: "10px" }}>/</span>
                 <span className="data-value" style={{ color: "var(--text-secondary)", fontSize: "11px" }}>{selectedAirport.iata}</span></>
@@ -1093,9 +1093,9 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
             onClick={() => setShowATCPanel((v) => !v)}
             className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all hover:brightness-125"
             style={{
-              background: showATCPanel ? "rgba(148,163,184,0.15)" : "rgba(148,163,184,0.06)",
-              border: `1px solid ${showATCPanel ? "rgba(148,163,184,0.35)" : "rgba(148,163,184,0.15)"}`,
-              color: showATCPanel ? "#94a3b8" : "var(--text-muted)",
+              background: showATCPanel ? "var(--border-strong)" : "var(--border-subtle)",
+              border: `1px solid ${showATCPanel ? "rgba(148,163,184,0.35)" : "var(--border-strong)"}`,
+              color: showATCPanel ? "var(--text-tertiary)" : "var(--text-muted)",
               fontSize: "11px",
               fontWeight: 600,
             }}
@@ -1137,7 +1137,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
             style={{
               fontSize: "10px",
               fontFamily: "'JetBrains Mono', monospace",
-              color: "#94a3b8",
+              color: "var(--text-tertiary)",
               letterSpacing: "0.02em",
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -1177,8 +1177,8 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
             zIndex: 1098,
           }}
         >
-          <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#cbd5e1", animation: "pulse 2s ease-in-out infinite" }} />
-          <span style={{ fontSize: "10px", color: "#94a3b8", fontWeight: 600 }}>
+          <div className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--text-secondary)", animation: "pulse 2s ease-in-out infinite" }} />
+          <span style={{ fontSize: "10px", color: "var(--text-tertiary)", fontWeight: 600 }}>
             SEPARATION TOOL
             {!separationPair ? " - Click first aircraft" :
              !separationPair.flightB ? ` - ${separationPair.flightA.callsign?.trim() || separationPair.flightA.icao24} selected. Click second aircraft.` :
@@ -1188,7 +1188,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
           <button
             onClick={() => { setSeparationMode(false); setSeparationPair(null); }}
             className="ml-auto text-xs px-2 py-0.5 rounded hover:bg-white/5"
-            style={{ color: "#64748b", fontSize: "10px" }}
+            style={{ color: "var(--text-muted)", fontSize: "10px" }}
           >
             ESC to close
           </button>
@@ -1220,16 +1220,16 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
 
                 {/* ---------- BEARING LINE TOOL ---------- */}
                 <div>
-                  <span className="section-label" style={{ letterSpacing: "0.06em", fontSize: "9px", fontWeight: 700, color: "#94a3b8" }}>BEARING LINE TOOL</span>
+                  <span className="section-label" style={{ letterSpacing: "0.06em", fontSize: "9px", fontWeight: 700, color: "var(--text-tertiary)" }}>BEARING LINE TOOL</span>
                 </div>
                 {/* Mode tabs */}
                 <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid var(--border-default)" }}>
                   <button onClick={() => setBearingMode("latlon")} className="flex-1 py-1.5 text-center transition-colors"
                     style={{ fontSize: "10px", fontWeight: 600, background: bearingMode === "latlon" ? "rgba(203,213,225,0.12)" : "transparent",
-                      color: bearingMode === "latlon" ? "#cbd5e1" : "var(--text-muted)" }}>LAT/LON</button>
+                      color: bearingMode === "latlon" ? "var(--text-secondary)" : "var(--text-muted)" }}>LAT/LON</button>
                   <button onClick={() => setBearingMode("cardinal")} className="flex-1 py-1.5 text-center transition-colors"
                     style={{ fontSize: "10px", fontWeight: 600, background: bearingMode === "cardinal" ? "rgba(203,213,225,0.12)" : "transparent",
-                      color: bearingMode === "cardinal" ? "#cbd5e1" : "var(--text-muted)", borderLeft: "1px solid var(--border-default)" }}>DIRECTION</button>
+                      color: bearingMode === "cardinal" ? "var(--text-secondary)" : "var(--text-muted)", borderLeft: "1px solid var(--border-default)" }}>DIRECTION</button>
                 </div>
 
                 {bearingMode === "latlon" && (
@@ -1247,7 +1247,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
                         style={{ background: "var(--surface-2)", border: "1px solid var(--border-default)", color: "var(--text-primary)", fontSize: "11px" }} />
                     </div>
                     <button onClick={drawLatLonLine} className="w-full h-7 rounded-md transition-colors"
-                      style={{ background: "rgba(148,163,184,0.15)", border: "1px solid rgba(148,163,184,0.3)", color: "#94a3b8", fontSize: "11px", fontWeight: 600 }}>Draw Line</button>
+                      style={{ background: "var(--border-strong)", border: "1px solid rgba(148,163,184,0.3)", color: "var(--text-tertiary)", fontSize: "11px", fontWeight: 600 }}>Draw Line</button>
                   </div>
                 )}
 
@@ -1261,7 +1261,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
                             style={{ fontSize: "10px", fontWeight: 700,
                               background: cardinalDir === dir ? "rgba(203,213,225,0.15)" : "var(--surface-2)",
                               border: `1px solid ${cardinalDir === dir ? "rgba(203,213,225,0.3)" : "var(--border-default)"}`,
-                              color: cardinalDir === dir ? "#cbd5e1" : "var(--text-muted)" }}>{dir}</button>
+                              color: cardinalDir === dir ? "var(--text-secondary)" : "var(--text-muted)" }}>{dir}</button>
                         ))}
                       </div>
                     </div>
@@ -1272,7 +1272,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
                         style={{ background: "var(--surface-2)", border: "1px solid var(--border-default)", color: "var(--text-primary)", fontSize: "11px" }} />
                     </div>
                     <button onClick={drawCardinalLine} className="w-full h-7 rounded-md transition-colors"
-                      style={{ background: "rgba(148,163,184,0.15)", border: "1px solid rgba(148,163,184,0.3)", color: "#94a3b8", fontSize: "11px", fontWeight: 600 }}>Draw Line</button>
+                      style={{ background: "var(--border-strong)", border: "1px solid rgba(148,163,184,0.3)", color: "var(--text-tertiary)", fontSize: "11px", fontWeight: 600 }}>Draw Line</button>
                   </div>
                 )}
 
@@ -1288,7 +1288,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
                       <div key={line.id} className="flex items-center justify-between px-2 py-1.5 rounded-md"
                         style={{ background: "var(--surface-2)", border: "1px solid var(--border-subtle)" }}>
                         <div className="data-value" style={{ fontSize: "10px" }}>
-                          <span style={{ color: "#94a3b8" }}>{line.distanceNm.toFixed(1)} NM</span>
+                          <span style={{ color: "var(--text-tertiary)" }}>{line.distanceNm.toFixed(1)} NM</span>
                           <span style={{ color: "var(--text-muted)", margin: "0 4px" }}>/</span>
                           <span style={{ color: "var(--text-secondary)" }}>{Math.round(line.bearingDeg)}{"\u00B0"}</span>
                         </div>
@@ -1372,16 +1372,16 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
                             border: isSelected ? "1px solid rgba(203,213,225,0.2)" : "1px solid transparent",
                           }}
                         >
-                          <span style={{ color: "#cbd5e1", fontSize: "10px", fontWeight: 700, fontFamily: "monospace", minWidth: "58px", textAlign: "left" }}>
+                          <span style={{ color: "var(--text-secondary)", fontSize: "10px", fontWeight: 700, fontFamily: "monospace", minWidth: "58px", textAlign: "left" }}>
                             {cs}
                           </span>
-                          <span style={{ color: "#64748b", fontSize: "9px", fontFamily: "monospace" }}>
+                          <span style={{ color: "var(--text-muted)", fontSize: "9px", fontFamily: "monospace" }}>
                             FL{alt}
                           </span>
-                          <span style={{ color: "#64748b", fontSize: "9px", fontFamily: "monospace" }}>
+                          <span style={{ color: "var(--text-muted)", fontSize: "9px", fontFamily: "monospace" }}>
                             {spd}kt
                           </span>
-                          <span style={{ color: "#475569", fontSize: "9px", fontFamily: "monospace", marginLeft: "auto" }}>
+                          <span style={{ color: "var(--text-faint)", fontSize: "9px", fontFamily: "monospace", marginLeft: "auto" }}>
                             {dist.toFixed(0)}nm
                           </span>
                         </button>
@@ -1395,7 +1395,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
 
                 {/* Altitude Legend */}
                 <div className="pt-1">
-                  <span className="section-label" style={{ fontSize: "9px", fontWeight: 700, color: "#94a3b8", letterSpacing: "0.06em" }}>ALTITUDE LEGEND</span>
+                  <span className="section-label" style={{ fontSize: "9px", fontWeight: 700, color: "var(--text-tertiary)", letterSpacing: "0.06em" }}>ALTITUDE LEGEND</span>
                   <div className="mt-2 space-y-1">
                     {[
                       { color: "#22c55e", label: "Ground / < 2k ft" },
@@ -1472,7 +1472,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
               <div className="text-center space-y-5 max-w-lg px-6 py-8">
                 <div className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center"
                   style={{ background: "rgba(203,213,225,0.06)", border: "1px solid rgba(203,213,225,0.12)" }}>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5" opacity="0.7">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="1.5" opacity="0.7">
                     <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
                     <line x1="12" y1="2" x2="12" y2="12" />
                   </svg>
@@ -1581,7 +1581,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
               <div style={{ width: "1px", height: "12px", background: "var(--border-subtle)" }} />
               <div className="flex items-center gap-1.5">
                 <div className="w-1.5 h-1.5 rounded-full"
-                  style={{ background: flightCount > 0 ? "#cbd5e1" : "#64748b", boxShadow: flightCount > 0 ? "0 0 6px rgba(203,213,225,0.4)" : "none" }} />
+                  style={{ background: flightCount > 0 ? "var(--text-secondary)" : "var(--text-muted)", boxShadow: flightCount > 0 ? "0 0 6px rgba(203,213,225,0.4)" : "none" }} />
                 <span className="data-value" style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{flightCount} flights</span>
                 <span style={{ color: "var(--text-faint)", fontSize: "10px" }}>&middot; airplanes.live</span>
               </div>
