@@ -268,16 +268,13 @@ function AirportMapInner({
       // intermediate zooms. zoomDelta: 0.5 for keyboard +/- to step less
       // aggressively. inertia keeps pans feeling natural.
       preferCanvas: true,
-      zoomSnap: 0,        // true fractional zoom (no discrete levels)
-      zoomDelta: 0.5,
-      wheelPxPerZoomLevel: 200,  // gentler per-wheel-notch zoom
-      wheelDebounceTime: 40,
+      zoomSnap: 1,
+      zoomDelta: 1,
+      wheelPxPerZoomLevel: 100,
       zoomAnimation: true,
-      zoomAnimationThreshold: 100,
       fadeAnimation: true,
       markerZoomAnimation: true,
       inertia: true,
-      inertiaDeceleration: 2500,
       worldCopyJump: true,
     });
     const ms = getMapStyle(getSavedMapStyleId());
