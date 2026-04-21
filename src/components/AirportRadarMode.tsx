@@ -62,6 +62,13 @@ interface SeparationPair {
 interface MetarData {
   raw: string;
   category: FlightCategory;
+  // When the requested airport has no METAR and we fell back to a
+  // nearby station (common for Indian, African, some Asian airports),
+  // we show this tag so the user knows it's not the airport itself.
+  fallbackFrom?: {
+    station: string;       // e.g. "VANP"
+    distanceNm: number;    // miles to fallback station
+  };
 }
 
 // ---------- Constants ----------
@@ -752,7 +759,59 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
     setWeatherLayer(null);
     setTerrainOn(false);
     setTimeout(() => setMapReady(true), 50);
+
+    // Persist to recent airports (last 8, most-recent first)
+    try {
+      const raw = localStorage.getItem("aerointel.recent_airports");
+      const recent: string[] = raw ? JSON.parse(raw) : [];
+      const filtered = recent.filter((icao) => icao !== apt.icao);
+      filtered.unshift(apt.icao);
+      localStorage.setItem(
+        "aerointel.recent_airports",
+        JSON.stringify(filtered.slice(0, 8)),
+      );
+    } catch { /* ignore quota errors */ }
+
+    // Update URL so the view is shareable without triggering navigation
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set("airport", apt.icao);
+      window.history.replaceState({}, "", url.toString());
+    } catch { /* non-browser env */ }
   }, []);
+
+  // Restore airport from ?airport= URL param on mount (deep-linking).
+  // This lets us share links like /airport?airport=VAGD that land directly
+  // on Gondia without the user needing to search.
+  useEffect(() => {
+    if (selectedAirport) return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const icaoParam = params.get("airport");
+      if (!icaoParam) return;
+      const q = icaoParam.trim().toUpperCase();
+      const found = airports.find((a) => a.icao === q || a.iata === q);
+      if (found) selectAirport(found);
+    } catch { /* non-browser env */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Load recent airports from localStorage (shown as quick-picks in search)
+  const recentAirports = useMemo(() => {
+    if (typeof window === "undefined") return [] as Airport[];
+    try {
+      const raw = localStorage.getItem("aerointel.recent_airports");
+      if (!raw) return [] as Airport[];
+      const icaos: string[] = JSON.parse(raw);
+      return icaos
+        .map((icao) => airports.find((a) => a.icao === icao))
+        .filter((a): a is Airport => Boolean(a));
+    } catch {
+      return [] as Airport[];
+    }
+    // We deliberately recompute when selectedAirport changes so the list
+    // refreshes after a selection.
+  }, [selectedAirport]);
 
   const handleSearchKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -775,19 +834,40 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
 
   const flightCount = flights.length;
 
-  // Fetch METAR
+  // Fetch METAR — pass lat/lon so the API can fall back to the nearest
+  // reporting station for airports outside AWC coverage (most of India,
+  // Africa, etc.).  Without the fallback, these airports show no weather.
   useEffect(() => {
     if (!selectedAirport || !metarVisible) { setMetarData(null); return; }
     let cancelled = false;
     async function fetchMetar() {
       try {
-        const r = await fetch(`/api/metar?icao=${selectedAirport!.icao}`);
+        const apt = selectedAirport!;
+        const url = `/api/metar?icao=${apt.icao}&lat=${apt.lat}&lon=${apt.lon}`;
+        const r = await fetch(url);
         if (cancelled) return;
         if (!r.ok) { setMetarData(null); return; }
         const data = await r.json();
-        const raw = data.raw || data.metar || data.data || "";
+
+        // New response shape: { stations: [{ rawOb, ... }], fallback?: {...} }
+        const station = Array.isArray(data.stations) && data.stations.length > 0
+          ? data.stations[0]
+          : null;
+        const raw = station?.rawOb || data.raw || data.metar || data.data || "";
+
         if (raw) {
-          setMetarData({ raw, category: parseFlightCategory(raw) });
+          setMetarData({
+            raw,
+            category: parseFlightCategory(raw),
+            fallbackFrom: data.fallback
+              ? {
+                  station: data.fallback.usedStation,
+                  distanceNm: data.fallback.distanceNm,
+                }
+              : undefined,
+          });
+        } else {
+          setMetarData(null);
         }
       } catch { setMetarData(null); }
     }
@@ -1040,10 +1120,28 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
+              flex: 1,
             }}
           >
             {metarData.raw}
           </span>
+          {metarData.fallbackFrom && (
+            <span
+              className="px-2 py-0.5 rounded-md"
+              style={{
+                fontSize: "9px",
+                fontWeight: 600,
+                color: "#f59e0b",
+                background: "rgba(245,158,11,0.12)",
+                border: "1px solid rgba(245,158,11,0.35)",
+                letterSpacing: "0.05em",
+                whiteSpace: "nowrap",
+              }}
+              title={`${selectedAirport.icao} has no METAR — showing data from ${metarData.fallbackFrom.station}`}
+            >
+              FROM {metarData.fallbackFrom.station} · {metarData.fallbackFrom.distanceNm} NM
+            </span>
+          )}
         </div>
       )}
 
@@ -1312,9 +1410,44 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
               separationPair={separationPair}
               onMapFlightClick={handleMapFlightClick}
             />
-          ) : (
+          ) : selectedAirport && !mapReady ? (
+            // Skeleton: map is being mounted — show the airport info + a
+            // pulsing circle so the user sees something instantly instead
+            // of a blank screen.
             <div className="h-full w-full flex items-center justify-center" style={{ background: "var(--surface-0)" }}>
-              <div className="text-center space-y-4 max-w-md">
+              <div className="text-center space-y-3">
+                <div
+                  className="w-20 h-20 mx-auto rounded-full relative"
+                  style={{
+                    background: "rgba(203,213,225,0.04)",
+                    border: "1px solid rgba(203,213,225,0.12)",
+                  }}
+                >
+                  <div
+                    className="absolute inset-2 rounded-full"
+                    style={{
+                      border: "1px dashed rgba(203,213,225,0.3)",
+                      animation: "pulse-ring 1.6s ease-in-out infinite",
+                    }}
+                  />
+                </div>
+                <div style={{ color: "var(--text-primary)", fontSize: "14px", fontWeight: 600, fontFamily: "monospace" }}>
+                  {selectedAirport.icao} · {selectedAirport.name}
+                </div>
+                <div style={{ color: "var(--text-muted)", fontSize: "11px" }}>
+                  Initializing radar view...
+                </div>
+                <style jsx>{`
+                  @keyframes pulse-ring {
+                    0%, 100% { opacity: 0.35; transform: scale(0.9); }
+                    50% { opacity: 1; transform: scale(1.1); }
+                  }
+                `}</style>
+              </div>
+            </div>
+          ) : (
+            <div className="h-full w-full flex items-center justify-center overflow-auto" style={{ background: "var(--surface-0)" }}>
+              <div className="text-center space-y-5 max-w-lg px-6 py-8">
                 <div className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center"
                   style={{ background: "rgba(203,213,225,0.06)", border: "1px solid rgba(203,213,225,0.12)" }}>
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5" opacity="0.7">
@@ -1328,12 +1461,73 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
                     Search for an airport above to view a radar-style display with range rings, live flights, and bearing line tools.
                   </p>
                 </div>
+
+                {/* Recently viewed */}
+                {recentAirports.length > 0 && (
+                  <div>
+                    <div style={{ color: "var(--text-muted)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em", marginBottom: "8px" }}>
+                      RECENT
+                    </div>
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {recentAirports.map((apt) => (
+                        <button
+                          key={apt.icao}
+                          onClick={() => selectAirport(apt)}
+                          className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
+                          style={{
+                            background: "var(--surface-2)",
+                            border: "1px solid var(--border-subtle)",
+                            color: "var(--text-secondary)",
+                            fontSize: "11px",
+                            fontFamily: "monospace",
+                            fontWeight: 600,
+                          }}
+                          title={`${apt.name} · ${apt.city}`}
+                        >
+                          {apt.icao}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Quick picks: curated list of frequently-used airports */}
+                <div>
+                  <div style={{ color: "var(--text-muted)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em", marginBottom: "8px" }}>
+                    QUICK PICKS
+                  </div>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {(["VAGD", "VABB", "VIDP", "VOBL", "VECC", "KJFK", "EGLL"] as const).map((icao) => {
+                      const apt = airports.find((a) => a.icao === icao);
+                      if (!apt) return null;
+                      return (
+                        <button
+                          key={apt.icao}
+                          onClick={() => selectAirport(apt)}
+                          className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
+                          style={{
+                            background: "transparent",
+                            border: "1px solid var(--border-subtle)",
+                            color: "var(--text-muted)",
+                            fontSize: "11px",
+                            fontFamily: "monospace",
+                            fontWeight: 600,
+                          }}
+                          title={`${apt.name} · ${apt.city}`}
+                        >
+                          {apt.iata || apt.icao}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg"
                   style={{ background: "var(--surface-2)", border: "1px solid var(--border-subtle)" }}>
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2">
                     <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
                   </svg>
-                  <span style={{ color: "var(--text-muted)", fontSize: "11px" }}>Try &quot;KJFK&quot;, &quot;Heathrow&quot;, or &quot;DEL&quot;</span>
+                  <span style={{ color: "var(--text-muted)", fontSize: "11px" }}>Try &quot;VAGD&quot;, &quot;Gondia&quot;, or &quot;KJFK&quot;</span>
                 </div>
               </div>
             </div>

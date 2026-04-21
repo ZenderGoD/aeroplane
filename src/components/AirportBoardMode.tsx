@@ -333,6 +333,10 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [selectedDetail, setSelectedDetail] = useState<ClassifiedFlight | null>(null);
   const [clock, setClock] = useState(new Date());
+  // Search radius in NM. Small regional airports (like Gondia) need a
+  // wider radius to see any traffic at all — 100NM was often showing
+  // an empty table even though aircraft were nearby.
+  const [searchRadiusNm, setSearchRadiusNm] = useState(150);
 
   // Inject keyframes
   useEffect(() => {
@@ -385,6 +389,38 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
     setSearchQuery("");
     setShowDropdown(false);
     setSelectedDetail(null);
+
+    // Persist to shared recent-airports list (same key used by Radar mode)
+    try {
+      const raw = localStorage.getItem("aerointel.recent_airports");
+      const recent: string[] = raw ? JSON.parse(raw) : [];
+      const filtered = recent.filter((icao) => icao !== apt.icao);
+      filtered.unshift(apt.icao);
+      localStorage.setItem(
+        "aerointel.recent_airports",
+        JSON.stringify(filtered.slice(0, 8)),
+      );
+    } catch { /* ignore */ }
+
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set("airport", apt.icao);
+      window.history.replaceState({}, "", url.toString());
+    } catch { /* non-browser */ }
+  }, []);
+
+  // Restore airport from ?airport= URL param on mount.
+  useEffect(() => {
+    if (selectedAirport) return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const icaoParam = params.get("airport");
+      if (!icaoParam) return;
+      const q = icaoParam.trim().toUpperCase();
+      const found = airports.find((a) => a.icao === q || a.iata === q);
+      if (found) selectAirport(found);
+    } catch { /* non-browser */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSearchKeyDown = useCallback(
@@ -405,8 +441,8 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
 
   // Get flights from shared context (no independent polling)
   const flights = useMemo(
-    () => (selectedAirport ? getFlightsNear(selectedAirport.lat, selectedAirport.lon, 100) : []),
-    [getFlightsNear, selectedAirport]
+    () => (selectedAirport ? getFlightsNear(selectedAirport.lat, selectedAirport.lon, searchRadiusNm) : []),
+    [getFlightsNear, selectedAirport, searchRadiusNm]
   );
 
   // Classify and filter flights
@@ -861,7 +897,24 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
                       className="text-center py-16"
                       style={{ color: "var(--text-muted)", fontSize: "12px" }}
                     >
-                      No {activeTab} detected within 100 NM
+                      <div className="flex flex-col items-center gap-3">
+                        <span>No {activeTab} detected within {searchRadiusNm} NM</span>
+                        {searchRadiusNm < 300 && (
+                          <button
+                            onClick={() => setSearchRadiusNm(Math.min(300, searchRadiusNm + 100))}
+                            className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
+                            style={{
+                              background: "var(--surface-2)",
+                              border: "1px solid var(--border-subtle)",
+                              color: "var(--text-secondary)",
+                              fontSize: "11px",
+                              fontFamily: "monospace",
+                            }}
+                          >
+                            Widen search to {Math.min(300, searchRadiusNm + 100)} NM
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -969,8 +1022,28 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
                 {activeTab === "arrivals" ? arrivals.length : departures.length}
               </span>
             </span>
-            <span style={{ color: "var(--text-muted)" }}>
-              Radius: <span style={{ color: "var(--text-secondary)" }}>100 NM</span>
+            <span style={{ color: "var(--text-muted)" }} className="flex items-center gap-1">
+              Radius:{" "}
+              <select
+                value={searchRadiusNm}
+                onChange={(e) => setSearchRadiusNm(Number(e.target.value))}
+                className="appearance-none cursor-pointer"
+                style={{
+                  background: "var(--surface-3)",
+                  color: "var(--text-secondary)",
+                  border: "1px solid var(--border-subtle)",
+                  borderRadius: "3px",
+                  padding: "0 4px",
+                  fontSize: "10px",
+                  fontFamily: "monospace",
+                  fontWeight: 600,
+                  outline: "none",
+                }}
+              >
+                {[50, 100, 150, 200, 250, 300].map((r) => (
+                  <option key={r} value={r}>{r} NM</option>
+                ))}
+              </select>
             </span>
           </div>
           <div className="flex items-center gap-4">
