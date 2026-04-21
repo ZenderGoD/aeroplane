@@ -124,12 +124,28 @@ export default function MapContent({
       className="h-full w-full"
       zoomControl={true}
       preferCanvas={true}
+      // Zoom smoothness — less jumpy than Leaflet defaults.
+      zoomSnap={0.25}
+      zoomDelta={0.5}
+      wheelPxPerZoomLevel={120}
+      wheelDebounceTime={30}
+      zoomAnimation={true}
+      fadeAnimation={true}
+      markerZoomAnimation={true}
+      inertia={true}
+      worldCopyJump={true}
     >
       <TileLayer
         key={style.id}
         attribution={style.attribution}
         url={style.url}
         maxZoom={style.maxZoom}
+        // Keep offscreen tiles in memory so panning back is instant.
+        // updateWhenZooming:false prevents tile re-fetch mid-animation.
+        keepBuffer={4}
+        updateWhenZooming={false}
+        updateWhenIdle={true}
+        crossOrigin={true}
         {...(style.subdomains ? { subdomains: style.subdomains } : {})}
       />
       <FlyToRegion region={region} />

@@ -70,7 +70,7 @@ const HAS_API_KEY = !!process.env.AIRPLANES_LIVE_API_KEY;
 interface CacheEntry {
   flights: FlightState[];
   time: number;
-  source: "airplaneslive" | "opensky";
+  source: "airplaneslive" | "opensky" | "secondary";
   timestamp: number; // cache write time (Date.now())
 }
 
@@ -337,6 +337,73 @@ async function fetchAirplanesLive(
 }
 
 /**
+ * Query secondary ADS-B networks (adsb.fi, ADSB One) for any aircraft
+ * airplanes.live didn't see. Each secondary gets ONE request at the
+ * bbox center — keeps total API calls minimal but catches aircraft
+ * on feeders that only one network has.
+ *
+ * Returns a Map of icao24 → FlightState. Caller merges into the
+ * primary result set, keeping airplanes.live data for duplicates.
+ */
+async function fetchSecondarySources(
+  bbox: BoundingBox | null,
+): Promise<Map<string, FlightState>> {
+  if (!bbox) return new Map(); // skip for global requests
+
+  const centerLat = (bbox.lamin + bbox.lamax) / 2;
+  const centerLon = (bbox.lomin + bbox.lomax) / 2;
+
+  type Source = {
+    name: "adsbfi" | "adsbone";
+    url: string;
+    responseKey: "aircraft" | "ac";
+  };
+
+  const sources: Source[] = [
+    {
+      name: "adsbfi",
+      url: `https://opendata.adsb.fi/api/v2/lat/${Math.round(centerLat)}/lon/${Math.round(centerLon)}/dist/250`,
+      responseKey: "aircraft",
+    },
+    {
+      name: "adsbone",
+      url: `https://api.adsb.one/v2/point/${centerLat.toFixed(4)}/${centerLon.toFixed(4)}/250`,
+      responseKey: "ac",
+    },
+  ];
+
+  const results = await Promise.allSettled(
+    sources.map(async (s) => {
+      try {
+        const res = await fetch(s.url, {
+          cache: "no-store",
+          signal: AbortSignal.timeout(6000),
+        });
+        if (!res.ok) return { name: s.name, aircraft: [] };
+        const data = await res.json();
+        const ac = Array.isArray(data?.[s.responseKey]) ? data[s.responseKey] : [];
+        return { name: s.name, aircraft: ac };
+      } catch {
+        return { name: s.name, aircraft: [] };
+      }
+    }),
+  );
+
+  const extras = new Map<string, FlightState>();
+  for (const r of results) {
+    if (r.status !== "fulfilled") continue;
+    for (const ac of r.value.aircraft) {
+      const parsed = parseAirplanesLive(ac as Record<string, unknown>);
+      if (parsed?.icao24 && !extras.has(parsed.icao24)) {
+        extras.set(parsed.icao24, parsed);
+      }
+    }
+  }
+
+  return extras;
+}
+
+/**
  * Fetch from OpenSky (existing logic preserved).
  * Returns parsed FlightState array or null on failure.
  */
@@ -424,7 +491,7 @@ async function fetchOpenSky(
 interface NormalizedResponse {
   flights: FlightState[];
   time: number;
-  source: "airplaneslive" | "opensky";
+  source: "airplaneslive" | "opensky" | "secondary";
   total: number;
   error?: string;
   rateLimited?: boolean;
@@ -518,10 +585,35 @@ export async function GET(request: NextRequest) {
     return null;
   };
 
-  // ── Try airplanes.live first (primary) ────────────────────────────
-  const alFlights = await fetchAirplanesLive(bbox);
+  // ── Primary + secondary sources in parallel ───────────────────────
+  // airplanes.live (primary) gets the full tiled query for bbox coverage.
+  // adsb.fi + ADSB One (secondaries) each get a single center-tile query
+  // and contribute any aircraft airplanes.live didn't see. Different
+  // feeder networks catch different aircraft — merging the union closes
+  // gaps especially for regional traffic.
+  const [alFlights, secondaryExtras] = await Promise.all([
+    fetchAirplanesLive(bbox),
+    fetchSecondarySources(bbox),
+  ]);
 
   if (alFlights && alFlights.length > 0) {
+    // Merge secondary-only aircraft into the primary result set.
+    // Primary wins on duplicates (airplanes.live generally has richer
+    // data fields like registration, type, callsign).
+    let secondaryAdded = 0;
+    if (secondaryExtras.size > 0) {
+      const seen = new Set(alFlights.map((f) => f.icao24));
+      for (const [icao, flight] of secondaryExtras) {
+        if (!seen.has(icao)) {
+          alFlights.push(flight);
+          secondaryAdded++;
+        }
+      }
+      if (secondaryAdded > 0) {
+        console.log(`[Flights] +${secondaryAdded} unique aircraft from secondary sources`);
+      }
+    }
+
     const time = Math.floor(now / 1000);
     regionCache.set(cacheKey, {
       flights: alFlights,
@@ -552,9 +644,37 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(resp, {
       headers: {
         "X-Data-Source": "airplaneslive",
+        "X-Secondary-Added": String(secondaryAdded),
+        "X-Aircraft-Count": String(alFlights.length),
         "X-Worker-Active": workerActive ? "true" : "false",
       },
     });
+  }
+
+  // ── If airplanes.live failed but secondaries returned data, use them ─
+  if (secondaryExtras.size > 0) {
+    const flights = Array.from(secondaryExtras.values());
+    const time = Math.floor(now / 1000);
+    regionCache.set(cacheKey, {
+      flights,
+      time,
+      source: "secondary",
+      timestamp: now,
+    });
+    return NextResponse.json(
+      {
+        flights,
+        time,
+        source: "secondary" as const,
+        total: flights.length,
+      },
+      {
+        headers: {
+          "X-Data-Source": "secondary",
+          "X-Aircraft-Count": String(flights.length),
+        },
+      },
+    );
   }
 
   // ── Fall back to OpenSky ──────────────────────────────────────────

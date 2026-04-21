@@ -258,12 +258,37 @@ function AirportMapInner({
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
     const map = L.map(containerRef.current, {
-      center: [airport.lat, airport.lon], zoom: 7, zoomControl: true, attributionControl: true,
+      center: [airport.lat, airport.lon],
+      zoom: 7,
+      zoomControl: true,
+      attributionControl: true,
+      // Zoom smoothness: canvas renderer is dramatically smoother than SVG
+      // for our marker volume. wheelPxPerZoomLevel tuned so a normal scroll
+      // doesn't jump multiple zoom levels. zoomSnap: 0.25 gives smoother
+      // intermediate zooms. zoomDelta: 0.5 for keyboard +/- to step less
+      // aggressively. inertia keeps pans feeling natural.
+      preferCanvas: true,
+      zoomSnap: 0.25,
+      zoomDelta: 0.5,
+      wheelPxPerZoomLevel: 120,
+      wheelDebounceTime: 30,
+      zoomAnimation: true,
+      fadeAnimation: true,
+      markerZoomAnimation: true,
+      inertia: true,
+      worldCopyJump: true,
     });
     const ms = getMapStyle(getSavedMapStyleId());
     L.tileLayer(ms.url, {
       attribution: ms.attribution,
       maxZoom: ms.maxZoom,
+      // Tile smoothness: keepBuffer keeps offscreen tiles in memory so they
+      // don't need to be re-fetched when panning back. updateWhenZooming:false
+      // delays re-fetch until the zoom animation finishes (no mid-zoom reload).
+      keepBuffer: 4,
+      updateWhenZooming: false,
+      updateWhenIdle: true,
+      crossOrigin: true,
       ...(ms.subdomains ? { subdomains: ms.subdomains } : {}),
     }).addTo(map);
     mapRef.current = map;
