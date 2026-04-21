@@ -124,15 +124,21 @@ export default function MapContent({
       className="h-full w-full"
       zoomControl={true}
       preferCanvas={true}
-      // Zoom smoothness — less jumpy than Leaflet defaults.
-      zoomSnap={0.25}
+      // Maximum zoom smoothness within Leaflet's limits. zoomSnap: 0 gives
+      // true fractional zoom — no discrete steps. wheelPxPerZoomLevel: 200
+      // makes scroll gentle (default is 60, so each notch was jumping 3x
+      // faster). zoomAnimationThreshold: 100 forces animation even for
+      // large zoom jumps.
+      zoomSnap={0}
       zoomDelta={0.5}
-      wheelPxPerZoomLevel={120}
-      wheelDebounceTime={30}
+      wheelPxPerZoomLevel={200}
+      wheelDebounceTime={40}
       zoomAnimation={true}
+      zoomAnimationThreshold={100}
       fadeAnimation={true}
       markerZoomAnimation={true}
       inertia={true}
+      inertiaDeceleration={2500}
       worldCopyJump={true}
     >
       <TileLayer
