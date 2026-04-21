@@ -27,6 +27,7 @@ import type { FlightState } from "@/types/flight";
 import type { Region } from "@/lib/regions";
 import type { ViewMode } from "@/types/viewMode";
 import type { FlightHistoryMap } from "@/lib/flightHistory";
+import { useSharedFlightData } from "@/contexts/FlightDataContext";
 
 interface Props {
   flights: FlightState[];
@@ -112,6 +113,7 @@ export default function MapContentMaplibre({
   const mapRef = useRef<maplibregl.Map | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [mapReady, setMapReady] = useState(false);
+  const { setBbox } = useSharedFlightData();
 
   // Stash latest flights/selection in refs so the render loop can
   // access them without needing to re-register.
@@ -174,6 +176,50 @@ export default function MapContentMaplibre({
       mapRef.current = null;
     };
   }, []);
+
+  // ── Viewport → FlightData bbox sync ───────────────────────────────
+  // Every time the user pans/zooms, send the visible bbox (padded 20%)
+  // to the FlightDataProvider. The API then tiles THAT viewport at 5×5
+  // density — much denser than tiling all of India. Debounced 300ms so
+  // mid-animation fetches don't spam the API.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapReady) return;
+
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const sendViewport = () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        const bounds = map.getBounds();
+        const lamin = bounds.getSouth();
+        const lamax = bounds.getNorth();
+        const lomin = bounds.getWest();
+        const lomax = bounds.getEast();
+        // Pad 20% beyond the visible area so aircraft just over the
+        // edge are pre-loaded — no pop-in when you pan slightly.
+        const latPad = (lamax - lamin) * 0.2;
+        const lonPad = (lomax - lomin) * 0.2;
+        setBbox({
+          lamin: lamin - latPad,
+          lamax: lamax + latPad,
+          lomin: lomin - lonPad,
+          lomax: lomax + lonPad,
+        });
+      }, 300);
+    };
+
+    sendViewport(); // fire immediately on mount
+
+    map.on("moveend", sendViewport);
+    map.on("zoomend", sendViewport);
+
+    return () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      map.off("moveend", sendViewport);
+      map.off("zoomend", sendViewport);
+    };
+  }, [mapReady, setBbox]);
 
   // ── Canvas render loop ────────────────────────────────────────────
   // Re-draws aircraft on every map move/zoom. MapLibre fires these

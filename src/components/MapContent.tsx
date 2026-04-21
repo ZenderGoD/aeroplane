@@ -6,6 +6,7 @@ import "leaflet/dist/leaflet.css";
 import { DEFAULT_CENTER, DEFAULT_ZOOM } from "@/lib/mapUtils";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useMapStyle } from "@/hooks/useMapStyle";
+import { useSharedFlightData } from "@/contexts/FlightDataContext";
 import CanvasPlaneLayer from "./CanvasPlaneLayer";
 import MeasureTool from "./MeasureTool";
 import CorridorOverlay from "./CorridorOverlay";
@@ -56,6 +57,52 @@ function FlyToRegion({ region }: { region: Region }) {
   useEffect(() => {
     map.flyTo(region.center, region.zoom, { duration: 1.5 });
   }, [map, region]);
+  return null;
+}
+
+/**
+ * Push the current map viewport (padded 20%) to the FlightDataProvider
+ * on every pan/zoom.  This way the /api/flights tile grid covers just
+ * what the user is looking at, giving much denser coverage when zoomed in.
+ * Debounced 300ms so mid-animation moves don't spam the API.
+ */
+function ViewportBboxSync() {
+  const map = useMap();
+  const { setBbox } = useSharedFlightData();
+
+  useEffect(() => {
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const sendViewport = () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        const bounds = map.getBounds();
+        const lamin = bounds.getSouth();
+        const lamax = bounds.getNorth();
+        const lomin = bounds.getWest();
+        const lomax = bounds.getEast();
+        const latPad = (lamax - lamin) * 0.2;
+        const lonPad = (lomax - lomin) * 0.2;
+        setBbox({
+          lamin: lamin - latPad,
+          lamax: lamax + latPad,
+          lomin: lomin - lonPad,
+          lomax: lomax + lonPad,
+        });
+      }, 300);
+    };
+
+    sendViewport();
+    map.on("moveend", sendViewport);
+    map.on("zoomend", sendViewport);
+
+    return () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      map.off("moveend", sendViewport);
+      map.off("zoomend", sendViewport);
+    };
+  }, [map, setBbox]);
+
   return null;
 }
 
@@ -147,6 +194,7 @@ export default function MapContent({
         crossOrigin={true}
         {...(style.subdomains ? { subdomains: style.subdomains } : {})}
       />
+      <ViewportBboxSync />
       <FlyToRegion region={region} />
       <FlyToFlight flight={selectedFlight} />
       <WeatherLayer visible={weatherVisible} />
