@@ -326,7 +326,7 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
   const searchRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { getFlightsNear, isLoading: sharedLoading, lastUpdated } = useSharedFlightData();
+  const { getFlightsNear, isLoading: sharedLoading, lastUpdated, setBbox: setSharedBbox } = useSharedFlightData();
   const [refreshRate, setRefreshRate] = useState(10);
   const [activeTab, setActiveTab] = useState<BoardTab>("arrivals");
   const [sortKey, setSortKey] = useState<SortKey>("distance");
@@ -390,6 +390,17 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
     setShowDropdown(false);
     setSelectedDetail(null);
 
+    // Update shared FlightDataProvider bbox so the API fetches aircraft
+    // around this airport (not wherever the user last was on the main map).
+    const latDelta = 200 / 60;
+    const lonDelta = 200 / (60 * Math.cos(apt.lat * Math.PI / 180));
+    setSharedBbox({
+      lamin: apt.lat - latDelta,
+      lamax: apt.lat + latDelta,
+      lomin: apt.lon - lonDelta,
+      lomax: apt.lon + lonDelta,
+    });
+
     // Persist to shared recent-airports list (same key used by Radar mode)
     try {
       const raw = localStorage.getItem("aerointel.recent_airports");
@@ -407,7 +418,7 @@ export default function AirportBoardMode({ onExitMode }: { onExitMode?: () => vo
       url.searchParams.set("airport", apt.icao);
       window.history.replaceState({}, "", url.toString());
     } catch { /* non-browser */ }
-  }, []);
+  }, [setSharedBbox]);
 
   // Restore airport from ?airport= URL param on mount.
   useEffect(() => {

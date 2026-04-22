@@ -709,7 +709,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
   const searchRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { getFlightsNear, isLoading: sharedLoading } = useSharedFlightData();
+  const { getFlightsNear, isLoading: sharedLoading, setBbox: setSharedBbox } = useSharedFlightData();
   const [selectedFlight, setSelectedFlight] = useState<FlightState | null>(null);
 
   const [bearingLines, setBearingLines] = useState<BearingLine[]>([]);
@@ -782,6 +782,20 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
     setTerrainOn(false);
     setTimeout(() => setMapReady(true), 50);
 
+    // Tell the shared FlightDataProvider to fetch ~200nm around the
+    // selected airport. Without this, airport mode inherits whatever
+    // bbox the main tracker had, so a Gondia-centered radar shows
+    // aircraft from whatever region the user last viewed (e.g. empty
+    // if they'd been looking at open ocean).
+    const latDelta = 200 / 60; // ~200 NM in latitude
+    const lonDelta = 200 / (60 * Math.cos(apt.lat * Math.PI / 180));
+    setSharedBbox({
+      lamin: apt.lat - latDelta,
+      lamax: apt.lat + latDelta,
+      lomin: apt.lon - lonDelta,
+      lomax: apt.lon + lonDelta,
+    });
+
     // Persist to recent airports (last 8, most-recent first)
     try {
       const raw = localStorage.getItem("aerointel.recent_airports");
@@ -800,7 +814,7 @@ export default function AirportRadarMode({ onExitMode }: { onExitMode?: () => vo
       url.searchParams.set("airport", apt.icao);
       window.history.replaceState({}, "", url.toString());
     } catch { /* non-browser env */ }
-  }, []);
+  }, [setSharedBbox]);
 
   // Restore airport from ?airport= URL param on mount (deep-linking).
   // This lets us share links like /airport?airport=VAGD that land directly
